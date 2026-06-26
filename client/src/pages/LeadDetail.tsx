@@ -180,8 +180,10 @@ export default function LeadDetail() {
   const sendWhatsApp = () => {
     const rawUrl = waTarget === "wa1" ? lead?.whatsapp1 : lead?.whatsapp2;
     if (!rawUrl) return;
-    const baseUrl = rawUrl.startsWith("https://wa.me/") ? rawUrl : rawUrl;
-    const finalUrl = `${baseUrl}?text=${encodeURIComponent(waMessage)}`;
+    // Build proper wa.me URL from phone number
+    const digits = rawUrl.replace(/\D/g, "");
+    const phone = digits.startsWith("55") ? digits : `55${digits}`;
+    const finalUrl = `https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`;
     window.open(finalUrl, "_blank", "noopener,noreferrer");
     setShowWaDialog(false);
   };
