@@ -25,6 +25,7 @@ import InteractionTimeline from "@/components/InteractionTimeline";
 import CadenciaDisplay from "@/components/CadenciaDisplay";
 import LeadScore from "@/components/LeadScore";
 import CallTracker from "@/components/CallTracker";
+import FrotaAltSuggestion from "@/components/FrotaAltSuggestion";
 
 const REQUIRED_FIELDS = ["nomeDecissor", "conheceMarca", "frotaAtual", "urgenciaCompra", "statusContato", "whatsapp1", "email"] as const;
 const FIELD_LABELS: Record<string, string> = {
@@ -395,6 +396,8 @@ export default function LeadDetail() {
                 isEditing={isEditing}
                 onChange={(v) => setEditForm(f => ({ ...f, frotaAtual: v }))}
               />
+              {/* Auto-suggest LS alternative based on frota */}
+              <FrotaAltSuggestion frotaAtual={lead.frotaAtual ?? (lead as any).frotas} />
               <EditableField
                 label="Urgência de Compra *"
                 field="urgenciaCompra"

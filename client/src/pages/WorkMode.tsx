@@ -11,6 +11,7 @@ import { WA_TEMPLATES, getTemplatesForSegmento } from "@/components/WaTemplates"
 import CadenciaDisplay from "@/components/CadenciaDisplay";
 import LeadScore from "@/components/LeadScore";
 import CallTracker from "@/components/CallTracker";
+import FrotaAltSuggestion from "@/components/FrotaAltSuggestion";
 import type { LeadShareData } from "@/components/WhatsAppShareModal";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -388,6 +389,13 @@ export default function WorkMode() {
                 <Users className="w-4 h-4 shrink-0" />
                 <span className="truncate">Frota: {lead.frotas}</span>
               </div>
+            )}
+            {/* Auto LS alternative suggestion */}
+            {(lead.frotas || (lead as any).frotaAtual) && (
+              <FrotaAltSuggestion
+                frotaAtual={lead.frotas ?? (lead as any).frotaAtual}
+                compact
+              />
             )}
             {lead.cnpj && (
               <div className="flex items-center gap-2 text-muted-foreground">

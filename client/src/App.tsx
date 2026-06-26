@@ -27,6 +27,7 @@ import FirstAccess from "./pages/FirstAccess";
 import WorkMode from "./pages/WorkMode";
 import Pipeline from "./pages/Pipeline";
 import FollowUps from "./pages/FollowUps";
+import Comparativos from "./pages/Comparativos";
 import QualificationFieldsConfig from "./pages/QualificationFieldsConfig";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -70,6 +71,7 @@ function Router() {
       <Route path="/settings/qualification-fields" component={() => <ProtectedRoute component={QualificationFieldsConfig} />} />
       <Route path="/work-mode" component={() => <ProtectedRoute component={WorkMode} />} />
       <Route path="/pipeline" component={() => <ProtectedRoute component={Pipeline} />} />
+      <Route path="/comparativos" component={() => <ProtectedRoute component={Comparativos} />} />
       <Route path="/follow-ups" component={() => <ProtectedRoute component={FollowUps} />} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
