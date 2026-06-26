@@ -21,6 +21,9 @@ import {
   ExternalLink, Loader2, MapPin, MessageSquare, Pencil, Phone, Plus, Save, Send, Trash2, User, XCircle
 } from "lucide-react";
 import { WA_TEMPLATES, getTemplatesForSegmento } from "@/components/WaTemplates";
+import InteractionTimeline from "@/components/InteractionTimeline";
+import CadenciaDisplay from "@/components/CadenciaDisplay";
+import LeadScore from "@/components/LeadScore";
 
 const REQUIRED_FIELDS = ["nomeDecissor", "conheceMarca", "frotaAtual", "urgenciaCompra", "statusContato", "whatsapp1", "email"] as const;
 const FIELD_LABELS: Record<string, string> = {
