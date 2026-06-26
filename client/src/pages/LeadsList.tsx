@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronLeft, ChevronRight, ExternalLink, FileUp, Filter, Lock, MapPin, Phone, Search, Unlock, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, FileUp, Filter, Lock, MapPin, Phone, MessageCircle, Search, Unlock, User } from "lucide-react";
 import { CityMultiSelect } from "@/components/CityMultiSelect";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -335,15 +335,38 @@ export default function LeadsList() {
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setLocation(`/leads/${lead.id}`)}
-                      className="h-7 text-xs"
-                    >
-                      <ExternalLink className="w-3 h-3 mr-1" />
-                      Ver
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      {lead.whatsapp1 && (
+                        <a
+                          href={`https://wa.me/55${lead.whatsapp1.replace(/\D/g,"")}?text=${encodeURIComponent(`Olá! Sou da Gallotti Tractor | LS Tractor. Gostaria de apresentar nossa linha de tratores agrícolas para ${lead.nomeFantasia ?? lead.razaoSocial ?? "vocês"}. Posso conversar?`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center h-7 w-7 rounded-md"
+                          style={{ background: "#25D36618", color: "#128C7E" }}
+                          title="WhatsApp"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      {lead.whatsapp1 && (
+                        <a
+                          href={`tel:${lead.whatsapp1.replace(/\D/g,"")}`}
+                          className="flex items-center justify-center h-7 w-7 rounded-md bg-muted"
+                          style={{ color: "#0a1e5a" }}
+                          title="Ligar"
+                        >
+                          <Phone className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setLocation(`/leads/${lead.id}`)}
+                        className="h-7 text-xs px-2"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -17,7 +17,9 @@ import {
   AlertTriangle, Clock, Phone, ChevronRight, ExternalLink
 } from "lucide-react";
 import GestorPanel from "@/components/GestorPanel";
+import { useEffect, useRef } from "react";
 import { Link } from "wouter";
+import { toast } from "sonner";
 
 const COLORS = ["#e21d3c", "#1e40af", "#16a34a", "#7c3aed", "#c8102e", "#0891b2"];
 
@@ -190,6 +192,22 @@ function AdminDashboard() {
   const { data: stats, isLoading } = trpc.dashboard.stats.useQuery(periodInput);
   const { data: ranking } = trpc.dashboard.ranking.useQuery({});
   const { data: reasons } = trpc.dashboard.disqualificationReasons.useQuery();
+  const { data: myFollowUps } = trpc.followUp.listMine.useQuery({ includesDone: false }, { refetchInterval: 300_000 });
+  const alertedRef = useRef(false);
+
+  useEffect(() => {
+    if (alertedRef.current || !myFollowUps) return;
+    const now = new Date();
+    const overdue = myFollowUps.filter((fu: any) => !fu.isDone && new Date(fu.scheduledAt) <= now);
+    if (overdue.length > 0) {
+      alertedRef.current = true;
+      toast(`⚠️ ${overdue.length} follow-up${overdue.length > 1 ? "s atrasados" : " atrasado"}! Acesse Follow-ups para regularizar.`, {
+        duration: 6000,
+        action: { label: "Ver", onClick: () => window.location.href = "/follow-ups" },
+      });
+    }
+  }, [myFollowUps]);
+
   const { data: bdrsAtRisk } = trpc.dashboard.bdrsAtRisk.useQuery(undefined, { refetchInterval: 120_000 });
   const { data: stagnantLeads } = trpc.dashboard.stagnantLeads.useQuery({ daysThreshold: 3, limit: 8 }, { refetchInterval: 300_000 });
   const { data: releaseStats } = trpc.leads.releaseStats.useQuery();

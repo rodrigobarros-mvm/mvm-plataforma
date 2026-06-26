@@ -1197,6 +1197,9 @@ export async function getFollowUpsByUser(userId: number, includesDone = false) {
       leadRazao: leadsTable.razaoSocial,
       leadCidade: leadsTable.cidade,
       leadUf: leadsTable.uf,
+      leadWhatsapp: leadsTable.whatsapp1,
+      leadSegmento: leadsTable.segmento,
+      leadModelo: leadsTable.modeloTrator,
     })
     .from(followUps)
     .leftJoin(leadsTable, eq(followUps.leadId, leadsTable.id))

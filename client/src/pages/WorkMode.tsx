@@ -158,6 +158,7 @@ export default function WorkMode() {
   };
 
   const [selectedWaTemplate, setSelectedWaTemplate] = useState("abertura_geral");
+  const [showWaPreview, setShowWaPreview] = useState(false);
 
   const handleWhatsApp = () => {
     const rawPhone = lead?.whatsapp1 ?? lead?.whatsapp ?? lead?.whatsapp2;
@@ -442,11 +443,31 @@ export default function WorkMode() {
               >
                 <MessageCircle className="w-4 h-4" /> WhatsApp
               </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5 text-xs"
+                onClick={() => setShowWaPreview(v => !v)}
+              >
+                {showWaPreview ? "▲ Ocultar" : "▼ Preview"}
+              </Button>
             )}
             {(lead.whatsapp ?? lead.whatsapp1) && (
               <Button size="sm" variant="outline" onClick={handleCopyPhone} className="gap-1.5">
                 <Copy className="w-4 h-4" /> Copiar
               </Button>
+            )}
+            {showWaPreview && lead && (
+              <div className="w-full mt-2 p-3 rounded-xl text-xs leading-relaxed whitespace-pre-wrap font-mono"
+                style={{ background: "#e5ddd5", color: "#303030", maxHeight: "160px", overflowY: "auto" }}>
+                {(() => {
+                  const templates = getTemplatesForSegmento(lead.segmento);
+                  const tpl = templates.find(t => t.id === selectedWaTemplate) ?? templates[0];
+                  if (!tpl) return "Selecione um template...";
+                  const empresa = lead.nomeFantasia ?? lead.razaoSocial ?? "sua empresa";
+                  return tpl.message({ empresa, modelo: lead.modeloTrator ?? undefined, decisor: lead.nomeDecissor ?? undefined });
+                })()}
+              </div>
             )}
             {lead.linkedin && (
               <Button

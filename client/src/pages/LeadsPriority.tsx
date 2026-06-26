@@ -233,16 +233,24 @@ export default function LeadsPriority() {
                     </div>
                   )}
                   {lead.whatsapp1 && (
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
-                      <Phone className="w-3.5 h-3.5 shrink-0" />
+                    <div className="flex items-center gap-2">
                       <a
-                        href={lead.whatsapp1}
+                        href={`tel:${lead.whatsapp1.replace(/\D/g,"")}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-muted hover:bg-muted/80"
+                        style={{ color: "#0a1e5a" }}
+                      >
+                        <Phone className="w-3 h-3" /> Ligar
+                      </a>
+                      <a
+                        href={`https://wa.me/55${lead.whatsapp1.replace(/\D/g,"")}?text=${encodeURIComponent(`Olá! Sou da Gallotti Tractor | LS Tractor. Posso apresentar nossa linha de tratores para ${lead.nomeFantasia ?? lead.razaoSocial ?? "vocês"}?`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="text-green-600 hover:underline"
+                        className="flex items-center gap-1 text-xs px-2 py-1 rounded-md"
+                        style={{ background: "#25D36618", color: "#128C7E" }}
                       >
-                        WhatsApp
+                        <MessageCircle className="w-3 h-3" /> WhatsApp
                       </a>
                     </div>
                   )}

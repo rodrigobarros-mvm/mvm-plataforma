@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
-  Bell, CalendarClock, CheckCircle2, Clock, ExternalLink, Trash2
+  Bell, CalendarClock, CheckCircle2, Clock, ExternalLink, Trash2, Phone, MessageCircle, Tag
 } from "lucide-react";
 
 export default function FollowUps() {
@@ -204,6 +204,11 @@ function FollowUpCard({
               {fu.leadCidade && (
                 <span className="text-xs text-muted-foreground">{fu.leadCidade}, {fu.leadUf}</span>
               )}
+              {fu.leadSegmento && (
+                <span className="text-xs flex items-center gap-1" style={{ color: "#0a1e5a" }}>
+                  <Tag className="w-3 h-3" />{fu.leadSegmento}
+                </span>
+              )}
               {isToday && !isDone && (
                 <Badge className="text-xs bg-red-100 text-red-700 border-red-200">Hoje</Badge>
               )}
@@ -219,23 +224,35 @@ function FollowUpCard({
             )}
           </div>
           {!isDone && (
-            <div className="flex gap-1 shrink-0">
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8"
-                onClick={onDone}
-                title="Marcar como concluído"
-              >
+            <div className="flex flex-col gap-1 shrink-0">
+              {/* Contact actions */}
+              {fu.leadWhatsapp && (
+                <a
+                  href={`https://wa.me/55${fu.leadWhatsapp.replace(/\D/g,"")}?text=${encodeURIComponent(`Olá! Sou da Gallotti Tractor | LS Tractor. Conforme combinado, estou entrando em contato com ${fu.leadName || fu.leadRazao || "vocês"}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center h-8 w-8 rounded-md"
+                  style={{ background: "#25D36618", color: "#128C7E" }}
+                  title="WhatsApp"
+                  onClick={onDone}
+                >
+                  <MessageCircle className="w-4 h-4" />
+                </a>
+              )}
+              {fu.leadWhatsapp && (
+                <a
+                  href={`tel:${fu.leadWhatsapp.replace(/\D/g,"")}`}
+                  className="flex items-center justify-center h-8 w-8 rounded-md bg-muted"
+                  style={{ color: "#0a1e5a" }}
+                  title="Ligar"
+                >
+                  <Phone className="w-4 h-4" />
+                </a>
+              )}
+              <Button size="icon" variant="ghost" className="h-8 w-8" onClick={onDone} title="Concluído">
                 <CheckCircle2 className="w-4 h-4 text-green-600" />
               </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="h-8 w-8"
-                onClick={onCancel}
-                title="Cancelar follow-up"
-              >
+              <Button size="icon" variant="ghost" className="h-8 w-8" onClick={onCancel} title="Cancelar">
                 <Trash2 className="w-4 h-4 text-red-500" />
               </Button>
             </div>
