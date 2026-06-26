@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Search, ChevronRight, TrendingDown, Award, Zap, Phone, MessageCircle,
-  CheckCircle2, ArrowRight, Target, BarChart3, BarChart2, Star
+  CheckCircle2, ArrowRight, Target, BarChart3, BarChart, Star
 } from "lucide-react";
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
@@ -312,7 +312,7 @@ export default function Comparativos() {
           <div className="lg:col-span-3 space-y-4">
             {!selectedComp ? (
               <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center text-muted-foreground">
-                <BarChart2 className="w-16 h-16 mb-4 opacity-20" />
+                <BarChart className="w-16 h-16 mb-4 opacity-20" />
                 <p className="font-semibold">Selecione um modelo {selectedBrand}</p>
                 <p className="text-sm mt-1">para ver as alternativas LS Tractor</p>
               </div>
