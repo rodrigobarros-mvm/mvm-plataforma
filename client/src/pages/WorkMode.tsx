@@ -435,22 +435,24 @@ export default function WorkMode() {
           {/* Ações de contato rápido */}
           <div className="flex gap-2 flex-wrap">
             {(lead.whatsapp ?? lead.whatsapp1) && (
-              <Button
-                size="sm"
-                onClick={handleWhatsApp}
-                className="gap-1.5"
-                style={{ background: "#25d366", color: "white" }}
-              >
-                <MessageCircle className="w-4 h-4" /> WhatsApp
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-1.5 text-xs"
-                onClick={() => setShowWaPreview(v => !v)}
-              >
-                {showWaPreview ? "▲ Ocultar" : "▼ Preview"}
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  onClick={handleWhatsApp}
+                  className="gap-1.5"
+                  style={{ background: "#25d366", color: "white" }}
+                >
+                  <MessageCircle className="w-4 h-4" /> WhatsApp
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 text-xs"
+                  onClick={() => setShowWaPreview((v: boolean) => !v)}
+                >
+                  {showWaPreview ? "▲ Ocultar" : "▼ Preview"}
+                </Button>
+              </>
             )}
             {(lead.whatsapp ?? lead.whatsapp1) && (
               <Button size="sm" variant="outline" onClick={handleCopyPhone} className="gap-1.5">
