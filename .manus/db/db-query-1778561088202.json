@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `leads` ADD `logradouro` varchar(256);\nALTER TABLE `leads` ADD `numero` varchar(32);\nALTER TABLE `leads` ADD `complemento` varchar(128);\nALTER TABLE `leads` ADD `bairro` varchar(128);\nALTER TABLE `leads` ADD `capitalSocial` varchar(64);\nALTER TABLE `leads` ADD `matrizFilial` varchar(32);\nALTER TABLE `leads` ADD `socios` text;\nALTER TABLE `leads` ADD `cnae` varchar(128);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway05.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3YRnRRbBfQZM69h.4a0a94f17a0a --database WWcWwDysuMmVTWuput3RKv --execute ALTER TABLE `leads` ADD `logradouro` varchar(256);\nALTER TABLE `leads` ADD `numero` varchar(32);\nALTER TABLE `leads` ADD `complemento` varchar(128);\nALTER TABLE `leads` ADD `bairro` varchar(128);\nALTER TABLE `leads` ADD `capitalSocial` varchar(64);\nALTER TABLE `leads` ADD `matrizFilial` varchar(32);\nALTER TABLE `leads` ADD `socios` text;\nALTER TABLE `leads` ADD `cnae` varchar(128);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2004
+}

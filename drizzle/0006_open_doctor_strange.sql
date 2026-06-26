@@ -1,0 +1,1 @@
+ALTER TABLE `leads` ADD `attemptCount` int DEFAULT 0 NOT NULL;

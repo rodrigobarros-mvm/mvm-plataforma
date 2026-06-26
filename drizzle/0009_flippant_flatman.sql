@@ -1,0 +1,1 @@
+ALTER TABLE `lead_interactions` MODIFY COLUMN `type` enum('contato','qualificacao','desqualificacao','observacao','tentativa','whatsapp_share') NOT NULL;

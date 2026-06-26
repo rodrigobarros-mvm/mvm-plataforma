@@ -1,0 +1,1 @@
+ALTER TABLE `lead_release_log` ADD `leadIds` text;
