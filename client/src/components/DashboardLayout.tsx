@@ -115,7 +115,7 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Star, label: "Alta Prioridade", path: "/leads/priority" },
         { icon: ListFilter, label: "Lista Completa", path: "/leads" },
         { icon: CalendarClock, label: "Follow-ups", path: "/follow-ups" },
-      { icon: Scale, label: "Comparativos", path: "/comparativos" },
+      { icon: BarChart2, label: "Comparativos", path: "/comparativos" },
       ],
     },
   ];
