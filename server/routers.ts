@@ -137,11 +137,15 @@ export const appRouter = router({
         if (user.isBlocked) {
           throw new TRPCError({ code: "FORBIDDEN", message: "Sua conta está bloqueada. Contate o administrador." });
         }
-        // Create session cookie
+        // Create session cookie — payload must match sdk.verifySession expectations
         const { SignJWT } = await import("jose");
         const secret = new TextEncoder().encode(process.env.JWT_SECRET ?? "secret");
-        const token = await new SignJWT({ id: user.id, openId: user.openId, role: user.role })
-          .setProtectedHeader({ alg: "HS256" })
+        const token = await new SignJWT({
+          openId: user.openId,
+          appId: process.env.VITE_APP_ID ?? "lstractor",
+          name: user.name ?? user.email ?? "",
+        })
+          .setProtectedHeader({ alg: "HS256", typ: "JWT" })
           .setExpirationTime("7d")
           .sign(secret);
         const { getSessionCookieOptions } = await import("./_core/cookies");
