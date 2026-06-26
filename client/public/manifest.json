@@ -14,26 +14,8 @@
   "categories": ["business", "productivity"],
   "lang": "pt-BR",
   "shortcuts": [
-    {
-      "name": "Modo de Trabalho",
-      "short_name": "Trabalhar",
-      "description": "Iniciar prospecção ativa",
-      "url": "/work-mode",
-      "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Follow-ups",
-      "short_name": "Follow-ups",
-      "description": "Ver retornos agendados",
-      "url": "/follow-ups",
-      "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Alta Prioridade",
-      "short_name": "Prioridade",
-      "description": "Leads de alta prioridade",
-      "url": "/leads/priority",
-      "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
-    }
+    { "name": "Modo de Trabalho", "short_name": "Trabalhar", "url": "/work-mode", "icons": [{ "src": "/logo.png", "sizes": "96x96" }] },
+    { "name": "Follow-ups", "short_name": "Follow-ups", "url": "/follow-ups", "icons": [{ "src": "/logo.png", "sizes": "96x96" }] },
+    { "name": "Alta Prioridade", "short_name": "Prioridade", "url": "/leads/priority", "icons": [{ "src": "/logo.png", "sizes": "96x96" }] }
   ]
 }
