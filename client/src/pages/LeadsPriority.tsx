@@ -33,6 +33,7 @@ export default function LeadsPriority() {
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
   const [status, setStatus] = useState<string>("");
   const [segmento, setSegmento] = useState<string>("");
+  const [modeloTrator, setModeloTrator] = useState<string>("");
 
   // Carrega segmentos disponíveis dinamicamente (filtrado por UFs selecionadas)
   const { data: filterOpts } = trpc.leads.filterOptions.useQuery(
@@ -48,6 +49,7 @@ export default function LeadsPriority() {
     cidades: selectedCities.length > 0 ? selectedCities : undefined,
     status: status || undefined,
     segmento: segmento || undefined,
+    modeloTrator: modeloTrator || undefined,
     isHighPriority: true,
   });
 

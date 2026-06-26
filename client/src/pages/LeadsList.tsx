@@ -35,6 +35,7 @@ export default function LeadsList() {
   const [status, setStatus] = useState<string>("");
   const [segmento, setSegmento] = useState<string>("");
   const [prioridade, setPrioridade] = useState<string>("");
+  const [modeloTrator, setModeloTrator] = useState<string>("");
 
   // Carrega segmentos disponíveis dinamicamente
   const { data: filterOpts } = trpc.leads.filterOptions.useQuery(
@@ -49,6 +50,7 @@ export default function LeadsList() {
     ufs: selectedUfs.length > 0 ? selectedUfs : undefined,
     cidades: selectedCities.length > 0 ? selectedCities : undefined,
     segmento: segmento || undefined,
+    modeloTrator: modeloTrator || undefined,
     status: status || undefined,
     isHighPriority: prioridade === "" ? undefined : prioridade === "true",
   });
@@ -200,6 +202,19 @@ export default function LeadsList() {
                 {(filterOpts?.segmentos ?? []).map((s) => (
                   <SelectItem key={s.label} value={s.label}>
                     {s.label} ({s.count})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={modeloTrator} onValueChange={(v) => { setModeloTrator(v === "all" ? "" : v); setPage(1); }}>
+              <SelectTrigger className="w-52">
+                <SelectValue placeholder="Modelo de Máquina" />
+              </SelectTrigger>
+              <SelectContent className="max-h-72">
+                <SelectItem value="all">Todos os modelos</SelectItem>
+                {(filterOpts?.modelos ?? []).map((m) => (
+                  <SelectItem key={m.label} value={m.label}>
+                    {m.label} ({m.count})
                   </SelectItem>
                 ))}
               </SelectContent>

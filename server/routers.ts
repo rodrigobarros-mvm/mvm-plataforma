@@ -315,6 +315,7 @@ export const appRouter = router({
           uf: z.string().optional(),
           cidade: z.string().optional(),
           segmento: z.string().optional(),
+          modeloTrator: z.string().optional(),
           status: z.string().optional(),
           isHighPriority: z.boolean().optional(),
           assignedTo: z.number().optional(),

@@ -192,6 +192,7 @@ export async function getLeads(opts: {
   onlyUnreleased?: boolean;
   onlyUnassigned?: boolean;
   hasNomeFantasia?: boolean;
+  modeloTrator?: string;
 }) {
   const db = await getDb();
   if (!db) return { data: [], total: 0 };
@@ -216,6 +217,7 @@ export async function getLeads(opts: {
   if (opts.uf && (!opts.ufs || opts.ufs.length === 0)) conditions.push(eq(leads.uf, opts.uf));
   if (opts.cidade && (!opts.cidades || opts.cidades.length === 0)) conditions.push(like(leads.cidade, `%${opts.cidade}%`));
   if (opts.segmento) conditions.push(like(leads.segmento, `%${opts.segmento}%`));
+  if (opts.modeloTrator) conditions.push(like(leads.modeloTrator, `%${opts.modeloTrator}%`));
   // Filtros multi-seleção (arrays)
   if (opts.ufs && opts.ufs.length > 0) conditions.push(inArray(leads.uf, opts.ufs));
   if (opts.cidades && opts.cidades.length > 0) {
@@ -1123,7 +1125,35 @@ export async function getLeadsFilterOptions(opts: {
     .limit(200);
   const segmentos = segRows.map((r) => ({ label: r.segmento!, count: r.count })).filter((r) => r.label);
 
-  return { ufs, cidades, classificacoes, segmentos };
+  // Modelos de Trator
+  const modeloConditions = [...baseConditions, sql`${leads.modeloTrator} IS NOT NULL AND ${leads.modeloTrator} != ''`];
+  if (opts.ufs && opts.ufs.length > 0) modeloConditions.push(inArray(leads.uf, opts.ufs));
+  const modeloRows = await db
+    .select({ modeloTrator: leads.modeloTrator, count: count() })
+    .from(leads)
+    .where(and(...modeloConditions))
+    .groupBy(leads.modeloTrator)
+    .orderBy(desc(count()))
+    .limit(100);
+
+  // Split multi-model entries (e.g. "MT7.80F; MT7.90F") into individual models
+  const modeloMap = new Map<string, number>();
+  for (const row of modeloRows) {
+    if (!row.modeloTrator) continue;
+    const parts = row.modeloTrator.split(/[;,]/).map(s => s.trim()).filter(Boolean);
+    for (const part of parts) {
+      // Extract just the model code (e.g. "MT7.80F" from "MT7.80F Cabinado (82cv)")
+      const match = part.match(/^([A-Z][A-Z0-9.]+(?:\s+[A-Z][A-Z0-9.]*)?)/i);
+      const key = match ? match[1].trim() : part.substring(0, 20);
+      modeloMap.set(key, (modeloMap.get(key) ?? 0) + row.count);
+    }
+  }
+  const modelos = Array.from(modeloMap.entries())
+    .map(([label, cnt]) => ({ label, count: cnt }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 30);
+
+  return { ufs, cidades, classificacoes, segmentos, modelos };
 }
 
 // ─── Follow-ups ───────────────────────────────────────────────────────────────
