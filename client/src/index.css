@@ -44,7 +44,7 @@
 
 :root {
   --radius: 0.5rem;
-  /* LN Máquinas + Michigan — Preto #111111 + Amarelo Michigan #F5A623 */
+  /* Gallotti Tractor | LS Tractor + Michigan — Preto #111111 + Amarelo Michigan #e21d3c */
   --background: oklch(0.975 0.002 90);
   --foreground: oklch(0.12 0.005 90);
   --card: oklch(1 0 0);
@@ -69,7 +69,7 @@
   --chart-3: oklch(0.58 0.15 140);
   --chart-4: oklch(0.48 0.15 280);
   --chart-5: oklch(0.58 0.18 27);
-  /* Sidebar: preto profundo da logo LN Máquinas */
+  /* Sidebar: preto profundo da logo Gallotti Tractor | LS Tractor */
   --sidebar: oklch(0.12 0.005 90);
   --sidebar-foreground: oklch(0.93 0.01 85);
   --sidebar-primary: oklch(0.72 0.16 75);

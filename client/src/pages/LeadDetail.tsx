@@ -168,7 +168,7 @@ export default function LeadDetail() {
     if (l.scriptAbertura) return l.scriptAbertura;
     const empresa = l.nomeFantasia || l.razaoSocial || "sua empresa";
     const decisor = l.nomeDecissor ? `, ${l.nomeDecissor}` : "";
-    return `Olá${decisor}! Tudo bem?\n\nSou da LN Máquinas — revendedores autorizados Michigan. Vi que a ${empresa} pode se beneficiar das nossas soluções em máquinas pesadas.\n\nPosso te apresentar nossas opções? Leva só 5 minutos! 😊`;
+    return `Olá${decisor}! Tudo bem?\n\nSou da Gallotti Tractor | LS Tractor — revendedores autorizados Michigan. Vi que a ${empresa} pode se beneficiar das nossas soluções em máquinas pesadas.\n\nPosso te apresentar nossas opções? Leva só 5 minutos! 😊`;
   };
 
   const openWaDialog = (target: "wa1" | "wa2") => {

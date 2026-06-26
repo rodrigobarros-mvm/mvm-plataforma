@@ -74,7 +74,7 @@ export default function SAC() {
           </div>
           <div className="mt-4 pt-4 border-t border-white/10">
             <p className="text-white/60 text-xs">
-              <strong className="text-white">Rodrigo Barros</strong> — Diretor Comercial · LN Máquinas
+              <strong className="text-white">Rodrigo Barros</strong> — Diretor Comercial · Gallotti Tractor | LS Tractor
             </p>
           </div>
         </CardContent>
@@ -84,7 +84,7 @@ export default function SAC() {
       <Card className="border-border">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <HelpCircle className="w-4 h-4" style={{ color: "#F5A623" }} />
+            <HelpCircle className="w-4 h-4" style={{ color: "#e21d3c" }} />
             Perguntas Frequentes
           </CardTitle>
         </CardHeader>
@@ -92,7 +92,7 @@ export default function SAC() {
           {FAQS.map((faq, i) => (
             <div key={i} className="border-b border-border pb-4 last:border-0 last:pb-0">
               <div className="flex items-start gap-3">
-                <Badge className="mt-0.5 shrink-0 text-xs" style={{ background: "#F5A62320", color: "#c47e00", border: "1px solid #F5A62340" }}>
+                <Badge className="mt-0.5 shrink-0 text-xs" style={{ background: "#e21d3c20", color: "#c47e00", border: "1px solid #e21d3c40" }}>
                   {String(i + 1).padStart(2, "0")}
                 </Badge>
                 <div>

@@ -157,7 +157,7 @@ export default function WorkMode() {
     if (!lead?.whatsapp) return toast.error("Número de WhatsApp não disponível");
     const phone = lead.whatsapp.replace(/\D/g, "");
     const msg = encodeURIComponent(
-      `Olá! Sou da LN Máquinas. Gostaria de conversar sobre soluções em máquinas pesadas para a ${lead.nomeFantasia ?? lead.razaoSocial ?? "sua empresa"}. Podemos conversar?`
+      `Olá! Sou da Gallotti Tractor | LS Tractor. Gostaria de conversar sobre soluções em máquinas pesadas para a ${lead.nomeFantasia ?? lead.razaoSocial ?? "sua empresa"}. Podemos conversar?`
     );
     window.open(`https://wa.me/55${phone}?text=${msg}`, "_blank");
     handleAttempt();
@@ -209,7 +209,7 @@ export default function WorkMode() {
             <p className="text-muted-foreground text-sm mb-6">
               Sessão: {sessionCount} leads trabalhados · {qualifiedCount} qualificados
             </p>
-            <Button onClick={() => setLocation("/leads")} style={{ background: "#111111" }}>
+            <Button onClick={() => setLocation("/leads")} style={{ background: "#0a1e5a" }}>
               Ver Lista Completa
             </Button>
           </CardContent>
@@ -227,7 +227,7 @@ export default function WorkMode() {
             <ArrowLeft className="w-4 h-4 mr-1" /> Sair
           </Button>
           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5" style={{ color: "#F5A623" }} />
+            <Zap className="w-5 h-5" style={{ color: "#e21d3c" }} />
             <h1 className="text-lg font-bold" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Modo de Prospecção
             </h1>
@@ -242,7 +242,7 @@ export default function WorkMode() {
 
       {/* Progresso do dia */}
       <div className="grid grid-cols-2 gap-3">
-        <Card className="border-0 shadow-sm" style={{ background: "#111111" }}>
+        <Card className="border-0 shadow-sm" style={{ background: "#0a1e5a" }}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -297,7 +297,7 @@ export default function WorkMode() {
             )}
           </CardContent>
         </Card>
-        <Card className="border-0 shadow-sm" style={{ background: "#111111" }}>
+        <Card className="border-0 shadow-sm" style={{ background: "#0a1e5a" }}>
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
@@ -311,7 +311,7 @@ export default function WorkMode() {
                 className="h-2 rounded-full transition-all"
                 style={{
                   width: `${Math.min(100, (qualified / leadsGoal) * 100)}%`,
-                  background: qualified >= leadsGoal ? "#22c55e" : "#F5A623"
+                  background: qualified >= leadsGoal ? "#22c55e" : "#e21d3c"
                 }}
               />
             </div>
@@ -427,7 +427,7 @@ export default function WorkMode() {
             {showScript && (
               <div className="px-4 pb-4 pt-2 text-sm text-muted-foreground bg-muted/30 space-y-2">
                 <p><strong>Abertura:</strong> "Olá, bom dia! Falo com o responsável pela área de logística/operações?"</p>
-                <p><strong>Apresentação:</strong> "Sou {user?.name} da LN Máquinas. Somos revendedores autorizados Michigan para o segmento {lead.segmento ?? "industrial"}."</p>
+                <p><strong>Apresentação:</strong> "Sou {user?.name} da Gallotti Tractor | LS Tractor. Somos revendedores autorizados Michigan para o segmento {lead.segmento ?? "industrial"}."</p>
                 <p><strong>Gancho:</strong> "Identifiquei que a {lead.nomeFantasia ?? lead.razaoSocial} pode se beneficiar das nossas máquinas. Vocês utilizam máquinas pesadas na operação atualmente?"</p>
                 <p><strong>Objetivo:</strong> Qualificar necessidade, frota atual e urgência. Agendar reunião com consultor.</p>
               </div>

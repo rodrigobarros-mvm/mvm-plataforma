@@ -14,7 +14,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
 
-const COLORS = ["#F5A623", "#111111", "#16a34a", "#ca8a04", "#7c3aed", "#0891b2"];
+const COLORS = ["#e21d3c", "#0a1e5a", "#16a34a", "#ca8a04", "#7c3aed", "#0891b2"];
 
 export default function Reports() {
   const { user } = useAuth();
@@ -61,7 +61,7 @@ export default function Reports() {
       const doc = new jsPDF();
       doc.setFontSize(18);
       doc.setTextColor(26, 58, 92);
-      doc.text("LN Máquinas — Relatório de Prospecção", 14, 20);
+      doc.text("Gallotti Tractor | LS Tractor — Relatório de Prospecção", 14, 20);
       doc.setFontSize(10);
       doc.setTextColor(100, 100, 100);
       doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")}`, 14, 28);
@@ -155,7 +155,7 @@ export default function Reports() {
   const handleExportExcel = async () => {
     try {
       const workbook = new ExcelJS.Workbook();
-      workbook.creator = "LN Máquinas Prospecção";
+      workbook.creator = "Gallotti Tractor | LS Tractor Prospecção";
       workbook.created = new Date();
       // Sheet 1: KPIs
       const kpiSheet = workbook.addWorksheet("KPIs");

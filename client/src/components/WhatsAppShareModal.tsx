@@ -179,7 +179,7 @@ function buildWhatsAppMessage(lead: LeadShareData, interactions: InteractionItem
 
   lines.push("");
   lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  lines.push("_Enviado via LN Máquinas Prospecção_");
+  lines.push("_Enviado via Gallotti Tractor | LS Tractor Prospecção_");
 
   return lines.join("\n");
 }
