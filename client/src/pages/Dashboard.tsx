@@ -16,6 +16,7 @@ import {
   Award, BarChart3, CheckCircle2, Tractor, Target, TrendingUp, Users, XCircle, Zap,
   AlertTriangle, Clock, Phone, ChevronRight, ExternalLink
 } from "lucide-react";
+import GestorPanel from "@/components/GestorPanel";
 import { Link } from "wouter";
 
 const COLORS = ["#e21d3c", "#1e40af", "#16a34a", "#7c3aed", "#c8102e", "#0891b2"];
@@ -294,9 +295,12 @@ function AdminDashboard() {
         </div>
       </div>
 
+      {/* ── Painel do Gestor em Tempo Real ── */}
+      <GestorPanel />
+
       {/* ── Alertas de BDRs em Risco + Leads Estagnados (mobile + desktop) ── */}
       {((bdrsAtRisk && bdrsAtRisk.length > 0) || (stagnantLeads && stagnantLeads.length > 0)) && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4" style={{ display: "none" }}>
           {bdrsAtRisk && bdrsAtRisk.length > 0 && (
             <Card className="border-red-200" style={{ background: "#fff7ed" }}>
               <CardHeader className="pb-3">
