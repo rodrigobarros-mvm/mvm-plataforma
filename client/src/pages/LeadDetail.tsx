@@ -24,6 +24,7 @@ import { WA_TEMPLATES, getTemplatesForSegmento } from "@/components/WaTemplates"
 import InteractionTimeline from "@/components/InteractionTimeline";
 import CadenciaDisplay from "@/components/CadenciaDisplay";
 import LeadScore from "@/components/LeadScore";
+import CallTracker from "@/components/CallTracker";
 
 const REQUIRED_FIELDS = ["nomeDecissor", "conheceMarca", "frotaAtual", "urgenciaCompra", "statusContato", "whatsapp1", "email"] as const;
 const FIELD_LABELS: Record<string, string> = {
@@ -611,6 +612,35 @@ export default function LeadDetail() {
           {canManage && (lead as any)?.assignedTo && (
             <AssignedBdrCard leadId={leadId} onUnassign={() => unassignLead.mutate({ leadId })} isPending={unassignLead.isPending} />
           )}
+
+          {/* Click-to-Call */}
+          <Card className="border-border">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Phone className="w-4 h-4" style={{ color: "#0a1e5a" }} />
+                Ligação Registrada
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CallTracker
+                phone={lead.whatsapp1 ?? lead.whatsapp2}
+                leadName={lead.nomeFantasia ?? lead.razaoSocial ?? "Lead"}
+                onCallEnd={(result, duration, note) => {
+                  const tipo = result === "contato" ? "contato" as const : "tentativa" as const;
+                  const obs = [
+                    result === "nao_existe" ? "Número inválido" : null,
+                    duration > 0 ? `Duração: ${Math.floor(duration/60)}m${duration%60}s` : null,
+                    note || null
+                  ].filter(Boolean).join(" · ");
+                  addInteraction.mutate({
+                    leadId,
+                    type: tipo,
+                    content: obs || undefined,
+                  });
+                }}
+              />
+            </CardContent>
+          </Card>
 
           {/* Contact Links */}
           <Card className="border-border">

@@ -10,6 +10,7 @@ import WhatsAppShareModal from "@/components/WhatsAppShareModal";
 import { WA_TEMPLATES, getTemplatesForSegmento } from "@/components/WaTemplates";
 import CadenciaDisplay from "@/components/CadenciaDisplay";
 import LeadScore from "@/components/LeadScore";
+import CallTracker from "@/components/CallTracker";
 import type { LeadShareData } from "@/components/WhatsAppShareModal";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -395,6 +396,25 @@ export default function WorkMode() {
             )}
           </div>
 
+          {/* Click-to-Call com registro automático */}
+          <div className="rounded-xl border border-border p-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Ligação</p>
+            <CallTracker
+              phone={lead.whatsapp1 ?? lead.whatsapp ?? lead.whatsapp2}
+              leadName={lead.nomeFantasia ?? lead.razaoSocial ?? "Lead"}
+              onCallEnd={(result, duration, note) => {
+                if (!lead.id) return;
+                const tipo = result === "contato" ? "contato" : "tentativa";
+                const content = [
+                  result === "nao_existe" ? "Número inválido/inexistente" : null,
+                  duration > 0 ? `Duração: ${Math.floor(duration/60)}m${duration%60}s` : null,
+                  note || null,
+                ].filter(Boolean).join(" · ");
+                addInteraction.mutate({ leadId: lead.id, type: tipo, content: content || undefined });
+              }}
+            />
+          </div>
+
           {/* Template WA Selector */}
           {(lead.whatsapp ?? lead.whatsapp1) && (
             <div className="mb-3">
@@ -425,7 +445,7 @@ export default function WorkMode() {
             )}
             {(lead.whatsapp ?? lead.whatsapp1) && (
               <Button size="sm" variant="outline" onClick={handleCopyPhone} className="gap-1.5">
-                <Copy className="w-4 h-4" /> Copiar Número
+                <Copy className="w-4 h-4" /> Copiar
               </Button>
             )}
             {lead.linkedin && (

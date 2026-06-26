@@ -1,0 +1,39 @@
+{
+  "name": "Gallotti Tractor | LS Tractor",
+  "short_name": "Gallotti LS",
+  "description": "Plataforma Comercial de Prospecção Ativa — LS Tractor Gallotti",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0a1e5a",
+  "theme_color": "#0a1e5a",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "pt-BR",
+  "shortcuts": [
+    {
+      "name": "Modo de Trabalho",
+      "short_name": "Trabalhar",
+      "description": "Iniciar prospecção ativa",
+      "url": "/work-mode",
+      "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Follow-ups",
+      "short_name": "Follow-ups",
+      "description": "Ver retornos agendados",
+      "url": "/follow-ups",
+      "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Alta Prioridade",
+      "short_name": "Prioridade",
+      "description": "Leads de alta prioridade",
+      "url": "/leads/priority",
+      "icons": [{ "src": "/logo.png", "sizes": "96x96" }]
+    }
+  ]
+}
