@@ -20,6 +20,7 @@ import {
   AlertTriangle, ArrowLeft, Bell, Building2, CalendarClock, CheckCircle2, Clock, Copy,
   ExternalLink, Loader2, MapPin, MessageSquare, Pencil, Phone, Plus, Save, Send, Trash2, User, XCircle
 } from "lucide-react";
+import { WA_TEMPLATES, getTemplatesForSegmento } from "@/components/WaTemplates";
 
 const REQUIRED_FIELDS = ["nomeDecissor", "conheceMarca", "frotaAtual", "urgenciaCompra", "statusContato", "whatsapp1", "email"] as const;
 const FIELD_LABELS: Record<string, string> = {
@@ -63,6 +64,7 @@ export default function LeadDetail() {
   const [showWaDialog, setShowWaDialog] = useState(false);
   const [waTarget, setWaTarget] = useState<"wa1" | "wa2">("wa1");
   const [waMessage, setWaMessage] = useState("");
+  const [waTemplate, setWaTemplate] = useState("");
 
   // Follow-up state
   const [showFollowUpDialog, setShowFollowUpDialog] = useState(false);
@@ -180,12 +182,25 @@ export default function LeadDetail() {
   const sendWhatsApp = () => {
     const rawUrl = waTarget === "wa1" ? lead?.whatsapp1 : lead?.whatsapp2;
     if (!rawUrl) return;
-    // Build proper wa.me URL from phone number
     const digits = rawUrl.replace(/\D/g, "");
     const phone = digits.startsWith("55") ? digits : `55${digits}`;
     const finalUrl = `https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`;
     window.open(finalUrl, "_blank", "noopener,noreferrer");
     setShowWaDialog(false);
+  };
+
+  const applyWaTemplate = (templateId: string) => {
+    const tpl = WA_TEMPLATES.find(t => t.id === templateId);
+    if (!tpl || !lead) return;
+    const nome = lead.nomeFantasia || lead.razaoSocial || "sua empresa";
+    const msg = tpl.message({
+      empresa: nome,
+      modelo: lead.modeloTrator ?? undefined,
+      cidade: lead.cidade ?? undefined,
+      decisor: lead.nomeDecissor ?? undefined,
+    });
+    setWaMessage(msg);
+    setWaTemplate(templateId);
   };
 
   const copyScript = (text: string) => {
@@ -328,7 +343,25 @@ export default function LeadDetail() {
 
           {/* Contact & Qualification */}
           <Card className="border-border">
-            <CardHeader className="pb-3">
+            {/* Score de Temperatura + Cadência */}
+            <Card className="border-border mb-4">
+              <CardContent className="p-4 space-y-4">
+                <LeadScore lead={lead as any} />
+                <div className="border-t border-border pt-4">
+                  <CadenciaDisplay
+                    attemptCount={lead.attemptCount ?? 0}
+                    onNextStep={(step) => {
+                      if (step.canal === "whatsapp" && lead.whatsapp1) {
+                        setWaTarget("wa1");
+                        setShowWaDialog(true);
+                      }
+                    }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+        <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <User className="w-4 h-4" style={{ color: "#e21d3c" }} />
                 Dados de Qualificação
@@ -735,51 +768,7 @@ export default function LeadDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {(interactions ?? []).length === 0 ? (
-                  <p className="text-muted-foreground text-xs text-center py-4">Nenhuma interação registrada</p>
-                ) : (
-                  (interactions ?? []).map((inter) => {
-                    const typeLabels: Record<string, string> = {
-                      contato: "Contato realizado",
-                      tentativa: "Tentativa",
-                      observacao: "Observação",
-                      qualificacao: "Qualificação",
-                      desqualificacao: "Desqualificação",
-                      whatsapp_share: "📲 Compartilhado via WhatsApp",
-                    };
-                    const typeColors: Record<string, string> = {
-                      contato: "#16a34a",
-                      tentativa: "#e21d3c",
-                      observacao: "#6366f1",
-                      qualificacao: "#0ea5e9",
-                      desqualificacao: "#dc2626",
-                      whatsapp_share: "#25D366",
-                    };
-                    const borderColor = typeColors[inter.type] ?? "#e21d3c";
-                    const label = typeLabels[inter.type] ?? inter.type;
-                    return (
-                      <div key={inter.id} className="border-l-2 pl-3 py-1" style={{ borderColor }}>
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant="outline"
-                            className="text-xs"
-                            style={{ borderColor, color: borderColor }}
-                          >
-                            {label}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(inter.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit" })}
-                          </span>
-                        </div>
-                        {inter.content && inter.type !== "whatsapp_share" && (
-                          <p className="text-xs mt-1 text-foreground">{inter.content}</p>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+              <InteractionTimeline interactions={(interactions ?? []) as any} />
             </CardContent>
           </Card>
         </div>
@@ -795,8 +784,21 @@ export default function LeadDetail() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Template de Mensagem</p>
+              <select
+                className="w-full border border-border rounded-md text-sm px-3 py-2 bg-background text-foreground"
+                value={waTemplate}
+                onChange={(e) => applyWaTemplate(e.target.value)}
+              >
+                <option value="">— Selecione um template —</option>
+                {getTemplatesForSegmento(lead?.segmento).map(t => (
+                  <option key={t.id} value={t.id}>{t.label}</option>
+                ))}
+              </select>
+            </div>
             <p className="text-xs text-muted-foreground">
-              Esta é a mensagem de <strong>abertura</strong> pré-preenchida. Você pode editá-la antes de enviar.
+              Mensagem pré-preenchida. Edite antes de enviar se desejar.
             </p>
             <Textarea
               value={waMessage}

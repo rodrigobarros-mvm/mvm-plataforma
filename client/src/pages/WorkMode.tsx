@@ -7,6 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { useState, useMemo, useRef } from "react";
 import WhatsAppShareModal from "@/components/WhatsAppShareModal";
+import { WA_TEMPLATES, getTemplatesForSegmento } from "@/components/WaTemplates";
+import CadenciaDisplay from "@/components/CadenciaDisplay";
+import LeadScore from "@/components/LeadScore";
 import type { LeadShareData } from "@/components/WhatsAppShareModal";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
@@ -153,13 +156,22 @@ export default function WorkMode() {
     setInteractionNote("");
   };
 
+  const [selectedWaTemplate, setSelectedWaTemplate] = useState("abertura_geral");
+
   const handleWhatsApp = () => {
-    if (!lead?.whatsapp) return toast.error("Número de WhatsApp não disponível");
-    const phone = lead.whatsapp.replace(/\D/g, "");
-    const msg = encodeURIComponent(
-      `Olá! Sou da Gallotti Tractor | LS Tractor. Gostaria de conversar sobre soluções em máquinas pesadas para a ${lead.nomeFantasia ?? lead.razaoSocial ?? "sua empresa"}. Podemos conversar?`
-    );
-    window.open(`https://wa.me/55${phone}?text=${msg}`, "_blank");
+    const rawPhone = lead?.whatsapp1 ?? lead?.whatsapp ?? lead?.whatsapp2;
+    if (!rawPhone) return toast.error("Número de WhatsApp não disponível");
+    const phone = rawPhone.replace(/\D/g, "");
+    const finalPhone = phone.startsWith("55") ? phone : `55${phone}`;
+    // Get message from selected template
+    const templates = getTemplatesForSegmento(lead?.segmento);
+    const tpl = templates.find(t => t.id === selectedWaTemplate) ?? templates[0];
+    const empresa = lead?.nomeFantasia ?? lead?.razaoSocial ?? "sua empresa";
+    const rawMsg = tpl
+      ? tpl.message({ empresa, modelo: lead?.modeloTrator ?? undefined, decisor: lead?.nomeDecissor ?? undefined })
+      : `Olá! Sou da Gallotti Tractor | LS Tractor. Posso apresentar nossa linha de tratores para ${empresa}?`;
+    const msg = encodeURIComponent(rawMsg);
+    window.open(`https://wa.me/${finalPhone}?text=${msg}`, "_blank");
     handleAttempt();
   };
 
@@ -383,9 +395,25 @@ export default function WorkMode() {
             )}
           </div>
 
+          {/* Template WA Selector */}
+          {(lead.whatsapp ?? lead.whatsapp1) && (
+            <div className="mb-3">
+              <p className="text-xs text-muted-foreground mb-1.5 font-semibold uppercase tracking-wide">Template WhatsApp</p>
+              <select
+                className="w-full border border-border rounded-md text-xs px-2 py-1.5 bg-background text-foreground"
+                value={selectedWaTemplate}
+                onChange={(e) => setSelectedWaTemplate(e.target.value)}
+              >
+                {getTemplatesForSegmento(lead.segmento).map(t => (
+                  <option key={t.id} value={t.id}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Ações de contato rápido */}
           <div className="flex gap-2 flex-wrap">
-            {lead.whatsapp && (
+            {(lead.whatsapp ?? lead.whatsapp1) && (
               <Button
                 size="sm"
                 onClick={handleWhatsApp}
@@ -395,7 +423,7 @@ export default function WorkMode() {
                 <MessageCircle className="w-4 h-4" /> WhatsApp
               </Button>
             )}
-            {lead.whatsapp && (
+            {(lead.whatsapp ?? lead.whatsapp1) && (
               <Button size="sm" variant="outline" onClick={handleCopyPhone} className="gap-1.5">
                 <Copy className="w-4 h-4" /> Copiar Número
               </Button>
@@ -444,6 +472,16 @@ export default function WorkMode() {
               rows={2}
               className="resize-none text-sm"
             />
+          </div>
+
+          {/* Score + Cadência */}
+          <div className="border border-border rounded-xl p-3 space-y-3 bg-muted/30">
+            <LeadScore lead={lead as any} />
+            <div className="border-t border-border pt-3">
+              <CadenciaDisplay
+                attemptCount={lead.attemptCount ?? 0}
+              />
+            </div>
           </div>
 
           {/* Ações principais */}

@@ -104,7 +104,7 @@ function buildWhatsAppMessage(lead: LeadShareData, interactions: InteractionItem
   const nome = lead.nomeFantasia || lead.razaoSocial || "Lead";
   const lines: string[] = [];
 
-  lines.push("🏆 *LEAD QUALIFICADO — LN MÁQUINAS*");
+  lines.push("🏆 *LEAD QUALIFICADO — GALLOTTI TRACTOR | LS TRACTOR*");
   lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━");
   lines.push("");
 
@@ -179,7 +179,7 @@ function buildWhatsAppMessage(lead: LeadShareData, interactions: InteractionItem
 
   lines.push("");
   lines.push("━━━━━━━━━━━━━━━━━━━━━━━━━━");
-  lines.push("_Enviado via Gallotti Tractor | LS Tractor Prospecção_");
+  lines.push("_Enviado via Gallotti Tractor | LS Tractor — Plataforma Comercial_");
 
   return lines.join("\n");
 }
