@@ -324,7 +324,7 @@ export default function ImportLeads() {
                   className="flex-1"
                   onClick={handleImport}
                   disabled={importing || previewing}
-                  style={{ background: "#e8621a" }}
+                  style={{ background: "#e21d3c" }}
                 >
                   {importing ? (
                     <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Importando...</>
@@ -407,8 +407,8 @@ export default function ImportLeads() {
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">{result.inserted.toLocaleString("pt-BR")}</p>
                   <p className="text-xs text-muted-foreground">Novos cadastrados</p>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-amber-500/10 border border-amber-200 dark:border-amber-900">
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{result.duplicated.toLocaleString("pt-BR")}</p>
+                <div className="text-center p-3 rounded-lg bg-red-500/10 border border-red-200 dark:border-red-900">
+                  <p className="text-2xl font-bold text-red-600 dark:text-red-400">{result.duplicated.toLocaleString("pt-BR")}</p>
                   <p className="text-xs text-muted-foreground">Duplicados ignorados</p>
                 </div>
                 <div className="text-center p-3 rounded-lg bg-muted">
@@ -432,7 +432,7 @@ export default function ImportLeads() {
                 <Button variant="outline" className="flex-1" onClick={handleReset}>
                   <Upload className="w-4 h-4 mr-2" /> Importar outra planilha
                 </Button>
-                <Button className="flex-1" onClick={() => navigate("/leads/lista-completa")} style={{ background: "#e8621a" }}>
+                <Button className="flex-1" onClick={() => navigate("/leads/lista-completa")} style={{ background: "#e21d3c" }}>
                   Ver Lista Completa
                 </Button>
               </div>
@@ -441,10 +441,10 @@ export default function ImportLeads() {
 
           {/* Seção de CNPJs duplicados */}
           {result.duplicated > 0 && (
-            <Card className="border-amber-300 dark:border-amber-800">
+            <Card className="border-red-300 dark:border-red-800">
               <CardHeader className="pb-0">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                  <CardTitle className="text-base flex items-center gap-2 text-red-700 dark:text-red-400">
                     <ShieldAlert className="w-4 h-4" />
                     {result.duplicated} CNPJ{result.duplicated > 1 ? "s" : ""} já cadastrado{result.duplicated > 1 ? "s" : ""} — ignorado{result.duplicated > 1 ? "s" : ""}
                   </CardTitle>
@@ -497,7 +497,7 @@ export default function ImportLeads() {
                           {result.duplicatedLeads.map((d, i) => (
                             <tr key={d.cnpjRaw} className="border-t border-border hover:bg-muted/30">
                               <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
-                              <td className="px-3 py-2 font-mono text-amber-700 dark:text-amber-400">{d.cnpj}</td>
+                              <td className="px-3 py-2 font-mono text-red-700 dark:text-red-400">{d.cnpj}</td>
                               <td className="px-3 py-2 text-foreground truncate max-w-[180px] hidden sm:table-cell">
                                 {d.nome ?? <span className="text-muted-foreground italic">—</span>}
                               </td>
@@ -530,9 +530,9 @@ export default function ImportLeads() {
 
           {/* Aviso se todos eram duplicados */}
           {result.inserted === 0 && result.duplicated > 0 && (
-            <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/30 dark:border-amber-900">
-              <XCircle className="h-4 w-4 text-amber-600" />
-              <AlertDescription className="text-amber-700 dark:text-amber-400">
+            <Alert className="border-red-200 bg-red-50 dark:bg-red-950/30 dark:border-red-900">
+              <XCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-700 dark:text-red-400">
                 Todos os CNPJs da planilha já estão cadastrados na plataforma. Nenhum novo lead foi inserido.
               </AlertDescription>
             </Alert>

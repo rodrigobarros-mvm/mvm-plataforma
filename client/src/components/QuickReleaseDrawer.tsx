@@ -90,7 +90,7 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
           <>
             <SheetHeader className="mb-6">
               <div className="flex items-center gap-2">
-                <Lock className="w-5 h-5" style={{ color: "#e8621a" }} />
+                <Lock className="w-5 h-5" style={{ color: "#e21d3c" }} />
                 <SheetTitle>Liberar Leads Rápido</SheetTitle>
               </div>
               <SheetDescription>
@@ -107,13 +107,13 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
                   <div
                     className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
                     style={{
-                      background: step >= s ? "#e8621a" : "oklch(0.22 0.08 240 / 0.1)",
+                      background: step >= s ? "#e21d3c" : "oklch(0.22 0.08 240 / 0.1)",
                       color: step >= s ? "white" : "oklch(0.5 0 0)",
                     }}
                   >
                     {s}
                   </div>
-                  {s < 3 && <div className="flex-1 h-0.5 w-8" style={{ background: step > s ? "#e8621a" : "oklch(0.22 0.08 240 / 0.15)" }} />}
+                  {s < 3 && <div className="flex-1 h-0.5 w-8" style={{ background: step > s ? "#e21d3c" : "oklch(0.22 0.08 240 / 0.15)" }} />}
                 </div>
               ))}
               <span className="text-xs text-muted-foreground ml-2">
@@ -126,7 +126,7 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
               <div className="space-y-5">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <MapPin className="w-4 h-4" style={{ color: "#e8621a" }} />
+                    <MapPin className="w-4 h-4" style={{ color: "#e21d3c" }} />
                     <Label className="font-semibold">Estados (opcional)</Label>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -136,9 +136,9 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
                         onClick={() => toggleUF(uf)}
                         className="px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors"
                         style={{
-                          background: selectedUFs.includes(uf) ? "#e8621a" : "transparent",
+                          background: selectedUFs.includes(uf) ? "#e21d3c" : "transparent",
                           color: selectedUFs.includes(uf) ? "white" : undefined,
-                          borderColor: selectedUFs.includes(uf) ? "#e8621a" : undefined,
+                          borderColor: selectedUFs.includes(uf) ? "#e21d3c" : undefined,
                         }}
                       >
                         {uf}
@@ -152,7 +152,7 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
 
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <Sliders className="w-4 h-4" style={{ color: "#e8621a" }} />
+                    <Sliders className="w-4 h-4" style={{ color: "#e21d3c" }} />
                     <Label className="font-semibold">Prioridade</Label>
                   </div>
                   <div className="flex gap-3">
@@ -160,9 +160,9 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
                       onClick={() => setIsHighPriority(false)}
                       className="flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors"
                       style={{
-                        background: !isHighPriority ? "#e8621a" : "transparent",
+                        background: !isHighPriority ? "#e21d3c" : "transparent",
                         color: !isHighPriority ? "white" : undefined,
-                        borderColor: !isHighPriority ? "#e8621a" : undefined,
+                        borderColor: !isHighPriority ? "#e21d3c" : undefined,
                       }}
                     >
                       Todos
@@ -171,9 +171,9 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
                       onClick={() => setIsHighPriority(true)}
                       className="flex-1 py-2.5 rounded-xl text-sm font-medium border transition-colors"
                       style={{
-                        background: isHighPriority ? "#e8621a" : "transparent",
+                        background: isHighPriority ? "#e21d3c" : "transparent",
                         color: isHighPriority ? "white" : undefined,
-                        borderColor: isHighPriority ? "#e8621a" : undefined,
+                        borderColor: isHighPriority ? "#e21d3c" : undefined,
                       }}
                     >
                       ⭐ Alta Prioridade
@@ -217,9 +217,9 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
                       onClick={() => setMaxQty(String(n))}
                       className="py-2 rounded-lg text-sm font-semibold border transition-colors"
                       style={{
-                        background: maxQty === String(n) ? "#e8621a" : "transparent",
+                        background: maxQty === String(n) ? "#e21d3c" : "transparent",
                         color: maxQty === String(n) ? "white" : undefined,
-                        borderColor: maxQty === String(n) ? "#e8621a" : undefined,
+                        borderColor: maxQty === String(n) ? "#e21d3c" : undefined,
                       }}
                     >
                       {n >= 1000 ? "1k" : n}
@@ -263,7 +263,7 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-muted-foreground">Quantidade</span>
-                    <span className="font-bold text-lg" style={{ color: "#e8621a" }}>
+                    <span className="font-bold text-lg" style={{ color: "#e21d3c" }}>
                       até {parseInt(maxQty).toLocaleString("pt-BR")} leads
                     </span>
                   </div>
@@ -271,7 +271,7 @@ export function QuickReleaseDrawer({ open, onClose }: QuickReleaseDrawerProps) {
 
                 <div className="rounded-xl p-4 text-center" style={{ background: "oklch(0.63 0.18 40 / 0.1)" }}>
                   <p className="text-sm text-muted-foreground">Serão liberados aproximadamente</p>
-                  <p className="text-3xl font-bold mt-1" style={{ color: "#e8621a", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  <p className="text-3xl font-bold mt-1" style={{ color: "#e21d3c", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                     {estimatedQty.toLocaleString("pt-BR")}
                   </p>
                   <p className="text-sm text-muted-foreground">leads para o time prospectar</p>

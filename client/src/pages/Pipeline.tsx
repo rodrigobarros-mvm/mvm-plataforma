@@ -18,7 +18,7 @@ import {
 const STAGE_COLORS: Record<string, string> = {
   "Não Iniciado": "#94a3b8",
   "Em Contato": "#3b82f6",
-  "Aguardando Retorno": "#f59e0b",
+  "Aguardando Retorno": "#e21d3c",
   "Qualificado": "#22c55e",
   "Desqualificado": "#ef4444",
 };
@@ -151,7 +151,7 @@ export default function Pipeline() {
       <Card className="shadow-sm">
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
-            <BarChart3 className="w-4 h-4" style={{ color: "#e8621a" }} />
+            <BarChart3 className="w-4 h-4" style={{ color: "#e21d3c" }} />
             Funil de Conversão
           </CardTitle>
         </CardHeader>
@@ -228,7 +228,7 @@ export default function Pipeline() {
         <Card className="shadow-sm">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <Users className="w-4 h-4" style={{ color: "#e8621a" }} />
+              <Users className="w-4 h-4" style={{ color: "#e21d3c" }} />
               Performance por BDR
             </CardTitle>
           </CardHeader>

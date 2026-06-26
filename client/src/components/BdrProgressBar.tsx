@@ -152,7 +152,7 @@ export default function BdrProgressBar() {
         <Link href="/work-mode">
           <button
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all hover:opacity-90 shrink-0"
-            style={{ background: "#e8621a", color: "white" }}
+            style={{ background: "#e21d3c", color: "white" }}
           >
             <Zap className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Iniciar Prospecção</span>

@@ -9,9 +9,9 @@ export default function Ranking() {
   const { data: ranking, isLoading } = trpc.dashboard.ranking.useQuery({});
 
   const medals = [
-    { icon: Trophy, color: "#e8621a", bg: "#e8621a20", label: "1°" },
+    { icon: Trophy, color: "#e21d3c", bg: "#e21d3c20", label: "1°" },
     { icon: Medal, color: "#94a3b8", bg: "#94a3b820", label: "2°" },
-    { icon: Medal, color: "#ca8a04", bg: "#ca8a0420", label: "3°" },
+    { icon: Medal, color: "#c8102e", bg: "#c8102e20", label: "3°" },
   ];
 
   return (
@@ -32,7 +32,7 @@ export default function Ranking() {
             const medal = medals[pos]!;
             const isFirst = pos === 0;
             return (
-              <Card key={r.userId} className={`border-border text-center ${isFirst ? "ring-2 ring-orange-400" : ""}`}>
+              <Card key={r.userId} className={`border-border text-center ${isFirst ? "ring-2 ring-red-600" : ""}`}>
                 <CardContent className="p-4">
                   <div className="flex justify-center mb-3">
                     <div className="relative">
@@ -66,7 +66,7 @@ export default function Ranking() {
       <Card className="border-border">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Award className="w-4 h-4" style={{ color: "#e8621a" }} />
+            <Award className="w-4 h-4" style={{ color: "#e21d3c" }} />
             Classificação Completa
           </CardTitle>
         </CardHeader>
@@ -83,7 +83,7 @@ export default function Ranking() {
                 <div key={r.userId} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
                     style={{
-                      background: i === 0 ? "#e8621a" : i === 1 ? "#94a3b8" : i === 2 ? "#ca8a04" : "#e2e8f0",
+                      background: i === 0 ? "#e21d3c" : i === 1 ? "#94a3b8" : i === 2 ? "#c8102e" : "#e2e8f0",
                       color: i < 3 ? "white" : "#64748b"
                     }}>
                     {i + 1}

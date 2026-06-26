@@ -24,7 +24,7 @@ function Particle({ delay, x, color }: { delay: number; x: number; color: string
   );
 }
 
-const COLORS = ["#e8621a", "#22c55e", "#3b82f6", "#f59e0b", "#a855f7", "#ec4899"];
+const COLORS = ["#e21d3c", "#22c55e", "#3b82f6", "#e21d3c", "#a855f7", "#ec4899"];
 
 export default function QualificationCelebration({
   show,
@@ -88,7 +88,7 @@ export default function QualificationCelebration({
             {/* Ícone principal */}
             <motion.div
               className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
-              style={{ background: "linear-gradient(135deg, #e8621a, #f59e0b)" }}
+              style={{ background: "linear-gradient(135deg, #e21d3c, #e21d3c)" }}
               animate={{ rotate: [0, -10, 10, -10, 10, 0] }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
@@ -144,8 +144,8 @@ export default function QualificationCelebration({
                 transition={{ delay: 0.5 }}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                  <span className="text-yellow-700 font-bold text-sm">
+                  <Star className="w-5 h-5 text-red-600 fill-red-600" />
+                  <span className="text-red-700 font-bold text-sm">
                     🏆 Meta diária atingida! Parabéns!
                   </span>
                 </div>
@@ -159,7 +159,7 @@ export default function QualificationCelebration({
             >
               <Button
                 className="w-full font-semibold"
-                style={{ background: "#e8621a", color: "white" }}
+                style={{ background: "#e21d3c", color: "white" }}
                 onClick={onClose}
               >
                 Continuar Prospectando

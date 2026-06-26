@@ -308,10 +308,10 @@ export default function WhatsAppShareModal({ show, lead, onClose }: WhatsAppShar
                   className="rounded-xl p-3 flex items-start gap-2"
                   style={{ background: "#fff7ed", border: "1px solid #fed7aa" }}
                 >
-                  <AlertCircle className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-orange-800 text-xs font-semibold">Campos obrigatórios não preenchidos:</p>
-                    <p className="text-orange-700 text-xs mt-0.5">
+                    <p className="text-red-800 text-xs font-semibold">Campos obrigatórios não preenchidos:</p>
+                    <p className="text-red-700 text-xs mt-0.5">
                       {missingRequired.map(f => f.label).join(", ")}
                     </p>
                   </div>

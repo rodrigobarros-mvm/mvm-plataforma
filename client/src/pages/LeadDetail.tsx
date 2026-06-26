@@ -168,7 +168,7 @@ export default function LeadDetail() {
     if (l.scriptAbertura) return l.scriptAbertura;
     const empresa = l.nomeFantasia || l.razaoSocial || "sua empresa";
     const decisor = l.nomeDecissor ? `, ${l.nomeDecissor}` : "";
-    return `Olá${decisor}! Tudo bem?\n\nSou da Gallotti Tractor | LS Tractor — revendedores autorizados Michigan. Vi que a ${empresa} pode se beneficiar das nossas soluções em máquinas pesadas.\n\nPosso te apresentar nossas opções? Leva só 5 minutos! 😊`;
+    return `Olá${decisor}! Tudo bem?\n\nSou da Gallotti Tractor | LS Tractor — revendedores autorizados ENSIGN. Vi que a ${empresa} pode se beneficiar das nossas soluções em máquinas pesadas.\n\nPosso te apresentar nossas opções? Leva só 5 minutos! 😊`;
   };
 
   const openWaDialog = (target: "wa1" | "wa2") => {
@@ -258,12 +258,12 @@ export default function LeadDetail() {
               </Badge>
             )}
             {lead.isHighPriority && (
-              <Badge style={{ background: "#e8621a20", color: "#e8621a", border: "1px solid #e8621a40" }}>
+              <Badge style={{ background: "#e21d3c20", color: "#e21d3c", border: "1px solid #e21d3c40" }}>
                 🔴 Alta Prioridade
               </Badge>
             )}
             {(lead.attemptCount ?? 0) > 0 && (
-              <Badge className="bg-amber-100 text-amber-700 border-amber-200 gap-1">
+              <Badge className="bg-red-100 text-red-700 border-red-200 gap-1">
                 <Phone className="w-3 h-3" />
                 {lead.attemptCount} {lead.attemptCount === 1 ? "tentativa" : "tentativas"}
               </Badge>
@@ -289,9 +289,9 @@ export default function LeadDetail() {
 
       {/* Missing fields alert */}
       {canQualify && !lead.isQualified && lead.statusContato !== "Desqualificado" && missingFields.length > 0 && (
-        <Alert className="border-orange-200 bg-orange-50">
-          <AlertTriangle className="h-4 w-4 text-orange-600" />
-          <AlertDescription className="text-orange-700">
+        <Alert className="border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4 text-red-700" />
+          <AlertDescription className="text-red-700">
             <strong>Campos obrigatórios faltando:</strong> {missingFields.map(f => FIELD_LABELS[f]).join(", ")}.
             Preencha todos antes de qualificar.
           </AlertDescription>
@@ -305,7 +305,7 @@ export default function LeadDetail() {
           <Card className="border-border">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <Building2 className="w-4 h-4" style={{ color: "#e8621a" }} />
+                <Building2 className="w-4 h-4" style={{ color: "#e21d3c" }} />
                 Informações da Empresa
               </CardTitle>
             </CardHeader>
@@ -328,7 +328,7 @@ export default function LeadDetail() {
           <Card className="border-border">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <User className="w-4 h-4" style={{ color: "#e8621a" }} />
+                <User className="w-4 h-4" style={{ color: "#e21d3c" }} />
                 Dados de Qualificação
               </CardTitle>
             </CardHeader>
@@ -438,7 +438,7 @@ export default function LeadDetail() {
             <Card className="border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4" style={{ color: "#e8621a" }} />
+                  <MessageSquare className="w-4 h-4" style={{ color: "#e21d3c" }} />
                   Scripts de Abordagem
                 </CardTitle>
               </CardHeader>
@@ -457,7 +457,7 @@ export default function LeadDetail() {
                     >
                       {tab.label}
                       {tab.key === "abertura" && (
-                        <span className="ml-1 text-[10px] px-1 rounded" style={{ background: "#e8621a20", color: "#e8621a" }}>
+                        <span className="ml-1 text-[10px] px-1 rounded" style={{ background: "#e21d3c20", color: "#e21d3c" }}>
                           WhatsApp
                         </span>
                       )}
@@ -644,7 +644,7 @@ export default function LeadDetail() {
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <CalendarClock className="w-4 h-4" style={{ color: "#e8621a" }} />
+                  <CalendarClock className="w-4 h-4" style={{ color: "#e21d3c" }} />
                   Follow-ups ({(followUps ?? []).length})
                 </CardTitle>
                 <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={() => setShowFollowUpDialog(true)}>
@@ -659,9 +659,9 @@ export default function LeadDetail() {
                 ) : (
                   (followUps ?? []).map((fu) => (
                     <div key={fu.id} className={`flex items-start gap-2 p-2 rounded-lg border ${
-                      fu.isDone ? "opacity-50 bg-muted/30" : "bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800"
+                      fu.isDone ? "opacity-50 bg-muted/30" : "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800"
                     }`}>
-                      <Bell className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: fu.isDone ? "#888" : "#e8621a" }} />
+                      <Bell className="w-3.5 h-3.5 mt-0.5 shrink-0" style={{ color: fu.isDone ? "#888" : "#e21d3c" }} />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium">
                           {new Date(fu.scheduledAt).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}
@@ -691,7 +691,7 @@ export default function LeadDetail() {
             <Card className="border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm flex items-center gap-2">
-                  <User className="w-4 h-4" style={{ color: "#e8621a" }} />
+                  <User className="w-4 h-4" style={{ color: "#e21d3c" }} />
                   Histórico de Atribuições ({(assignmentHistory ?? []).length})
                 </CardTitle>
               </CardHeader>
@@ -748,13 +748,13 @@ export default function LeadDetail() {
                     };
                     const typeColors: Record<string, string> = {
                       contato: "#16a34a",
-                      tentativa: "#e8621a",
+                      tentativa: "#e21d3c",
                       observacao: "#6366f1",
                       qualificacao: "#0ea5e9",
                       desqualificacao: "#dc2626",
                       whatsapp_share: "#25D366",
                     };
-                    const borderColor = typeColors[inter.type] ?? "#e8621a";
+                    const borderColor = typeColors[inter.type] ?? "#e21d3c";
                     const label = typeLabels[inter.type] ?? inter.type;
                     return (
                       <div key={inter.id} className="border-l-2 pl-3 py-1" style={{ borderColor }}>
@@ -888,7 +888,7 @@ export default function LeadDetail() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <CalendarClock className="w-5 h-5" style={{ color: "#e8621a" }} />
+              <CalendarClock className="w-5 h-5" style={{ color: "#e21d3c" }} />
               Agendar Follow-up
             </DialogTitle>
           </DialogHeader>
@@ -931,7 +931,7 @@ export default function LeadDetail() {
             <Button
               onClick={handleCreateFollowUp}
               disabled={createFollowUp.isPending || !followUpDate}
-              style={{ background: "#e8621a" }}
+              style={{ background: "#e21d3c" }}
             >
               {createFollowUp.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Agendar Follow-up"}
             </Button>
@@ -1000,7 +1000,7 @@ function EditableField({
 function AssignedBdrCard({ leadId, onUnassign, isPending }: { leadId: number; onUnassign: () => void; isPending: boolean }) {
   const { data: bdr, isLoading } = trpc.leads.getAssignedBdr.useQuery({ leadId });
   return (
-    <Card className="border-amber-200">
+    <Card className="border-red-200">
       <CardContent className="p-4">
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">BDR Atribuído</p>
         {isLoading ? (
@@ -1016,7 +1016,7 @@ function AssignedBdrCard({ leadId, onUnassign, isPending }: { leadId: number; on
         <Button
           variant="outline"
           size="sm"
-          className="w-full border-amber-300 text-amber-700 hover:bg-amber-50"
+          className="w-full border-red-300 text-red-700 hover:bg-red-50"
           onClick={onUnassign}
           disabled={isPending}
         >

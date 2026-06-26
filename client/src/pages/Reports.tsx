@@ -14,7 +14,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
 
-const COLORS = ["#e21d3c", "#0a1e5a", "#16a34a", "#ca8a04", "#7c3aed", "#0891b2"];
+const COLORS = ["#e21d3c", "#0a1e5a", "#16a34a", "#c8102e", "#7c3aed", "#0891b2"];
 
 export default function Reports() {
   const { user } = useAuth();
@@ -249,12 +249,12 @@ export default function Reports() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
-            { label: "Total de Leads", value: stats?.totalLeads ?? 0, sub: "na base completa", icon: Users, color: "#e8621a" },
+            { label: "Total de Leads", value: stats?.totalLeads ?? 0, sub: "na base completa", icon: Users, color: "#e21d3c" },
             { label: "Qualificados", value: qualifiedLeads, sub: `${conversionRate}% das atividades`, icon: TrendingUp, color: "#16a34a" },
-            { label: "Desqualificados", value: stats?.disqualifiedLeads ?? 0, sub: "com justificativa", icon: FileText, color: "#ca8a04" },
+            { label: "Desqualificados", value: stats?.disqualifiedLeads ?? 0, sub: "com justificativa", icon: FileText, color: "#c8102e" },
             { label: "Tentativas", value: totalAttempts.toLocaleString("pt-BR"), sub: `${totalContacts} contatos realizados`, icon: TrendingUp, color: "#0ea5e9" },
             { label: "Taxa Tent. → Contato", value: `${conversionAttemptToContact}%`, sub: `${totalContacts} de ${totalAttempts}`, icon: TrendingUp, color: "#7c3aed" },
-            { label: "Taxa Contato → Qualif.", value: `${conversionContactToQualified}%`, sub: `${qualifiedLeads} de ${totalContacts}`, icon: TrendingUp, color: "#f59e0b" },
+            { label: "Taxa Contato → Qualif.", value: `${conversionContactToQualified}%`, sub: `${qualifiedLeads} de ${totalContacts}`, icon: TrendingUp, color: "#e21d3c" },
           ].map((item) => (
             <Card key={item.label} className="border-border">
               <CardContent className="p-3 md:p-4">
@@ -287,7 +287,7 @@ export default function Reports() {
                   <XAxis dataKey="userName" tick={{ fontSize: 11 }} tickFormatter={(v: string) => v?.split(" ")[0] ?? v} />
                   <YAxis tick={{ fontSize: 11 }} />
                   <Tooltip />
-                  <Bar dataKey="qualifiedCount" fill="#e8621a" radius={[4, 4, 0, 0]} name="Qualificados" />
+                  <Bar dataKey="qualifiedCount" fill="#e21d3c" radius={[4, 4, 0, 0]} name="Qualificados" />
                 </BarChart>
               </ResponsiveContainer>
             )}

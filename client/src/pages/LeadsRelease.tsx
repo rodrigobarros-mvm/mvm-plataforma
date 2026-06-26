@@ -337,11 +337,11 @@ export default function LeadsRelease() {
             <Card className="border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-amber-100">
-                    <Lock className="w-5 h-5 text-amber-600" />
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-red-100">
+                    <Lock className="w-5 h-5 text-red-600" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-amber-600" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                    <p className="text-2xl font-bold text-red-600" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                       {(releaseStats?.unreleased ?? 0).toLocaleString("pt-BR")}
                     </p>
                     <p className="text-xs text-muted-foreground">Não Liberados</p>
@@ -354,13 +354,13 @@ export default function LeadsRelease() {
       </div>
 
       {/* Aviso importante */}
-      <Card className="border-amber-200 bg-amber-50">
+      <Card className="border-red-200 bg-red-50">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-amber-800 text-sm">Controle de Acesso ao Banco de Dados</p>
-              <p className="text-amber-700 text-xs mt-1">
+              <p className="font-semibold text-red-800 text-sm">Controle de Acesso ao Banco de Dados</p>
+              <p className="text-red-700 text-xs mt-1">
                 Somente o ADM tem acesso completo ao banco. Gerentes e BDRs <strong>não podem importar ou exportar leads</strong>.
                 Ao liberar leads, <strong>todos do time</strong> (Gerentes, Diretores, Coordenadores, Supervisores e BDRs) poderão visualizá-los.
                 Use "Atribuir a BDRs" para direcionar lotes específicos a vendedores individuais.
@@ -618,7 +618,7 @@ export default function LeadsRelease() {
                       <TableCell className="text-sm text-muted-foreground">{lead.cidade || "—"}</TableCell>
                       <TableCell>
                         {lead.isHighPriority ? (
-                          <Badge className="text-xs bg-orange-100 text-orange-700 border-orange-200">Alta</Badge>
+                          <Badge className="text-xs bg-red-100 text-red-700 border-red-200">Alta</Badge>
                         ) : (
                           <Badge variant="outline" className="text-xs">Normal</Badge>
                         )}

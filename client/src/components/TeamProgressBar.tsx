@@ -150,7 +150,7 @@ function BdrRow({
         <div className="flex items-center gap-2 min-w-0">
           <div
             className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-            style={{ background: "#e8621a", color: "white" }}
+            style={{ background: "#e21d3c", color: "white" }}
           >
             {bdr.name.charAt(0).toUpperCase()}
           </div>
@@ -421,7 +421,7 @@ export default function TeamProgressBar() {
             <Link href="/work-mode">
               <button
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
-                style={{ background: "#e8621a", color: "white" }}
+                style={{ background: "#e21d3c", color: "white" }}
               >
                 <Zap className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Iniciar Prospecção</span>

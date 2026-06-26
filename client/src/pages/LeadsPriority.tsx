@@ -16,7 +16,7 @@ const STATUS_COLORS: Record<string, string> = {
   "Em contato": "bg-blue-100 text-blue-700",
   "Qualificado": "bg-green-100 text-green-700",
   "Desqualificado": "bg-red-100 text-red-700",
-  "Aguardando retorno": "bg-yellow-100 text-yellow-700",
+  "Aguardando retorno": "bg-yellow-100 text-red-700",
 };
 
 const UF_LIST = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
@@ -64,7 +64,7 @@ export default function LeadsPriority() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <Star className="w-5 h-5" style={{ color: "#e8621a" }} />
+            <Star className="w-5 h-5" style={{ color: "#e21d3c" }} />
             <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               Alta Prioridade
             </h1>
@@ -73,7 +73,7 @@ export default function LeadsPriority() {
             {data ? `${data.total.toLocaleString("pt-BR")} leads prioritários${!isAdm ? " (liberados pelo ADM)" : ""}` : "Carregando..."}
           </p>
         </div>
-        <Badge className="text-sm px-3 py-1" style={{ background: "#e8621a20", color: "#e8621a", border: "1px solid #e8621a40" }}>
+        <Badge className="text-sm px-3 py-1" style={{ background: "#e21d3c20", color: "#e21d3c", border: "1px solid #e21d3c40" }}>
           🔴 Alta Prioridade
         </Badge>
       </div>
@@ -157,7 +157,7 @@ export default function LeadsPriority() {
                 ))}
               </SelectContent>
             </Select>
-            <Button type="submit" style={{ background: "#e8621a" }}>
+            <Button type="submit" style={{ background: "#e21d3c" }}>
               <Search className="w-4 h-4 mr-2" />
               Buscar
             </Button>
@@ -254,7 +254,7 @@ export default function LeadsPriority() {
                     <Badge variant="outline" className="text-xs">{lead.urgenciaCompra}</Badge>
                   )}
                   {(lead.attemptCount ?? 0) > 0 && (
-                    <Badge className="text-xs bg-amber-100 text-amber-700 border-amber-200 gap-1">
+                    <Badge className="text-xs bg-red-100 text-red-700 border-red-200 gap-1">
                       <Phone className="w-3 h-3" />{lead.attemptCount} {lead.attemptCount === 1 ? "tent." : "tent."}
                     </Badge>
                   )}

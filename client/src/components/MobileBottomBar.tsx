@@ -78,7 +78,7 @@ export function MobileBottomBar() {
               onClick={() => setLocation(action.path)}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full rounded-lg transition-colors ${
                 isActive
-                  ? "text-orange-500"
+                  ? "text-red-600"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -93,7 +93,7 @@ export function MobileBottomBar() {
           onClick={handlePushToggle}
           disabled={isLoading || permission === "unsupported"}
           className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full rounded-lg transition-colors disabled:opacity-40 ${
-            isSubscribed ? "text-orange-500" : "text-muted-foreground hover:text-foreground"
+            isSubscribed ? "text-red-600" : "text-muted-foreground hover:text-foreground"
           }`}
           title={isSubscribed ? "Desativar alertas push" : "Ativar alertas push"}
         >
@@ -110,7 +110,7 @@ export function MobileBottomBar() {
         {isAdm && (
           <button
             onClick={() => setQuickReleaseOpen(true)}
-            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full rounded-lg transition-colors text-muted-foreground hover:text-orange-500"
+            className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full rounded-lg transition-colors text-muted-foreground hover:text-red-600"
           >
             <Zap className="w-5 h-5" />
             <span className="text-[10px] font-medium leading-tight">Liberar</span>

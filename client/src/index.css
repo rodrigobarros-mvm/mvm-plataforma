@@ -1,6 +1,36 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+
+/* ── LS Tractor Gallotti Brand Colors ───────────────────────────── */
+:root {
+  --ls-red: #e21d3c;
+  --ls-blue: #0a1e5a;
+  --ls-blue-mid: #1c3c8a;
+  --ls-gray: #9ea3a6;
+  --brand-primary: #e21d3c;
+  --brand-secondary: #0a1e5a;
+}
+
+/* Sidebar LS Blue */
+[data-sidebar] {
+  --sidebar-background: #0a1e5a !important;
+  --sidebar-foreground: #ffffff !important;
+  --sidebar-primary: #e21d3c !important;
+  --sidebar-primary-foreground: #ffffff !important;
+  --sidebar-accent: rgba(226,29,60,0.15) !important;
+  --sidebar-border: rgba(255,255,255,0.1) !important;
+}
+
+/* Primary buttons → LS Blue */
+.bg-primary { background-color: #0a1e5a !important; }
+.hover\:bg-primary\/90:hover { background-color: #1c3c8a !important; }
+
+/* Accent/brand elements → LS Red */
+.text-primary { color: #0a1e5a; }
+[style*="#e8621a"], [style*="#E8621A"] { color: #e21d3c !important; }
+/* ───────────────────────────────────────────────────────────────── */
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -44,7 +74,7 @@
 
 :root {
   --radius: 0.5rem;
-  /* Gallotti Tractor | LS Tractor + Michigan — Preto #111111 + Amarelo Michigan #e21d3c */
+  /* Gallotti Tractor | LS Tractor + ENSIGN — Preto #111111 + Amarelo ENSIGN #e21d3c */
   --background: oklch(0.975 0.002 90);
   --foreground: oklch(0.12 0.005 90);
   --card: oklch(1 0 0);

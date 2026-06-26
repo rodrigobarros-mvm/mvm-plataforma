@@ -66,7 +66,7 @@ export default function Settings() {
       <Card className="border-border">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <SettingsIcon className="w-4 h-4" style={{ color: "#e8621a" }} />
+            <SettingsIcon className="w-4 h-4" style={{ color: "#e21d3c" }} />
             Metas e KPIs
           </CardTitle>
           <CardDescription>Configure as metas diárias da equipe de BDRs</CardDescription>
@@ -175,7 +175,7 @@ export default function Settings() {
         <Card className="border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <ListChecks className="w-4 h-4" style={{ color: "#e8621a" }} />
+              <ListChecks className="w-4 h-4" style={{ color: "#e21d3c" }} />
               Campos de Qualificação
             </CardTitle>
             <CardDescription>
@@ -209,7 +209,7 @@ export default function Settings() {
         <Card className="border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Database className="w-4 h-4" style={{ color: "#e8621a" }} />
+              <Database className="w-4 h-4" style={{ color: "#e21d3c" }} />
               Importação e Exportação de Dados
             </CardTitle>
             <CardDescription>
@@ -295,7 +295,7 @@ export default function Settings() {
           <div className="flex items-center justify-between">
             <div className="flex-1 pr-4">
               <div className="flex items-center gap-2">
-                {isSubscribed ? <Bell className="w-4 h-4 text-orange-500" /> : <BellOff className="w-4 h-4 text-muted-foreground" />}
+                {isSubscribed ? <Bell className="w-4 h-4 text-red-600" /> : <BellOff className="w-4 h-4 text-muted-foreground" />}
                 <p className="font-medium text-sm">Notificações Push (Mobile)</p>
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">

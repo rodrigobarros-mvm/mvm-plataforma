@@ -38,7 +38,7 @@ import {
   ChevronDown,
   ClipboardList,
   DollarSign,
-  Forklift,
+  Tractor,
   LayoutDashboard,
   ListFilter,
   LogOut,

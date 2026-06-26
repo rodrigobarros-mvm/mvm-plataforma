@@ -50,7 +50,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ background: "#0a1e5a" }}>
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #0a1e5a 0%, #1c3c8a 60%, #0a1e5a 100%)" }}>
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-64 h-64 rounded-full border border-white/20" />
@@ -90,7 +90,7 @@ export default function Login() {
                 { value: "5.876", label: "Alta Prioridade" },
                 { value: "10", label: "Estados Cobertos" },
               ].map((stat) => (
-                <div key={stat.label} className="rounded-xl p-4" style={{ background: "rgba(226,29,60,0.12)", border: "1px solid rgba(226,29,60,0.25)" }}>
+                <div key={stat.label} className="rounded-xl p-4" style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.2)" }}>
                   <div className="text-2xl font-bold text-white" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{stat.value}</div>
                   <div className="text-white/60 text-xs mt-1">{stat.label}</div>
                 </div>
@@ -188,7 +188,7 @@ export default function Login() {
                     <Button
                       type="submit"
                       className="w-full font-semibold text-white"
-                      style={{ background: "#0a1e5a" }}
+                      style={{ background: "linear-gradient(135deg, #0a1e5a 0%, #1c3c8a 60%, #0a1e5a 100%)" }}
                       disabled={isLoading}
                     >
                       {isLoading ? (

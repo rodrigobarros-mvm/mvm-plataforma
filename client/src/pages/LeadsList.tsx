@@ -16,7 +16,7 @@ const STATUS_COLORS: Record<string, string> = {
   "Em contato": "bg-blue-100 text-blue-700",
   "Qualificado": "bg-green-100 text-green-700",
   "Desqualificado": "bg-red-100 text-red-700",
-  "Aguardando retorno": "bg-yellow-100 text-yellow-700",
+  "Aguardando retorno": "bg-yellow-100 text-red-700",
 };
 
 const UF_LIST = ["AC","AL","AM","AP","BA","CE","DF","ES","GO","MA","MG","MS","MT","PA","PB","PE","PI","PR","RJ","RN","RO","RR","RS","SC","SE","SP","TO"];
@@ -100,11 +100,11 @@ export default function LeadsList() {
 
       {/* Aviso de acesso restrito para Gerente e BDR */}
       {!isAdm && (
-        <Card className="border-amber-200 bg-amber-50">
+        <Card className="border-red-200 bg-red-50">
           <CardContent className="p-3">
             <div className="flex items-center gap-2">
-              <Lock className="w-4 h-4 text-amber-600 shrink-0" />
-              <p className="text-amber-800 text-sm">
+              <Lock className="w-4 h-4 text-red-600 shrink-0" />
+              <p className="text-red-800 text-sm">
                 Você está visualizando apenas os leads liberados pelo Administrador.
                 {role === "bdr" && " Somente leads atribuídos a você são exibidos."}
                 {" "}Importação e exportação de dados são restritas ao ADM.
@@ -305,7 +305,7 @@ export default function LeadsList() {
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">
                     {(lead.attemptCount ?? 0) > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700 border border-red-200">
                         <Phone className="w-3 h-3" />{lead.attemptCount}
                       </span>
                     ) : (
@@ -314,7 +314,7 @@ export default function LeadsList() {
                   </td>
                   <td className="px-4 py-3">
                     {lead.isHighPriority ? (
-                      <Badge className="text-xs bg-orange-100 text-orange-700 border-orange-200">Alta</Badge>
+                      <Badge className="text-xs bg-red-100 text-red-700 border-red-200">Alta</Badge>
                     ) : (
                       <Badge variant="outline" className="text-xs">Normal</Badge>
                     )}

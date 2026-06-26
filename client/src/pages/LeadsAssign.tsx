@@ -308,7 +308,7 @@ export default function LeadsAssign() {
                         : (workloadMap[bdr.id] ?? 0) < 50
                         ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                         : (workloadMap[bdr.id] ?? 0) < 150
-                        ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                        ? "bg-yellow-100 text-red-700 dark:bg-yellow-900/30 dark:text-red-500"
                         : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                     )}>
                       {workloadMap[bdr.id] ?? 0} leads
@@ -556,7 +556,7 @@ export default function LeadsAssign() {
                       <TableCell className="text-sm text-muted-foreground">{lead.cidade || "—"}</TableCell>
                       <TableCell>
                         {lead.isHighPriority ? (
-                          <Badge className="text-xs bg-orange-100 text-orange-700 border-orange-200">Alta</Badge>
+                          <Badge className="text-xs bg-red-100 text-red-700 border-red-200">Alta</Badge>
                         ) : (
                           <Badge variant="outline" className="text-xs">Normal</Badge>
                         )}

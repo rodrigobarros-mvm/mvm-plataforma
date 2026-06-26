@@ -290,7 +290,7 @@ export default function QualificationFieldsConfig() {
           <p className="text-xs text-muted-foreground mt-0.5">Ativos</p>
         </div>
         <div className="rounded-lg border border-border p-3 text-center">
-          <p className="text-2xl font-bold" style={{ color: "#e8621a" }}>{requiredCount}</p>
+          <p className="text-2xl font-bold" style={{ color: "#e21d3c" }}>{requiredCount}</p>
           <p className="text-xs text-muted-foreground mt-0.5">Obrigatórios</p>
         </div>
       </div>
@@ -308,7 +308,7 @@ export default function QualificationFieldsConfig() {
       <Card className="border-border">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <ListChecks className="w-4 h-4" style={{ color: "#e8621a" }} />
+            <ListChecks className="w-4 h-4" style={{ color: "#e21d3c" }} />
             Campos Configurados
           </CardTitle>
           <CardDescription>Arranje a ordem usando as setas. Clique em Editar para modificar.</CardDescription>
@@ -364,7 +364,7 @@ export default function QualificationFieldsConfig() {
                         <Lock className="w-3 h-3 text-muted-foreground shrink-0" />
                       )}
                       {field.required && (
-                        <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4 shrink-0" style={{ background: "oklch(0.95 0.05 30)", color: "#e8621a" }}>
+                        <Badge variant="secondary" className="text-xs px-1.5 py-0 h-4 shrink-0" style={{ background: "oklch(0.95 0.05 30)", color: "#e21d3c" }}>
                           Obrigatório
                         </Badge>
                       )}

@@ -55,8 +55,8 @@ export default function Goals() {
           <Card className="border-border">
             <CardContent className="p-5">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#e8621a20" }}>
-                  <Zap className="w-5 h-5" style={{ color: "#e8621a" }} />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#e21d3c20" }}>
+                  <Zap className="w-5 h-5" style={{ color: "#e21d3c" }} />
                 </div>
                 <div>
                   <p className="font-semibold">Tentativas de Contato</p>
@@ -100,7 +100,7 @@ export default function Goals() {
       <Card className="border-border">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Target className="w-4 h-4" style={{ color: "#e8621a" }} />
+            <Target className="w-4 h-4" style={{ color: "#e21d3c" }} />
             Configuração de Metas
           </CardTitle>
           <CardDescription>

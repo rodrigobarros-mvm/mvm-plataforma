@@ -13,12 +13,12 @@ import {
   PieChart, Pie, Cell, Legend
 } from "recharts";
 import {
-  Award, BarChart3, CheckCircle2, Forklift, Target, TrendingUp, Users, XCircle, Zap,
+  Award, BarChart3, CheckCircle2, Tractor, Target, TrendingUp, Users, XCircle, Zap,
   AlertTriangle, Clock, Phone, ChevronRight, ExternalLink
 } from "lucide-react";
 import { Link } from "wouter";
 
-const COLORS = ["#e8621a", "#1e40af", "#16a34a", "#7c3aed", "#ca8a04", "#0891b2"];
+const COLORS = ["#e21d3c", "#1e40af", "#16a34a", "#7c3aed", "#c8102e", "#0891b2"];
 
 type Period = "today" | "week" | "month" | "all";
 const PERIOD_LABELS: Record<Period, string> = {
@@ -107,10 +107,10 @@ function BdrDashboard() {
   return (
     <div className="space-y-4 md:space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <StatCard title="Tentativas Hoje" value={totalActivity} sub={`Meta: ${attemptsGoal} · ${todayContacts} contatos realizados`} icon={Zap} color="#e8621a" />
+        <StatCard title="Tentativas Hoje" value={totalActivity} sub={`Meta: ${attemptsGoal} · ${todayContacts} contatos realizados`} icon={Zap} color="#e21d3c" />
         <StatCard title="Leads Qualificados" value={totalQualified} sub={`Meta diária: ${qualifiedGoal}`} icon={CheckCircle2} color="#16a34a" />
         <StatCard title="Taxa Tent. → Contato" value={`${convAttemptToContact}%`} sub={`${todayContacts} de ${totalActivity} tentativas`} icon={TrendingUp} color="#7c3aed" />
-        <StatCard title="Taxa Contato → Qualif." value={`${convContactToQualified}%`} sub={`${totalQualified} de ${todayContacts} contatos`} icon={Target} color="#f59e0b" />
+        <StatCard title="Taxa Contato → Qualif." value={`${convContactToQualified}%`} sub={`${totalQualified} de ${todayContacts} contatos`} icon={Target} color="#e21d3c" />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
@@ -150,7 +150,7 @@ function BdrDashboard() {
         <Card className="border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Award className="w-4 h-4" style={{ color: "#e8621a" }} />
+              <Award className="w-4 h-4" style={{ color: "#e21d3c" }} />
               Ranking Geral
             </CardTitle>
           </CardHeader>
@@ -247,8 +247,8 @@ function AdminDashboard() {
             title="Total de Leads"
             value={stats?.totalLeads ?? 0}
             sub="na base completa"
-            icon={Forklift}
-            color="#e8621a"
+            icon={Tractor}
+            color="#e21d3c"
             onClick={() => setModal("total")}
           />
           <StatCard
@@ -288,7 +288,7 @@ function AdminDashboard() {
             value={`${conversionContactToQualified}%`}
             sub={`${qualifiedLeads} de ${totalContacts} · ${periodLabel}`}
             icon={Target}
-            color="#f59e0b"
+            color="#e21d3c"
             onClick={() => setModal("convContact")}
           />
         </div>
@@ -298,27 +298,27 @@ function AdminDashboard() {
       {((bdrsAtRisk && bdrsAtRisk.length > 0) || (stagnantLeads && stagnantLeads.length > 0)) && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4">
           {bdrsAtRisk && bdrsAtRisk.length > 0 && (
-            <Card className="border-orange-200" style={{ background: "#fff7ed" }}>
+            <Card className="border-red-200" style={{ background: "#fff7ed" }}>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2 text-orange-700">
+                <CardTitle className="text-base flex items-center gap-2 text-red-700">
                   <AlertTriangle className="w-4 h-4" />
                   BDRs em Risco Hoje
                 </CardTitle>
-                <CardDescription className="text-orange-600">Abaixo de 50% das metas diárias</CardDescription>
+                <CardDescription className="text-red-700">Abaixo de 50% das metas diárias</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   {bdrsAtRisk.map((bdr) => (
-                    <div key={bdr.id} className="p-3 bg-white rounded-lg border border-orange-100">
+                    <div key={bdr.id} className="p-3 bg-white rounded-lg border border-red-100">
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-sm font-semibold text-gray-800">{bdr.name}</p>
-                        <Badge className="bg-orange-100 text-orange-700 border-orange-200 text-xs">Em risco</Badge>
+                        <Badge className="bg-red-100 text-red-700 border-red-200 text-xs">Em risco</Badge>
                       </div>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div>
                           <p className="text-gray-500 mb-1">Tentativas: {bdr.todayAttempts}/{bdr.attemptsGoal}</p>
                           <div className="w-full bg-gray-100 rounded-full h-1.5">
-                            <div className="h-1.5 rounded-full bg-orange-400" style={{ width: `${bdr.attemptsPercent}%` }} />
+                            <div className="h-1.5 rounded-full bg-red-600" style={{ width: `${bdr.attemptsPercent}%` }} />
                           </div>
                         </div>
                         <div>
@@ -338,11 +338,11 @@ function AdminDashboard() {
           {stagnantLeads && stagnantLeads.length > 0 && (
             <Card className="border-yellow-200" style={{ background: "#fefce8" }}>
               <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2 text-yellow-700">
+                <CardTitle className="text-base flex items-center gap-2 text-red-700">
                   <Clock className="w-4 h-4" />
                   Leads Estagnados (+3 dias)
                 </CardTitle>
-                <CardDescription className="text-yellow-600">Sem interação nos últimos 3 dias</CardDescription>
+                <CardDescription className="text-red-600">Sem interação nos últimos 3 dias</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -375,7 +375,7 @@ function AdminDashboard() {
         <Card className="border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Award className="w-4 h-4" style={{ color: "#e8621a" }} />
+              <Award className="w-4 h-4" style={{ color: "#e21d3c" }} />
               Ranking de BDRs
             </CardTitle>
             <CardDescription>Leads qualificados por BDR</CardDescription>
@@ -385,7 +385,7 @@ function AdminDashboard() {
               {(ranking ?? []).slice(0, 8).map((r, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
-                    style={{ background: i === 0 ? "#e8621a" : i === 1 ? "#94a3b8" : i === 2 ? "#ca8a04" : "#e2e8f0", color: i < 3 ? "white" : "#64748b" }}>
+                    style={{ background: i === 0 ? "#e21d3c" : i === 1 ? "#94a3b8" : i === 2 ? "#c8102e" : "#e2e8f0", color: i < 3 ? "white" : "#64748b" }}>
                     {i + 1}
                   </div>
                   <Avatar className="w-8 h-8 shrink-0">
@@ -414,7 +414,7 @@ function AdminDashboard() {
         <Card className="border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <BarChart3 className="w-4 h-4" style={{ color: "#e8621a" }} />
+              <BarChart3 className="w-4 h-4" style={{ color: "#e21d3c" }} />
               Status dos Leads
             </CardTitle>
             <CardDescription>Distribuição por status de contato</CardDescription>
@@ -453,7 +453,7 @@ function AdminDashboard() {
                   <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="leads" fill="#e8621a" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="leads" fill="#e21d3c" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -474,7 +474,7 @@ function AdminDashboard() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm truncate">{r.name}</p>
                       <div className="w-full bg-muted rounded-full h-1.5 mt-1">
-                        <div className="h-1.5 rounded-full" style={{ width: `${(r.count / (reasonsData[0]?.count ?? 1)) * 100}%`, background: "#e8621a" }} />
+                        <div className="h-1.5 rounded-full" style={{ width: `${(r.count / (reasonsData[0]?.count ?? 1)) * 100}%`, background: "#e21d3c" }} />
                       </div>
                     </div>
                     <span className="text-sm font-semibold text-muted-foreground w-8 text-right">{r.count}</span>
@@ -495,7 +495,7 @@ function AdminDashboard() {
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Forklift className="w-5 h-5" style={{ color: "#e8621a" }} />
+              <Tractor className="w-5 h-5" style={{ color: "#e21d3c" }} />
               Total de Leads na Base
             </DialogTitle>
           </DialogHeader>
@@ -519,7 +519,7 @@ function AdminDashboard() {
                     <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                     <YAxis tick={{ fontSize: 11 }} />
                     <Tooltip />
-                    <Bar dataKey="leads" fill="#e8621a" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="leads" fill="#e21d3c" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : <p className="text-sm text-muted-foreground text-center py-8">Nenhum dado disponível</p>}
@@ -694,13 +694,13 @@ function AdminDashboard() {
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5" style={{ color: "#f59e0b" }} />
+              <Target className="w-5 h-5" style={{ color: "#e21d3c" }} />
               Taxa Contatos → Qualificados — {periodLabel}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="p-6 rounded-xl border text-center">
-              <p className="text-5xl font-bold" style={{ color: "#f59e0b" }}>{conversionContactToQualified}%</p>
+              <p className="text-5xl font-bold" style={{ color: "#e21d3c" }}>{conversionContactToQualified}%</p>
               <p className="text-sm text-muted-foreground mt-2">de {totalContacts} contatos resultaram em {qualifiedLeads} leads qualificados</p>
             </div>
             <div className="grid grid-cols-2 gap-3">

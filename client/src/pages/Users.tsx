@@ -170,7 +170,7 @@ export default function Users() {
                       disabled={u.id === user?.id}
                       title={u.isBlocked ? "Desbloquear" : "Bloquear"}
                     >
-                      <UserX className="w-4 h-4 text-yellow-600" />
+                      <UserX className="w-4 h-4 text-red-600" />
                     </Button>
                     <Button
                       variant="ghost"

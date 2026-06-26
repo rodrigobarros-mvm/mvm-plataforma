@@ -63,10 +63,10 @@ export default function FollowUps() {
             <p className="text-xs text-red-600 font-medium mt-1">Atrasados</p>
           </CardContent>
         </Card>
-        <Card className="border-orange-200 bg-orange-50 dark:bg-orange-950/20 dark:border-orange-800">
+        <Card className="border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-800">
           <CardContent className="p-4 text-center">
-            <p className="text-2xl font-bold" style={{ color: "#e8621a" }}>{pending.length}</p>
-            <p className="text-xs font-medium mt-1" style={{ color: "#e8621a" }}>Agendados</p>
+            <p className="text-2xl font-bold" style={{ color: "#e21d3c" }}>{pending.length}</p>
+            <p className="text-xs font-medium mt-1" style={{ color: "#e21d3c" }}>Agendados</p>
           </CardContent>
         </Card>
         <Card>
@@ -106,7 +106,7 @@ export default function FollowUps() {
           {/* Pending */}
           {pending.length > 0 && (
             <div className="space-y-2">
-              <h2 className="text-sm font-semibold flex items-center gap-2" style={{ color: "#e8621a" }}>
+              <h2 className="text-sm font-semibold flex items-center gap-2" style={{ color: "#e21d3c" }}>
                 <CalendarClock className="w-4 h-4" />
                 Agendados ({pending.length})
               </h2>
@@ -178,18 +178,18 @@ function FollowUpCard({
         ? "opacity-60 bg-muted/20"
         : isOverdue
           ? "border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-800"
-          : "border-orange-200 bg-orange-50/50 dark:bg-orange-950/10 dark:border-orange-900"
+          : "border-red-200 bg-red-50/50 dark:bg-red-950/10 dark:border-red-900"
     }`}>
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-            isDone ? "bg-green-100" : isOverdue ? "bg-red-100" : "bg-orange-100"
+            isDone ? "bg-green-100" : isOverdue ? "bg-red-100" : "bg-red-100"
           }`}>
             {isDone
               ? <CheckCircle2 className="w-4 h-4 text-green-600" />
               : isOverdue
                 ? <Bell className="w-4 h-4 text-red-600" />
-                : <Clock className="w-4 h-4" style={{ color: "#e8621a" }} />
+                : <Clock className="w-4 h-4" style={{ color: "#e21d3c" }} />
             }
           </div>
           <div className="flex-1 min-w-0">
@@ -205,7 +205,7 @@ function FollowUpCard({
                 <span className="text-xs text-muted-foreground">{fu.leadCidade}, {fu.leadUf}</span>
               )}
               {isToday && !isDone && (
-                <Badge className="text-xs bg-orange-100 text-orange-700 border-orange-200">Hoje</Badge>
+                <Badge className="text-xs bg-red-100 text-red-700 border-red-200">Hoje</Badge>
               )}
               {isOverdue && (
                 <Badge className="text-xs bg-red-100 text-red-700 border-red-200">Atrasado</Badge>

@@ -34,12 +34,12 @@ const NOTIF_ICONS: Record<string, React.ElementType> = {
 // Mapeamento de tipo → cor
 const NOTIF_COLORS: Record<string, string> = {
   info: "text-blue-600",
-  warning: "text-yellow-600",
+  warning: "text-red-600",
   success: "text-green-600",
   alert: "text-red-600",
   lead_qualificado: "text-green-600",
-  meta_atingida: "text-orange-500",
-  bdr_meta_atingida: "text-orange-500",
+  meta_atingida: "text-red-600",
+  bdr_meta_atingida: "text-red-600",
 };
 
 const NOTIF_BG: Record<string, string> = {
@@ -175,7 +175,7 @@ export default function Notifications() {
                           {!notif.isRead && (
                             <div
                               className="w-2 h-2 rounded-full"
-                              style={{ background: "#e8621a" }}
+                              style={{ background: "#e21d3c" }}
                             />
                           )}
                         </div>

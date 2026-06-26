@@ -427,7 +427,7 @@ export default function WorkMode() {
             {showScript && (
               <div className="px-4 pb-4 pt-2 text-sm text-muted-foreground bg-muted/30 space-y-2">
                 <p><strong>Abertura:</strong> "Olá, bom dia! Falo com o responsável pela área de logística/operações?"</p>
-                <p><strong>Apresentação:</strong> "Sou {user?.name} da Gallotti Tractor | LS Tractor. Somos revendedores autorizados Michigan para o segmento {lead.segmento ?? "industrial"}."</p>
+                <p><strong>Apresentação:</strong> "Sou {user?.name} da Gallotti Tractor | LS Tractor. Somos revendedores autorizados ENSIGN para o segmento {lead.segmento ?? "industrial"}."</p>
                 <p><strong>Gancho:</strong> "Identifiquei que a {lead.nomeFantasia ?? lead.razaoSocial} pode se beneficiar das nossas máquinas. Vocês utilizam máquinas pesadas na operação atualmente?"</p>
                 <p><strong>Objetivo:</strong> Qualificar necessidade, frota atual e urgência. Agendar reunião com consultor.</p>
               </div>

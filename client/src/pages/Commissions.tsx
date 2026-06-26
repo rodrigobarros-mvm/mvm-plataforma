@@ -93,8 +93,8 @@ export default function Commissions() {
                     : "—"}
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#e8621a20" }}>
-                <DollarSign className="w-5 h-5" style={{ color: "#e8621a" }} />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "#e21d3c20" }}>
+                <DollarSign className="w-5 h-5" style={{ color: "#e21d3c" }} />
               </div>
             </div>
           </CardContent>
@@ -106,7 +106,7 @@ export default function Commissions() {
         <Card className="border-border">
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Settings className="w-4 h-4" style={{ color: "#e8621a" }} />
+              <Settings className="w-4 h-4" style={{ color: "#e21d3c" }} />
               Configurar Comissões
             </CardTitle>
             <CardDescription>Defina o valor de comissão por lead qualificado</CardDescription>
