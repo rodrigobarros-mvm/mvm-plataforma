@@ -38,6 +38,7 @@ export default function Oportunidades() {
   const [, setLocation] = useLocation();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [consultorFilter, setConsultorFilter] = useState("");
   const [showHandoff, setShowHandoff] = useState(false);
   const [handoffLeadId, setHandoffLeadId] = useState<number | null>(null);
 
@@ -49,6 +50,7 @@ export default function Oportunidades() {
     status: statusFilter || undefined,
     search: search || undefined,
   });
+  const { data: propostasStats } = trpc.propostas.stats.useQuery();
 
   // Load qualified leads (for BDR handoff)
   const { data: qualifiedLeads } = trpc.leads.list.useQuery({
@@ -68,7 +70,7 @@ export default function Oportunidades() {
   // Handoff form state
   const [handoffForm, setHandoffForm] = useState({
     modeloInteresse: "", urgencia: "30-90 dias", formaPagamento: "",
-    ticketEstimado: "", observacoesBdr: "",
+    ticketEstimado: "", observacoesBdr: "", proximoPasso: "", dataProximoPasso: "",
   });
 
   const stats = {
@@ -124,6 +126,14 @@ export default function Oportunidades() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Buscar por cliente ou modelo..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
         </div>
+        {/* Propostas stats bar */}
+        {propostasStats && (
+          <div className="flex gap-3 text-xs text-muted-foreground bg-muted/40 rounded-lg px-4 py-2">
+            <span>📄 <strong>{propostasStats.mesAtual}</strong> propostas este mês</span>
+            <span>💰 <strong>R$ {propostasStats.volumeMes.toLocaleString("pt-BR")}</strong> em volume</span>
+            <span>✅ <strong>{propostasStats.aceitas}</strong> aceitas</span>
+          </div>
+        )}
         <div className="flex gap-2 flex-wrap">
           {["", "aguardando_consultor", "em_negociacao", "proposta_enviada", "ganho", "perdido"].map(s => (
             <Button
@@ -320,7 +330,7 @@ export default function Oportunidades() {
               <Button
                 className="flex-1 gap-2"
                 style={{ background: "#e21d3c", color: "white" }}
-                disabled={!handoffLeadId || !handoffForm.observacoesBdr || createOpp.isPending}
+                disabled={!handoffLeadId || !handoffForm.observacoesBdr || !handoffForm.proximoPasso || !handoffForm.dataProximoPasso || createOpp.isPending}
                 onClick={() => {
                   if (!handoffLeadId) return;
                   createOpp.mutate({

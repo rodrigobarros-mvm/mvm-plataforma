@@ -1161,16 +1161,18 @@ const oportunidadesRouter = router({
         observacoesBdr: input.observacoesBdr,
         status: "aguardando_consultor",
       });
-      // Notify admins/gerentes
+      // Notify admins/gerentes + all consultores
       const { notifications } = await import("../drizzle/schema");
-      const admins = await db.select({ id: users.id }).from(users)
-        .where(inArray(users.role, ["adm", "gerente", "admin"]));
-      if (admins.length > 0) {
-        await db.insert(notifications).values(admins.map(a => ({
-          userId: a.id,
+      const toNotify = await db.select({ id: users.id, role: users.role }).from(users)
+        .where(inArray(users.role, ["adm", "gerente", "admin", "consultor"]));
+      if (toNotify.length > 0) {
+        await db.insert(notifications).values(toNotify.map(u => ({
+          userId: u.id,
           type: "nova_oportunidade",
-          title: "Nova Oportunidade Qualificada",
-          content: `BDR passou um lead qualificado para o consultor. Modelo: ${input.modeloInteresse ?? "a definir"}`,
+          title: u.role === "consultor" ? "🔥 Novo Lead Qualificado para Voce!" : "Nova Oportunidade Qualificada",
+          content: u.role === "consultor"
+            ? `BDR passou lead qualificado: ${input.modeloInteresse ?? "modelo a definir"} — R$ ${input.ticketEstimado ?? "a definir"}. Acesse Pipeline para assumir!`
+            : `BDR passou um lead qualificado. Modelo: ${input.modeloInteresse ?? "a definir"} — Ticket: R$ ${input.ticketEstimado ?? "?"}`,
           relatedLeadId: input.leadId,
         })));
       }

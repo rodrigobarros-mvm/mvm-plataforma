@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Printer, MessageCircle, FileText, Building2, Tractor } from "lucide-react";
 import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import { format, addBusinessDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -329,6 +330,14 @@ export default function GerarProposta() {
   const [, setLocation] = useLocation();
   const [step, setStep] = useState<1|2|3>(1);
   const [versao, setVersao] = useState(1);
+  const [saved, setSaved] = useState(false);
+  const saveProposta = trpc.propostas.create.useMutation({
+    onSuccess: (data) => {
+      setSaved(true);
+      toast.success(`Proposta ${data.numero} salva no sistema!`);
+    },
+    onError: () => toast.error("Erro ao salvar proposta"),
+  });
   const [numProposta] = useState(() => genNum(1));
   const dataEmissao = format(new Date(), "dd/MM/yyyy");
   const dataValidade = format(addBusinessDays(new Date(), 3), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });

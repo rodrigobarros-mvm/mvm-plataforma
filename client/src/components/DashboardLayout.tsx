@@ -68,6 +68,7 @@ import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import GlobalSearch from "./GlobalSearch";
 import QuickActionFAB from "./QuickActionFAB";
 import { useSmartNotifications } from "@/hooks/useSmartNotifications";
+import OnboardingTour from "./OnboardingTour";
 import { Button } from "./ui/button";
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -180,6 +181,7 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Zap, label: "Nova Oportunidade", path: "/nova-oportunidade" },
         { icon: TrendingUp, label: "Minhas Oportunidades", path: "/oportunidades" },
         { icon: FileText, label: "Gerar Proposta", path: "/gerar-proposta" },
+        { icon: FileText, label: "Hist. Propostas", path: "/historico-propostas" },
         { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
         { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
       ],
@@ -217,8 +219,9 @@ function getMenuGroups(role: string): MenuGroup[] {
   }
 
   groups.push({
-    label: "Suporte",
+    label: "Minha Conta",
     items: [
+      { icon: User, label: "Meu Perfil", path: "/meu-perfil" },
       { icon: MessageCircle, label: "SAC / Suporte", path: "/sac" },
     ],
   });
@@ -520,6 +523,7 @@ function DashboardLayoutContent({
         <TeamProgressBar />
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">{children}</main>
         <QuickActionFAB />
+        <OnboardingTour />
         <MobileBottomBar />
       </SidebarInset>
     </>
