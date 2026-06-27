@@ -285,3 +285,158 @@ export const leadAssignmentLog = mysqlTable("lead_assignment_log", {
 });
 export type LeadAssignmentLog = typeof leadAssignmentLog.$inferSelect;
 export type InsertLeadAssignmentLog = typeof leadAssignmentLog.$inferInsert;
+
+
+// ─── FASE 1: Handoff BDR → Consultor ─────────────────────────────────────────
+export const oportunidades = mysqlTable("oportunidades", {
+  id: int("id").autoincrement().primaryKey(),
+  leadId: int("leadId").notNull(),          // lead qualificado de origem
+  bdrId: int("bdrId").notNull(),             // BDR que qualificou
+  consultorId: int("consultorId"),           // consultor atribuído
+  titulo: varchar("titulo", { length: 256 }),
+  // Dados capturados na qualificação
+  modeloInteresse: varchar("modeloInteresse", { length: 256 }),
+  frotaAtual: varchar("frotaAtual", { length: 256 }),
+  urgencia: varchar("urgencia", { length: 64 }),  // imediato / 30-90 dias / pesquisando
+  formaPagamento: varchar("formaPagamento", { length: 128 }),
+  ticketEstimado: decimal("ticketEstimado", { precision: 12, scale: 2 }),
+  observacoesBdr: text("observacoesBdr"),    // resumo do BDR para o consultor
+  // Controle de pipeline
+  status: mysqlEnum("status", [
+    "aguardando_consultor",   // BDR passou, consultor ainda não assumiu
+    "em_negociacao",          // consultor está trabalhando
+    "proposta_enviada",       // proposta gerada e enviada
+    "aguardando_decisao",     // cliente analisando
+    "ganho",                  // fechado
+    "perdido",                // perdeu
+    "cancelado",
+  ]).default("aguardando_consultor").notNull(),
+  motivoPerda: text("motivoPerda"),
+  dataFechamento: timestamp("dataFechamento"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Oportunidade = typeof oportunidades.$inferSelect;
+
+// Interações da oportunidade (consultor registra reuniões, ligações etc.)
+export const oportunidadeInteracoes = mysqlTable("oportunidade_interacoes", {
+  id: int("id").autoincrement().primaryKey(),
+  oportunidadeId: int("oportunidadeId").notNull(),
+  userId: int("userId").notNull(),
+  tipo: mysqlEnum("tipo", ["ligacao", "reuniao", "email", "whatsapp", "visita", "proposta", "observacao"]).notNull(),
+  resumo: text("resumo"),
+  proximoPasso: text("proximoPasso"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+// ─── FASE 2: Catálogo de Máquinas e Propostas ────────────────────────────────
+export const maquinas = mysqlTable("maquinas", {
+  id: int("id").autoincrement().primaryKey(),
+  marca: varchar("marca", { length: 64 }).notNull(),           // LS Tractor / ENSIGN
+  serie: varchar("serie", { length: 128 }),
+  modelo: varchar("modelo", { length: 128 }).notNull(),
+  potenciaCv: decimal("potenciaCv", { precision: 6, scale: 1 }),
+  tracao: varchar("tracao", { length: 32 }),
+  transmissao: varchar("transmissao", { length: 128 }),
+  versao: varchar("versao", { length: 64 }),                  // Plataformado / Cabinado
+  aplicacaoPrincipal: text("aplicacaoPrincipal"),
+  culturasSegmentos: text("culturasSegmentos"),
+  // Preço e precificação
+  precoFabrica: decimal("precoFabrica", { precision: 12, scale: 2 }),  // custo na fábrica
+  precoTabelaVarejo: decimal("precoTabelaVarejo", { precision: 12, scale: 2 }),
+  // Ficha técnica (JSON)
+  fichaTecnica: text("fichaTecnica"),  // JSON com specs detalhadas
+  // Imagem
+  fotoUrl: text("fotoUrl"),
+  ativo: boolean("ativo").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Maquina = typeof maquinas.$inferSelect;
+
+// ─── FASE 3: Estoque (chassis) ────────────────────────────────────────────────
+export const estoque = mysqlTable("estoque", {
+  id: int("id").autoincrement().primaryKey(),
+  maquinaId: int("maquinaId").notNull(),
+  chassis: varchar("chassis", { length: 64 }).unique(),
+  cor: varchar("cor", { length: 64 }),
+  localizacao: mysqlEnum("localizacao", ["loja", "fabrica", "transito", "vendido"]).default("loja").notNull(),
+  anoFabricacao: int("anoFabricacao"),
+  anoModelo: int("anoModelo"),
+  // Custos reais desta unidade
+  custoAquisicao: decimal("custoAquisicao", { precision: 12, scale: 2 }),
+  freteEntrada: decimal("freteEntrada", { precision: 10, scale: 2 }),
+  impostos: decimal("impostos", { precision: 10, scale: 2 }),
+  // Precificação
+  precoVendaBruto: decimal("precoVendaBruto", { precision: 12, scale: 2 }),
+  margemPercentual: decimal("margemPercentual", { precision: 5, scale: 2 }),
+  notaFiscalEntrada: varchar("notaFiscalEntrada", { length: 64 }),
+  dataEntrada: timestamp("dataEntrada"),
+  dataVenda: timestamp("dataVenda"),
+  vendidoPara: int("vendidoPara"),   // oportunidade que fechou
+  observacoes: text("observacoes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Estoque = typeof estoque.$inferSelect;
+
+// ─── FASE 3: Precificação (regras por estado/produto) ─────────────────────────
+export const precificacao = mysqlTable("precificacao", {
+  id: int("id").autoincrement().primaryKey(),
+  maquinaId: int("maquinaId").notNull(),
+  // Impostos sobre o produto
+  icmsOrigem: decimal("icmsOrigem", { precision: 5, scale: 2 }).default("12.00"),   // SC -> cliente
+  icmsDestino: decimal("icmsDestino", { precision: 5, scale: 2 }).default("12.00"),
+  ipi: decimal("ipi", { precision: 5, scale: 2 }).default("0.00"),
+  pis: decimal("pis", { precision: 5, scale: 2 }).default("0.65"),
+  cofins: decimal("cofins", { precision: 5, scale: 2 }).default("3.00"),
+  st: decimal("st", { precision: 5, scale: 2 }).default("0.00"),
+  // Frete estimado por região
+  freteNordeste: decimal("freteNordeste", { precision: 10, scale: 2 }),
+  freteSudeste: decimal("freteSudeste", { precision: 10, scale: 2 }),
+  freteSul: decimal("freteSul", { precision: 10, scale: 2 }),
+  freteCentroOeste: decimal("freteCentroOeste", { precision: 10, scale: 2 }),
+  freteNorte: decimal("freteNorte", { precision: 10, scale: 2 }),
+  // Margem mínima e padrão
+  margemMinima: decimal("margemMinima", { precision: 5, scale: 2 }).default("8.00"),
+  margemPadrao: decimal("margemPadrao", { precision: 5, scale: 2 }).default("12.00"),
+  // BNDES/FINAME spread
+  spreadFinanciamento: decimal("spreadFinanciamento", { precision: 5, scale: 2 }).default("0.00"),
+  ativo: boolean("ativo").default(true).notNull(),
+  updatedBy: int("updatedBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+// ─── Propostas Comerciais ────────────────────────────────────────────────────
+export const propostas = mysqlTable("propostas", {
+  id: int("id").autoincrement().primaryKey(),
+  numero: varchar("numero", { length: 32 }).unique(),         // PROP-2025-001
+  oportunidadeId: int("oportunidadeId").notNull(),
+  consultorId: int("consultorId").notNull(),
+  // Cliente
+  clienteNome: varchar("clienteNome", { length: 512 }).notNull(),
+  clienteCnpj: varchar("clienteCnpj", { length: 32 }),
+  clienteUf: varchar("clienteUf", { length: 4 }),
+  // Itens (JSON: [{maquinaId, chassis, qty, precoUnitario, desconto, total}])
+  itens: text("itens").notNull(),
+  // Totais
+  subtotal: decimal("subtotal", { precision: 12, scale: 2 }).notNull(),
+  descontoTotal: decimal("descontoTotal", { precision: 12, scale: 2 }).default("0"),
+  freteTotal: decimal("freteTotal", { precision: 10, scale: 2 }).default("0"),
+  totalGeral: decimal("totalGeral", { precision: 12, scale: 2 }).notNull(),
+  margemGeral: decimal("margemGeral", { precision: 5, scale: 2 }),
+  // Condições
+  condicaoPagamento: varchar("condicaoPagamento", { length: 256 }),
+  prazoEntrega: varchar("prazoEntrega", { length: 128 }),
+  validadeAte: timestamp("validadeAte"),
+  // Status
+  status: mysqlEnum("status", ["rascunho", "enviada", "aceita", "recusada", "expirada"]).default("rascunho").notNull(),
+  motivoRecusa: text("motivoRecusa"),
+  // Conteúdo para PDF
+  observacoesCliente: text("observacoesCliente"),
+  observacoesInternas: text("observacoesInternas"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Proposta = typeof propostas.$inferSelect;

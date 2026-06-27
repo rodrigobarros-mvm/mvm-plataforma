@@ -28,6 +28,9 @@ import WorkMode from "./pages/WorkMode";
 import Pipeline from "./pages/Pipeline";
 import FollowUps from "./pages/FollowUps";
 import Comparativos from "./pages/Comparativos";
+import Oportunidades from "./pages/Oportunidades";
+import Maquinas from "./pages/Maquinas";
+import Estoque from "./pages/Estoque";
 import QualificationFieldsConfig from "./pages/QualificationFieldsConfig";
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -72,6 +75,9 @@ function Router() {
       <Route path="/work-mode" component={() => <ProtectedRoute component={WorkMode} />} />
       <Route path="/pipeline" component={() => <ProtectedRoute component={Pipeline} />} />
       <Route path="/comparativos" component={() => <ProtectedRoute component={Comparativos} />} />
+      <Route path="/oportunidades" component={() => <ProtectedRoute component={Oportunidades} />} />
+      <Route path="/maquinas" component={() => <ProtectedRoute component={Maquinas} />} />
+      <Route path="/estoque" component={() => <ProtectedRoute component={Estoque} />} />
       <Route path="/follow-ups" component={() => <ProtectedRoute component={FollowUps} />} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

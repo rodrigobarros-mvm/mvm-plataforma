@@ -122,7 +122,15 @@ function getMenuGroups(role: string): MenuGroup[] {
 
   if (isAdm || isGerente) {
     groups.push({
-      label: "Gestão",
+      label: "Comercial",
+      items: [
+        { icon: TrendingUp, label: "Oportunidades", path: "/oportunidades" },
+        { icon: Package, label: "Catálogo / Máquinas", path: "/maquinas" },
+        { icon: Package, label: "Estoque & Chassis", path: "/estoque" },
+      ],
+    },
+    {
+    label: "Gestão",
       items: [
         { icon: BarChart3, label: "Relatórios", path: "/reports" },
         { icon: TrendingUp, label: "Funil de Pipeline", path: "/pipeline" },

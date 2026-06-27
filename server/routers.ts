@@ -1,4 +1,5 @@
 import { COOKIE_NAME } from "@shared/const";
+import { oportunidades, maquinas as maquinasTable, estoque as estoqueTable } from "../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { getSessionCookieOptions } from "./_core/cookies";
@@ -1087,4 +1088,237 @@ export const appRouter = router({
       }),
   }),
 });
+
+
+// ─── OPORTUNIDADES ROUTER ─────────────────────────────────────────────────────
+import {
+  oportunidades, oportunidadeInteracoes,
+  maquinas, estoque, propostas
+} from "../drizzle/schema";
+
+const oportunidadesRouter = router({
+  list: protectedProcedure
+    .input(z.object({
+      status: z.string().optional(),
+      search: z.string().optional(),
+      limit: z.number().optional().default(50),
+    }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return { data: [], total: 0 };
+      const { leads: leadsTable, users } = await import("../drizzle/schema");
+      const conditions: any[] = [];
+      if (input.status) conditions.push(eq(oportunidades.status, input.status as any));
+      const rows = await db
+        .select({
+          id: oportunidades.id,
+          leadId: oportunidades.leadId,
+          bdrId: oportunidades.bdrId,
+          consultorId: oportunidades.consultorId,
+          titulo: oportunidades.titulo,
+          modeloInteresse: oportunidades.modeloInteresse,
+          urgencia: oportunidades.urgencia,
+          formaPagamento: oportunidades.formaPagamento,
+          ticketEstimado: oportunidades.ticketEstimado,
+          observacoesBdr: oportunidades.observacoesBdr,
+          status: oportunidades.status,
+          createdAt: oportunidades.createdAt,
+          updatedAt: oportunidades.updatedAt,
+          leadNome: leadsTable.nomeFantasia,
+          leadRazao: leadsTable.razaoSocial,
+          leadCidade: leadsTable.cidade,
+          leadUf: leadsTable.uf,
+          bdrNome: users.name,
+        })
+        .from(oportunidades)
+        .leftJoin(leadsTable, eq(oportunidades.leadId, leadsTable.id))
+        .leftJoin(users, eq(oportunidades.bdrId, users.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(oportunidades.createdAt))
+        .limit(input.limit);
+      return { data: rows, total: rows.length };
+    }),
+
+  create: protectedProcedure
+    .input(z.object({
+      leadId: z.number(),
+      modeloInteresse: z.string().optional(),
+      urgencia: z.string().optional(),
+      formaPagamento: z.string().optional(),
+      ticketEstimado: z.string().optional(),
+      observacoesBdr: z.string(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      await db.insert(oportunidades).values({
+        leadId: input.leadId,
+        bdrId: ctx.user!.id,
+        modeloInteresse: input.modeloInteresse,
+        urgencia: input.urgencia,
+        formaPagamento: input.formaPagamento,
+        ticketEstimado: input.ticketEstimado,
+        observacoesBdr: input.observacoesBdr,
+        status: "aguardando_consultor",
+      });
+      // Notify admins/gerentes
+      const { notifications } = await import("../drizzle/schema");
+      const admins = await db.select({ id: users.id }).from(users)
+        .where(inArray(users.role, ["adm", "gerente", "admin"]));
+      if (admins.length > 0) {
+        await db.insert(notifications).values(admins.map(a => ({
+          userId: a.id,
+          type: "nova_oportunidade",
+          title: "Nova Oportunidade Qualificada",
+          content: `BDR passou um lead qualificado para o consultor. Modelo: ${input.modeloInteresse ?? "a definir"}`,
+          relatedLeadId: input.leadId,
+        })));
+      }
+      return { success: true };
+    }),
+
+  updateStatus: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      status: z.string(),
+      motivoPerda: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      await db.update(oportunidades)
+        .set({
+          status: input.status as any,
+          motivoPerda: input.motivoPerda,
+          consultorId: ctx.user!.id,
+          updatedAt: new Date(),
+        })
+        .where(eq(oportunidades.id, input.id));
+      return { success: true };
+    }),
+});
+
+// ─── MAQUINAS ROUTER ─────────────────────────────────────────────────────────
+const { users } = await import("../drizzle/schema").catch(() => ({ users: null }));
+
+const maquinasRouter = router({
+  list: protectedProcedure
+    .input(z.object({
+      search: z.string().optional(),
+      marca: z.string().optional(),
+      ativo: z.boolean().optional(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { data: [], total: 0 };
+      const conditions: any[] = [eq(maquinas.ativo, true)];
+      if (input.marca) conditions.push(eq(maquinas.marca, input.marca));
+      if (input.search) {
+        conditions.push(or(
+          like(maquinas.modelo, `%${input.search}%`),
+          like(maquinas.serie, `%${input.search}%`),
+          like(maquinas.aplicacaoPrincipal, `%${input.search}%`),
+        ));
+      }
+      const rows = await db.select().from(maquinas)
+        .where(and(...conditions))
+        .orderBy(maquinas.marca, maquinas.potenciaCv);
+      return { data: rows, total: rows.length };
+    }),
+
+  create: admOrGerenteProcedure
+    .input(z.object({
+      marca: z.string(),
+      serie: z.string().optional(),
+      modelo: z.string(),
+      potenciaCv: z.string().optional(),
+      tracao: z.string().optional(),
+      transmissao: z.string().optional(),
+      versao: z.string().optional(),
+      aplicacaoPrincipal: z.string().optional(),
+      culturasSegmentos: z.string().optional(),
+      precoFabrica: z.string().optional(),
+      precoTabelaVarejo: z.string().optional(),
+      fotoUrl: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      await db.insert(maquinas).values({
+        ...input,
+        potenciaCv: input.potenciaCv || null,
+        precoFabrica: input.precoFabrica || null,
+        precoTabelaVarejo: input.precoTabelaVarejo || null,
+        ativo: true,
+      });
+      return { success: true };
+    }),
+});
+
+// ─── ESTOQUE ROUTER ───────────────────────────────────────────────────────────
+const estoqueRouter = router({
+  list: protectedProcedure
+    .input(z.object({
+      search: z.string().optional(),
+      localizacao: z.string().optional(),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { data: [], total: 0 };
+      const conditions: any[] = [];
+      if (input.localizacao) conditions.push(eq(estoque.localizacao, input.localizacao as any));
+      const rows = await db
+        .select({
+          id: estoque.id,
+          maquinaId: estoque.maquinaId,
+          chassis: estoque.chassis,
+          cor: estoque.cor,
+          localizacao: estoque.localizacao,
+          anoFabricacao: estoque.anoFabricacao,
+          anoModelo: estoque.anoModelo,
+          custoAquisicao: estoque.custoAquisicao,
+          freteEntrada: estoque.freteEntrada,
+          impostos: estoque.impostos,
+          precoVendaBruto: estoque.precoVendaBruto,
+          margemPercentual: estoque.margemPercentual,
+          observacoes: estoque.observacoes,
+          dataEntrada: estoque.dataEntrada,
+          maquinaModelo: maquinas.modelo,
+          maquinaCv: maquinas.potenciaCv,
+          maquinaMarca: maquinas.marca,
+        })
+        .from(estoque)
+        .leftJoin(maquinas, eq(estoque.maquinaId, maquinas.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(estoque.createdAt));
+      return { data: rows, total: rows.length };
+    }),
+
+  create: admOrGerenteProcedure
+    .input(z.object({
+      maquinaId: z.number(),
+      chassis: z.string().optional(),
+      cor: z.string().optional(),
+      localizacao: z.string().optional(),
+      anoFabricacao: z.number().optional(),
+      anoModelo: z.number().optional(),
+      custoAquisicao: z.string().optional(),
+      freteEntrada: z.string().optional(),
+      impostos: z.string().optional(),
+      precoVendaBruto: z.string().optional(),
+      margemPercentual: z.string().optional(),
+      observacoes: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      await db.insert(estoque).values({
+        ...input,
+        localizacao: (input.localizacao ?? "loja") as any,
+        dataEntrada: new Date(),
+      });
+      return { success: true };
+    }),
+});
+
 export type AppRouter = typeof appRouter;
