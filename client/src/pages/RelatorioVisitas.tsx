@@ -110,7 +110,7 @@ export default function RelatorioVisitas() {
         <CardContent>
           <div className="rounded-xl overflow-hidden border border-border" style={{ height: "380px", position: "relative" }}>
             {/* Google Maps embed showing checkin locations */}
-            {checkins.length > 0 ? (
+            {checkins.length > 0 && localStorage.getItem("maps_api_key") ? (
               <iframe
                 title="Mapa de Visitas"
                 width="100%"
@@ -118,16 +118,22 @@ export default function RelatorioVisitas() {
                 style={{ border: 0 }}
                 loading="lazy"
                 allowFullScreen
-                src={`https://www.google.com/maps/embed/v1/search?key=AIzaSyD-dummy-replace-with-real-key&q=${encodeURIComponent(
+                src={`https://www.google.com/maps/embed/v1/search?key=${localStorage.getItem("maps_api_key") ?? ""}&q=${encodeURIComponent(
                   checkins.map(c => c.cidade).filter(Boolean).join("|") || "Luís Eduardo Magalhães, BA"
                 )}&zoom=7&language=pt-BR`}
               />
             ) : (
-              <div className="h-full flex items-center justify-center bg-muted/30">
-                <div className="text-center">
-                  <MapPin className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+              <div className="h-full flex items-center justify-center bg-muted/30 flex-col gap-3">
+                <MapPin className="w-12 h-12 text-muted-foreground/30" />
+                {!localStorage.getItem("maps_api_key") ? (
+                  <div className="text-center px-6">
+                    <p className="text-sm font-semibold text-muted-foreground">Chave Google Maps não configurada</p>
+                    <p className="text-xs text-muted-foreground mt-1">Acesse <strong>Configurações → Google Maps API</strong> para ativar o mapa</p>
+                    <a href="/configuracoes" className="text-xs text-blue-600 underline mt-2 block">Ir para Configurações →</a>
+                  </div>
+                ) : (
                   <p className="text-sm font-semibold text-muted-foreground">Nenhum check-in no período</p>
-                </div>
+                )}
               </div>
             )}
             {/* Overlay with check-in status summary */}
