@@ -17,6 +17,7 @@ import {
   AlertTriangle, Clock, Phone, ChevronRight, ExternalLink
 } from "lucide-react";
 import GestorPanel from "@/components/GestorPanel";
+import PipelineHealth from "@/components/PipelineHealth";
 import { useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { toast } from "sonner";

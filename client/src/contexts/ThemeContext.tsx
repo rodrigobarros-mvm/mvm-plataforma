@@ -24,10 +24,29 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(() => {
     if (switchable) {
       const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
+      if (stored) return stored as Theme;
+      // Auto: dark after 18h or before 7h
+      const h = new Date().getHours();
+      return (h >= 18 || h < 7) ? "dark" : defaultTheme;
     }
     return defaultTheme;
   });
+
+  // Auto-switch at 7am and 18pm
+  useEffect(() => {
+    if (!switchable) return;
+    const checkTime = () => {
+      const h = new Date().getHours();
+      const m = new Date().getMinutes();
+      const stored = localStorage.getItem("theme-manual");
+      if (!stored) { // Only auto-switch if user hasn't manually set it today
+        if (h === 7 && m < 5) setTheme("light");
+        if (h === 18 && m < 5) setTheme("dark");
+      }
+    };
+    const interval = setInterval(checkTime, 60000);
+    return () => clearInterval(interval);
+  }, [switchable]);
 
   useEffect(() => {
     const root = document.documentElement;

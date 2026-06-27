@@ -58,7 +58,8 @@ import {
   Zap,
   Package,
   Calendar,
-  Trophy
+  Trophy,
+  FileText
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -176,6 +177,7 @@ function getMenuGroups(role: string): MenuGroup[] {
       items: [
         { icon: Zap, label: "Nova Oportunidade", path: "/nova-oportunidade" },
         { icon: TrendingUp, label: "Minhas Oportunidades", path: "/oportunidades" },
+        { icon: FileText, label: "Gerar Proposta", path: "/gerar-proposta" },
         { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
         { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
       ],

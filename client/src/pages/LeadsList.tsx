@@ -239,7 +239,8 @@ export default function LeadsList() {
                 <th className="text-left px-4 py-3 font-semibold text-foreground hidden xl:table-cell">Contato</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Status</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground hidden sm:table-cell">Tentativas</th>
-                <th className="text-left px-4 py-3 font-semibold text-foreground">Prioridade</th>
+                <th className="text-left px-4 py-3 font-semibold text-foreground">Score</th>
+                    <th className="text-left px-4 py-3 font-semibold text-foreground">Prioridade</th>
                 <th className="text-left px-4 py-3 font-semibold text-foreground">Ações</th>
               </tr>
             </thead>
