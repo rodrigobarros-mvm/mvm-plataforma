@@ -56,6 +56,7 @@ import {
   Users,
   FileUp,
   Zap,
+  Package
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
