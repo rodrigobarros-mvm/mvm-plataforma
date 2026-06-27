@@ -59,7 +59,8 @@ import {
   Package,
   Calendar,
   Trophy,
-  FileText
+  FileText,
+  MapPin
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -145,6 +146,7 @@ function getMenuGroups(role: string): MenuGroup[] {
     label: "Gestão",
       items: [
         { icon: BarChart3, label: "Relatórios", path: "/reports" },
+        { icon: MapPin, label: "Relatório de Visitas", path: "/relatorio-visitas" },
         { icon: TrendingUp, label: "Funil de Pipeline", path: "/pipeline" },
         { icon: Target, label: "Metas & KPIs", path: "/goals" },
         { icon: DollarSign, label: "Comissões", path: "/commissions" },

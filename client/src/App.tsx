@@ -33,6 +33,8 @@ import NovaOportunidade from "./pages/NovaOportunidade";
 import RankingConsultores from "./pages/RankingConsultores";
 import AgendaConsultor from "./pages/AgendaConsultor";
 import GerarProposta from "./pages/GerarProposta";
+import RelatorioVisitas from "./pages/RelatorioVisitas";
+import OportunidadeDetalhe from "./pages/OportunidadeDetalhe";
 import Maquinas from "./pages/Maquinas";
 import Estoque from "./pages/Estoque";
 import QualificationFieldsConfig from "./pages/QualificationFieldsConfig";
@@ -84,6 +86,8 @@ function Router() {
       <Route path="/ranking-consultores" component={() => <ProtectedRoute component={RankingConsultores} />} />
       <Route path="/agenda-consultor" component={() => <ProtectedRoute component={AgendaConsultor} />} />
       <Route path="/gerar-proposta" component={() => <ProtectedRoute component={GerarProposta} />} />
+      <Route path="/relatorio-visitas" component={() => <ProtectedRoute component={RelatorioVisitas} />} />
+      <Route path="/oportunidades/:id" component={() => <ProtectedRoute component={OportunidadeDetalhe} />} />
       <Route path="/maquinas" component={() => <ProtectedRoute component={Maquinas} />} />
       <Route path="/estoque" component={() => <ProtectedRoute component={Estoque} />} />
       <Route path="/follow-ups" component={() => <ProtectedRoute component={FollowUps} />} />

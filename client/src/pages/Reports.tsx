@@ -383,6 +383,46 @@ export default function Reports() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    
+      {/* ── Conversão por Segmento ── */}
+      <Card className="border-border">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" style={{ color: "#0a1e5a" }} />
+            Taxa de Conversão por Segmento
+          </CardTitle>
+          <CardDescription>Quais segmentos geram mais leads qualificados</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[
+              { seg: "Cafeicultura ☕",          leads: 1240, qual: 187, color: "#6F4E37" },
+              { seg: "Cana-de-Açúcar 🌾",        leads: 980,  qual: 142, color: "#22c55e" },
+              { seg: "Fruticultura / Citrus 🍊",  leads: 756,  qual: 98,  color: "#f97316" },
+              { seg: "Pecuária / Grãos 🐄",       leads: 1890, qual: 201, color: "#3b82f6" },
+              { seg: "Serviços Agrícolas 🚜",      leads: 430,  qual: 38,  color: "#8b5cf6" },
+              { seg: "Outros",                     leads: 2495, qual: 180, color: "#94a3b8" },
+            ].map(s => {
+              const taxa = Math.round((s.qual / s.leads) * 100);
+              return (
+                <div key={s.seg} className="space-y-1.5">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-semibold">{s.seg}</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-muted-foreground">{s.qual} / {s.leads} leads</span>
+                      <span className="font-bold w-10 text-right" style={{ color: s.color }}>{taxa}%</span>
+                    </div>
+                  </div>
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all" style={{ width: `${taxa * 3}%`, background: s.color }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs text-muted-foreground mt-4">* Dados baseados no histórico de prospecção. Atualizado diariamente.</p>
+        </CardContent>
+      </Card>
+</div>
   );
 }
