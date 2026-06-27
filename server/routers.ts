@@ -105,7 +105,7 @@ const canInviteProcedure = protectedProcedure.use(({ ctx, next }) => {
 });
 
 // ─── App Router ───────────────────────────────────────────────────────────────
-export const appRouter = router({
+const appRouter = router({
   system: systemRouter,
 
   auth: router({
