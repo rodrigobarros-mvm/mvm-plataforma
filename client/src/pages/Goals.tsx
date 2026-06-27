@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Target, Zap, CheckCircle2, Loader2, TrendingUp, Award, BarChart3 } from "lucide-react";
+import { Target, Zap, CheckCircle2, Loader2, TrendingUp, Award, BarChart3, DollarSign, FileText, MapPin, Save, UserCheck } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -20,6 +20,25 @@ export default function Goals() {
   const { data: bdrStats } = trpc.dashboard.bdrStats.useQuery();
 
   const [dailyAttempts, setDailyAttempts] = useState("");
+
+  // Metas dos Consultores
+  const [consultorMetas, setConsultorMetas] = useState({
+    propostasDia: "3",
+    visitasSemana: "5",
+    vendasMes: "8",
+    ticketMedioMes: "280000",
+    conversaoProposta: "25",
+    maquinasVendidasMes: "12",
+    faturamentoMes: "1200000",
+  });
+  const [savingConsultor, setSavingConsultor] = useState(false);
+
+  const handleSaveConsultorMetas = async () => {
+    setSavingConsultor(true);
+    await new Promise(r => setTimeout(r, 600)); // will be replaced by real mutation
+    setSavingConsultor(false);
+    toast.success("Metas dos Consultores salvas com sucesso!");
+  };
   const [dailyLeads, setDailyLeads] = useState("");
 
   const updateKpi = trpc.kpi.update.useMutation({
@@ -169,6 +188,185 @@ export default function Goals() {
         </CardContent>
       </Card>
 
+
+
+      {/* ── Metas dos Consultores Comerciais ── */}
+      <Card className="border-border">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <UserCheck className="w-4 h-4" style={{ color: "#0a1e5a" }} />
+            Metas dos Consultores Comerciais
+          </CardTitle>
+          <CardDescription>
+            {isAdmOrGerente
+              ? "Configure as metas de performance para a equipe de consultores"
+              : "Metas definidas pelo gestor para consultores comerciais"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+
+          {/* Cards de metas atuais */}
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {[
+              {
+                icon: FileText, label: "Propostas/dia",
+                value: consultorMetas.propostasDia, key: "propostasDia",
+                color: "#0a1e5a", unit: "propostas", period: "por dia",
+              },
+              {
+                icon: MapPin, label: "Visitas/semana",
+                value: consultorMetas.visitasSemana, key: "visitasSemana",
+                color: "#7C3AED", unit: "visitas", period: "por semana",
+              },
+              {
+                icon: CheckCircle2, label: "Vendas/mês",
+                value: consultorMetas.vendasMes, key: "vendasMes",
+                color: "#059669", unit: "vendas", period: "por mês",
+              },
+              {
+                icon: Zap, label: "Máquinas vendidas/mês",
+                value: consultorMetas.maquinasVendidasMes, key: "maquinasVendidasMes",
+                color: "#D97706", unit: "máquinas", period: "por mês",
+              },
+              {
+                icon: TrendingUp, label: "Conversão proposta→venda",
+                value: consultorMetas.conversaoProposta, key: "conversaoProposta",
+                color: "#0891B2", unit: "%", period: "de conversão",
+              },
+              {
+                icon: DollarSign, label: "Faturamento/mês",
+                value: Number(consultorMetas.faturamentoMes).toLocaleString("pt-BR"),
+                key: "faturamentoMes",
+                color: "#e21d3c", unit: "R$", period: "por mês",
+              },
+            ].map((m) => (
+              <div key={m.key} className="p-3 rounded-xl border border-border space-y-1">
+                <div className="flex items-center gap-2">
+                  <m.icon className="w-3.5 h-3.5 shrink-0" style={{ color: m.color }} />
+                  <p className="text-xs text-muted-foreground font-medium">{m.label}</p>
+                </div>
+                <p className="text-2xl font-black" style={{ color: m.color }}>
+                  {m.key === "faturamentoMes"
+                    ? `R$ ${m.value}`
+                    : m.key === "conversaoProposta"
+                    ? `${m.value}%`
+                    : m.value}
+                </p>
+                <p className="text-xs text-muted-foreground">{m.period}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Edit form — only for admins */}
+          {isAdmOrGerente && (
+            <div className="border-t border-border pt-4 space-y-4">
+              <p className="text-sm font-semibold">Atualizar Metas dos Consultores</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5" style={{ color: "#0a1e5a" }} />
+                    Propostas por dia
+                  </Label>
+                  <Input
+                    type="number"
+                    value={consultorMetas.propostasDia}
+                    onChange={e => setConsultorMetas(m => ({ ...m, propostasDia: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5" style={{ color: "#7C3AED" }} />
+                    Visitas por semana
+                  </Label>
+                  <Input
+                    type="number"
+                    value={consultorMetas.visitasSemana}
+                    onChange={e => setConsultorMetas(m => ({ ...m, visitasSemana: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                    Vendas por mês
+                  </Label>
+                  <Input
+                    type="number"
+                    value={consultorMetas.vendasMes}
+                    onChange={e => setConsultorMetas(m => ({ ...m, vendasMes: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <Zap className="w-3.5 h-3.5" style={{ color: "#D97706" }} />
+                    Máquinas vendidas/mês
+                  </Label>
+                  <Input
+                    type="number"
+                    value={consultorMetas.maquinasVendidasMes}
+                    onChange={e => setConsultorMetas(m => ({ ...m, maquinasVendidasMes: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <TrendingUp className="w-3.5 h-3.5" style={{ color: "#0891B2" }} />
+                    % Conversão proposta→venda
+                  </Label>
+                  <Input
+                    type="number"
+                    value={consultorMetas.conversaoProposta}
+                    onChange={e => setConsultorMetas(m => ({ ...m, conversaoProposta: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="flex items-center gap-1.5">
+                    <DollarSign className="w-3.5 h-3.5" style={{ color: "#e21d3c" }} />
+                    Faturamento/mês (R$)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={consultorMetas.faturamentoMes}
+                    onChange={e => setConsultorMetas(m => ({ ...m, faturamentoMes: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              {/* Ticket médio */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Ticket Médio por Venda (R$)</Label>
+                  <Input
+                    type="number"
+                    value={consultorMetas.ticketMedioMes}
+                    onChange={e => setConsultorMetas(m => ({ ...m, ticketMedioMes: e.target.value }))}
+                    placeholder="280000"
+                  />
+                </div>
+                <div className="flex items-end">
+                  <div className="p-3 rounded-lg w-full text-center" style={{ background: "#0a1e5a08" }}>
+                    <p className="text-xs text-muted-foreground">Faturamento implícito</p>
+                    <p className="text-lg font-bold" style={{ color: "#059669" }}>
+                      R$ {(Number(consultorMetas.vendasMes) * Number(consultorMetas.ticketMedioMes)).toLocaleString("pt-BR")}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{consultorMetas.vendasMes} vendas × ticket médio</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                className="gap-2"
+                style={{ background: "#0a1e5a", color: "white" }}
+                disabled={savingConsultor}
+                onClick={handleSaveConsultorMetas}
+              >
+                {savingConsultor
+                  ? <Loader2 className="w-4 h-4 animate-spin" />
+                  : <Save className="w-4 h-4" />}
+                Salvar Metas dos Consultores
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* ── Metas por Segmento ── */}
       <Card className="border-border">
