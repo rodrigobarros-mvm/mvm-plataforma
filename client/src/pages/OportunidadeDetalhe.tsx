@@ -51,16 +51,14 @@ export default function OportunidadeDetalhe() {
 
   // Unified timeline mock — will pull from real backend
   const MOCK_TIMELINE = [
-    { id: 1, tipo: "tentativa", conteudo: "Ligação — não atendeu", data: new Date(Date.now()-86400000*10), autor: "Rodrigo BDR", role: "bdr" },
+    { id: 1, tipo: "tentativa", conteudo: "Ligacao - nao atendeu", data: new Date(Date.now()-86400000*10), autor: "Rodrigo BDR", role: "bdr" },
     { id: 2, tipo: "whatsapp_share", conteudo: "Mensagem de abertura enviada", data: new Date(Date.now()-86400000*9), autor: "Rodrigo BDR", role: "bdr" },
-    { id: 3, tipo: "contato", conteudo: "Contato realizado! Cliente demonstrou interesse no MT7.80F para cafeicultura. Tem 3 hectares de café. Quer ver proposta.", data: new Date(Date.now()-86400000*8), autor: "Rodrigo BDR", role: "bdr" },
-    { id: 4, tipo: "qualificacao", conteudo: "Lead qualificado — interesse confirmado no MT7.80F Cabinado", data: new Date(Date.now()-86400000*7), autor: "Rodrigo BDR", role: "bdr" },
-    { id: 5, tipo: "handoff", conteudo: "Modelo: MT7.80F Cabinado | Urgência: 30-90 dias | FINAME | Ticket: R$260.000
-
-"Cliente já tem JD 5060E e quer trocar. Sensível ao preço de parcela FINAME. Decisor: João Carlos (proprietário)."", data: new Date(Date.now()-86400000*7), autor: "Rodrigo BDR", role: "bdr" },
+    { id: 3, tipo: "contato", conteudo: "Contato realizado! Cliente demonstrou interesse no MT7.80F para cafeicultura. Tem 3 hectares de cafe. Quer ver proposta.", data: new Date(Date.now()-86400000*8), autor: "Rodrigo BDR", role: "bdr" },
+    { id: 4, tipo: "qualificacao", conteudo: "Lead qualificado - interesse confirmado no MT7.80F Cabinado", data: new Date(Date.now()-86400000*7), autor: "Rodrigo BDR", role: "bdr" },
+    { id: 5, tipo: "handoff", conteudo: "Modelo: MT7.80F Cabinado | Urgencia: 30-90 dias | FINAME | Ticket: R$260.000. Cliente ja tem JD 5060E e quer trocar. Sensivel ao preco da parcela FINAME. Decisor: Joao Carlos (proprietario).", data: new Date(Date.now()-86400000*7), autor: "Rodrigo BDR", role: "bdr" },
     { id: 6, tipo: "contato", conteudo: "Primeiro contato como consultor. Apresentei comparativo LS vs JD. Cliente receptivo. Agendou visita.", data: new Date(Date.now()-86400000*5), autor: "Carlos Menezes", role: "consultor" },
-    { id: 7, tipo: "visita", conteudo: "Visita realizada na propriedade. Check-in validado (GPS ✅ 320m do local). Demonstração do MT7.80F. Cliente muito satisfeito com a cabine. Pediu proposta formal.", data: new Date(Date.now()-86400000*3), autor: "Carlos Menezes", role: "consultor" },
-    { id: 8, tipo: "proposta", conteudo: "Proposta PROP-2025-001 enviada por WhatsApp: MT7.80F Cab (82cv) — R$255.000 — FINAME 60x — Entrada: R$25.500", data: new Date(Date.now()-86400000*2), autor: "Carlos Menezes", role: "consultor" },
+    { id: 7, tipo: "visita", conteudo: "Visita realizada na propriedade. Check-in GPS validado (320m do local). Demonstracao do MT7.80F. Cliente muito satisfeito com a cabine. Pediu proposta formal.", data: new Date(Date.now()-86400000*3), autor: "Carlos Menezes", role: "consultor" },
+    { id: 8, tipo: "proposta", conteudo: "Proposta PROP-2025-001 enviada por WhatsApp: MT7.80F Cab (82cv) - R$255.000 - FINAME 60x - Entrada: R$25.500", data: new Date(Date.now()-86400000*2), autor: "Carlos Menezes", role: "consultor" },
   ];
 
   const stCfg = STATUS_CONFIG["proposta_enviada"];
