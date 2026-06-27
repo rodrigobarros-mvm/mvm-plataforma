@@ -363,17 +363,29 @@ export const estoque = mysqlTable("estoque", {
   localizacao: mysqlEnum("localizacao", ["loja", "fabrica", "transito", "vendido"]).default("loja").notNull(),
   anoFabricacao: int("anoFabricacao"),
   anoModelo: int("anoModelo"),
-  // Custos reais desta unidade
+  // Custos
   custoAquisicao: decimal("custoAquisicao", { precision: 12, scale: 2 }),
   freteEntrada: decimal("freteEntrada", { precision: 10, scale: 2 }),
   impostos: decimal("impostos", { precision: 10, scale: 2 }),
   // Precificação
   precoVendaBruto: decimal("precoVendaBruto", { precision: 12, scale: 2 }),
   margemPercentual: decimal("margemPercentual", { precision: 5, scale: 2 }),
+  descontoMaxConsultor: decimal("descontoMaxConsultor", { precision: 4, scale: 2 }).default("3.00"),
+  // Nota Fiscal
   notaFiscalEntrada: varchar("notaFiscalEntrada", { length: 64 }),
+  notaFiscalUrl: text("notaFiscalUrl"),
+  // Checklist de recebimento
+  checklistConcluido: boolean("checklistConcluido").default(false).notNull(),
+  checklistData: text("checklistData"),   // JSON com itens do checklist
+  fotosRecebimento: text("fotosRecebimento"), // JSON array de base64/urls
+  // Fluxo de liberação para venda
+  disponivel: boolean("disponivel").default(false).notNull(),
+  aprovadoPor: int("aprovadoPor"),
+  dataAprovacao: timestamp("dataAprovacao"),
+  // Datas
   dataEntrada: timestamp("dataEntrada"),
   dataVenda: timestamp("dataVenda"),
-  vendidoPara: int("vendidoPara"),   // oportunidade que fechou
+  vendidoPara: int("vendidoPara"),
   observacoes: text("observacoes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

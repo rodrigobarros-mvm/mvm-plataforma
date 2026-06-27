@@ -334,6 +334,16 @@ export default function GerarProposta() {
   const [step, setStep] = useState<1|2|3>(1);
   const [versao, setVersao] = useState(1);
   const [saved, setSaved] = useState(false);
+  // Load ONLY disponivel machines from estoque
+  const { data: estoqueDisp } = trpc.estoque.listDisponivel.useQuery();
+  const [chassisBusca, setChassisBusca] = useState("");
+  const { data: maquinaByChasis } = trpc.estoque.getByChasis.useQuery(
+    { chassis: chassisBusca },
+    { enabled: chassisBusca.length >= 5 }
+  );
+  const [estoqueSelected, setEstoqueSelected] = useState<any>(null);
+  const [aguardandoAprovacao, setAguardandoAprovacao] = useState(false);
+
   // Load machines from DB catalog (merge with static list)
   const { data: dbMachines } = trpc.maquinas.list.useQuery({ ativo: true });
   const allMachines = (dbMachines?.data?.length ?? 0) > 0
@@ -371,9 +381,12 @@ export default function GerarProposta() {
   const theme = BRAND_THEMES[M?.marca ?? "LS Tractor"] ?? BRAND_THEMES["LS Tractor"];
   const pag = PAGAMENTOS.find(p => p.label === form.pagamento) ?? PAGAMENTOS[0];
 
-  const precoUnit = M?.preco ?? 0;
+  // Use estoque price if machine selected from stock
+  const precoUnit = estoqueSelected?.precoVendaBruto ? Number(estoqueSelected.precoVendaBruto) : (M?.preco ?? 0);
+  const descMaxPermitido = Number(estoqueSelected?.descontoMaxConsultor ?? 3);
   const precoBase = precoUnit * Number(form.qty || 1);
   const desc$ = precoBase * Number(form.desconto) / 100;
+  const descontoAcimaLimite = estoqueSelected && Number(form.desconto) > descMaxPermitido;
   const frete$ = form.tipoFrete === "CIF" ? Number(form.valorFrete || 0) : 0;
   const total$ = precoBase - desc$ + frete$;
   const entrada$ = total$ * pag.entrada / 100;
@@ -638,7 +651,19 @@ export default function GerarProposta() {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5"><Label>Quantidade</Label><Input type="number" min="1" value={form.qty} onChange={e=>setForm(f=>({...f,qty:e.target.value}))} /></div>
-              <div className="space-y-1.5"><Label>Desconto (%)</Label><Input type="number" min="0" max="20" value={form.desconto} onChange={e=>setForm(f=>({...f,desconto:e.target.value}))} /></div>
+              <div className="space-y-1.5">
+                <Label className={descontoAcimaLimite ? "text-red-600 font-bold" : ""}>
+                  Desconto (%) {estoqueSelected ? `— máx. sem aprovação: ${descMaxPermitido}%` : ""}
+                </Label>
+                <Input type="number" min="0" max="20" value={form.desconto} onChange={e=>setForm(f=>({...f,desconto:e.target.value}))}
+                  style={descontoAcimaLimite ? { borderColor: "#e21d3c" } : {}} />
+                {descontoAcimaLimite && (
+                  <div className="p-2 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
+                    ⚠️ Desconto acima de {descMaxPermitido}% requer <strong>aprovação do gestor</strong>.
+                    A proposta ficará em "Aguardando aprovação" até o gestor aprovar.
+                  </div>
+                )}
+              </div>
               <div className="space-y-1.5"><Label>Garantia</Label><Input value={form.garantia||M?.garantia||""} onChange={e=>setForm(f=>({...f,garantia:e.target.value}))} /></div>
             </div>
             <div className="space-y-2">

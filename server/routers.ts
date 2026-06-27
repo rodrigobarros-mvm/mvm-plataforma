@@ -1269,10 +1269,13 @@ const estoqueRouter = router({
       if (!db) return { data: [], total: 0 };
       const conditions: any[] = [];
       if (input.localizacao) conditions.push(eq(estoque.localizacao, input.localizacao as any));
+      const { maquinas: maquinasT } = await import("../drizzle/schema");
       const rows = await db
         .select({
           id: estoque.id,
           maquinaId: estoque.maquinaId,
+          maquinaModelo: maquinasT.modelo,
+          maquinaMarca: maquinasT.marca,
           chassis: estoque.chassis,
           cor: estoque.cor,
           localizacao: estoque.localizacao,
@@ -1321,6 +1324,104 @@ const estoqueRouter = router({
       });
       return { success: true };
     }),
+
+  update: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      notaFiscalUrl: z.string().optional(),
+      checklistConcluido: z.boolean().optional(),
+      checklistData: z.string().optional(),
+      fotosRecebimento: z.string().optional(),
+      observacoes: z.string().optional(),
+      custoAquisicao: z.string().optional(),
+      freteEntrada: z.string().optional(),
+      impostos: z.string().optional(),
+      margemPercentual: z.string().optional(),
+      precoVendaBruto: z.string().optional(),
+      descontoMaxConsultor: z.string().optional(),
+      disponivel: z.boolean().optional(),
+      aprovadoPor: z.number().optional().nullable(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      const { id, ...data } = input;
+      const updateData: any = { ...data, updatedAt: new Date() };
+      if (data.disponivel === true) {
+        updateData.aprovadoPor = ctx.user!.id;
+        updateData.dataAprovacao = new Date();
+        // Notify all consultores
+        const { users } = await import("../drizzle/schema");
+        const consultores = await db.select({ id: users.id }).from(users)
+          .where(inArray(users.role, ["consultor"]));
+        for (const c of consultores) {
+          await createNotification({
+            userId: c.id,
+            type: "maquina_disponivel",
+            title: "Nova maquina disponivel para venda!",
+            content: `Uma nova maquina foi liberada para venda pelo gestor. Verifique o estoque para gerar propostas.`,
+          });
+        }
+      }
+      await db.update(estoque).set(updateData).where(eq(estoque.id, id));
+      return { success: true };
+    }),
+
+  getByChasis: protectedProcedure
+    .input(z.object({ chassis: z.string() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return null;
+      const { maquinas } = await import("../drizzle/schema");
+      const rows = await db
+        .select({
+          id: estoque.id,
+          chassis: estoque.chassis,
+          localizacao: estoque.localizacao,
+          disponivel: estoque.disponivel,
+          precoVendaBruto: estoque.precoVendaBruto,
+          descontoMaxConsultor: estoque.descontoMaxConsultor,
+          margemPercentual: estoque.margemPercentual,
+          maquinaId: estoque.maquinaId,
+          modelo: maquinas.modelo,
+          marca: maquinas.marca,
+          potenciaCv: maquinas.potenciaCv,
+          anoFabricacao: estoque.anoFabricacao,
+          anoModelo: estoque.anoModelo,
+          cor: estoque.cor,
+        })
+        .from(estoque)
+        .leftJoin(maquinas, eq(estoque.maquinaId, maquinas.id))
+        .where(eq(estoque.chassis, input.chassis))
+        .limit(1);
+      return rows[0] ?? null;
+    }),
+
+  listDisponivel: protectedProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+    const { maquinas } = await import("../drizzle/schema");
+    return db
+      .select({
+        id: estoque.id,
+        chassis: estoque.chassis,
+        localizacao: estoque.localizacao,
+        disponivel: estoque.disponivel,
+        precoVendaBruto: estoque.precoVendaBruto,
+        descontoMaxConsultor: estoque.descontoMaxConsultor,
+        margemPercentual: estoque.margemPercentual,
+        maquinaId: estoque.maquinaId,
+        modelo: maquinas.modelo,
+        marca: maquinas.marca,
+        potenciaCv: maquinas.potenciaCv,
+        cor: estoque.cor,
+        anoModelo: estoque.anoModelo,
+      })
+      .from(estoque)
+      .leftJoin(maquinas, eq(estoque.maquinaId, maquinas.id))
+      .where(and(eq(estoque.disponivel, true), inArray(estoque.localizacao, ["loja", "fabrica"])))
+      .orderBy(estoque.localizacao, estoque.createdAt);
+  }),
 });
 
 // ─── PROPOSTAS ROUTER ─────────────────────────────────────────────────────────
@@ -1340,12 +1441,24 @@ const propostasRouter = router({
       prazoEntrega: z.string().optional(),
       observacoesCliente: z.string().optional(),
       numero: z.string().optional(),
+      chassisEstoque: z.string().optional(),
+      descontoSolicitado: z.string().optional(),
     }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("DB unavailable");
       const { propostas, users } = await import("../drizzle/schema");
       const numero = input.numero ?? `PROP-${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,"0")}${String(new Date().getDate()).padStart(2,"0")}-${String(Math.floor(Math.random()*999)+1).padStart(3,"0")}`;
+      // Check if discount needs manager approval
+      const descontoSolicitado = Number(input.descontoSolicitado ?? 0);
+      let needsApproval = false;
+      if (input.chassisEstoque) {
+        const estoqueRow = await db.select({ descontoMaxConsultor: estoque.descontoMaxConsultor })
+          .from(estoque).where(eq(estoque.chassis, input.chassisEstoque)).limit(1);
+        const maxDesc = Number(estoqueRow[0]?.descontoMaxConsultor ?? 3);
+        if (descontoSolicitado > maxDesc) needsApproval = true;
+      }
+
       await db.insert(propostas).values({
         numero,
         oportunidadeId: input.oportunidadeId,
@@ -1361,8 +1474,25 @@ const propostasRouter = router({
         condicaoPagamento: input.condicaoPagamento,
         prazoEntrega: input.prazoEntrega,
         observacoesCliente: input.observacoesCliente,
-        status: "enviada",
+        chassisEstoque: input.chassisEstoque,
+        descontoSolicitado: input.descontoSolicitado,
+        status: needsApproval ? "aguardando_aprovacao" : "enviada",
       });
+
+      // If needs approval, notify managers
+      if (needsApproval) {
+        const { users } = await import("../drizzle/schema");
+        const admins = await db.select({ id: users.id }).from(users)
+          .where(inArray(users.role, ["adm", "gerente", "admin"]));
+        for (const a of admins) {
+          await createNotification({
+            userId: a.id,
+            type: "desconto_aprovacao",
+            title: "Desconto acima do limite — aprovacao necessaria",
+            content: `${ctx.user!.name} solicitou ${descontoSolicitado}% de desconto na proposta ${numero} para ${input.clienteNome}. Acesse Historico de Propostas para aprovar ou reprovar.`,
+          });
+        }
+      }
       // Auto-update opportunity status
       if (input.oportunidadeId) {
         await db.update(oportunidades)

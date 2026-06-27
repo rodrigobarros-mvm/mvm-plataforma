@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 const STATUS_CONFIG = {
   rascunho:  { label: "Rascunho",  color: "#94A3B8", bg: "#F8FAFC" },
+  aguardando_aprovacao: { label: "Aguard. Aprovacao", color: "#D97706", bg: "#FEF3C7" },
   enviada:   { label: "Enviada",   color: "#0891B2", bg: "#ECFEFF" },
   aceita:    { label: "Aceita",    color: "#059669", bg: "#F0FDF4" },
   recusada:  { label: "Recusada",  color: "#e21d3c", bg: "#FEF2F2" },
@@ -108,6 +109,7 @@ export default function HistoricoPropostas() {
                       <p className="text-sm text-foreground font-medium">{p.clienteNome}</p>
                       <div className="flex items-center gap-3 mt-1 flex-wrap text-xs text-muted-foreground">
                         {p.consultorNome && <span>👤 {p.consultorNome}</span>}
+                        {p.chassisEstoque && <span className="font-mono">🔑 {p.chassisEstoque}</span>}
                         {p.condicaoPagamento && <span>💳 {p.condicaoPagamento}</span>}
                         {p.prazoEntrega && <span>📦 {p.prazoEntrega}</span>}
                         <span>📅 {format(new Date(p.createdAt), "dd/MM/yyyy", { locale: ptBR })}</span>
@@ -120,6 +122,21 @@ export default function HistoricoPropostas() {
                         </p>
                       </div>
                       {/* Status actions */}
+                      {p.status === "aguardando_aprovacao" && (
+                        <div className="flex flex-col gap-1">
+                          <p className="text-xs text-orange-700 font-bold">Desconto: {p.descontoSolicitado}%</p>
+                          <div className="flex gap-1">
+                            <Button size="sm" className="h-8 text-xs gap-1" style={{ background: "#059669", color: "white" }}
+                              onClick={() => updateStatus.mutate({ id: p.id, status: "enviada" })}>
+                              <CheckCircle2 className="w-3 h-3" /> Aprovar
+                            </Button>
+                            <Button size="sm" variant="outline" className="h-8 text-xs gap-1 text-red-600 border-red-200"
+                              onClick={() => updateStatus.mutate({ id: p.id, status: "recusada" })}>
+                              <XCircle className="w-3 h-3" /> Reprovar
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                       {p.status === "enviada" && (
                         <div className="flex gap-1">
                           <Button size="sm" className="h-8 text-xs gap-1" style={{ background: "#059669", color: "white" }}
