@@ -67,6 +67,38 @@ function StatCard({
 
 // ─── Period Selector ──────────────────────────────────────────────────────────
 function PeriodSelector({ value, onChange }: { value: Period; onChange: (p: Period) => void }) {
+  // Consultores go to their agenda
+  if (isConsultor) {
+    return (
+      <div className="space-y-4 max-w-2xl">
+        <div>
+          <h1 className="text-2xl font-bold">Olá, {user?.name?.split(" ")[0]} 👋</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+          </p>
+        </div>
+        {/* Quick nav cards for consultor */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: "Minha Agenda", emoji: "📅", path: "/agenda-consultor", desc: "Ver compromissos do dia", color: "#0a1e5a" },
+            { label: "Nova Oportunidade", emoji: "⚡", path: "/nova-oportunidade", desc: "Cadastrar novo cliente", color: "#e21d3c" },
+            { label: "Pipeline", emoji: "🎯", path: "/oportunidades", desc: "Minhas oportunidades", color: "#7C3AED" },
+            { label: "Comparativos", emoji: "📊", path: "/comparativos", desc: "LS vs concorrentes", color: "#059669" },
+          ].map(c => (
+            <a key={c.path} href={c.path}
+              className="flex flex-col p-4 rounded-xl border-2 hover:shadow-md transition-all active:scale-95"
+              style={{ borderColor: c.color + "40", background: c.color + "08" }}>
+              <span className="text-2xl mb-2">{c.emoji}</span>
+              <p className="font-bold text-sm" style={{ color: c.color }}>{c.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{c.desc}</p>
+            </a>
+          ))}
+        </div>
+        <GestorPanel />
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
       {(["today", "week", "month", "all"] as Period[]).map((p) => (
@@ -106,6 +138,38 @@ function BdrDashboard() {
   // Taxas de conversão BDR
   const convAttemptToContact = totalActivity > 0 ? ((todayContacts / totalActivity) * 100).toFixed(1) : "0.0";
   const convContactToQualified = todayContacts > 0 ? ((totalQualified / todayContacts) * 100).toFixed(1) : "0.0";
+
+  // Consultores go to their agenda
+  if (isConsultor) {
+    return (
+      <div className="space-y-4 max-w-2xl">
+        <div>
+          <h1 className="text-2xl font-bold">Olá, {user?.name?.split(" ")[0]} 👋</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+          </p>
+        </div>
+        {/* Quick nav cards for consultor */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: "Minha Agenda", emoji: "📅", path: "/agenda-consultor", desc: "Ver compromissos do dia", color: "#0a1e5a" },
+            { label: "Nova Oportunidade", emoji: "⚡", path: "/nova-oportunidade", desc: "Cadastrar novo cliente", color: "#e21d3c" },
+            { label: "Pipeline", emoji: "🎯", path: "/oportunidades", desc: "Minhas oportunidades", color: "#7C3AED" },
+            { label: "Comparativos", emoji: "📊", path: "/comparativos", desc: "LS vs concorrentes", color: "#059669" },
+          ].map(c => (
+            <a key={c.path} href={c.path}
+              className="flex flex-col p-4 rounded-xl border-2 hover:shadow-md transition-all active:scale-95"
+              style={{ borderColor: c.color + "40", background: c.color + "08" }}>
+              <span className="text-2xl mb-2">{c.emoji}</span>
+              <p className="font-bold text-sm" style={{ color: c.color }}>{c.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{c.desc}</p>
+            </a>
+          ))}
+        </div>
+        <GestorPanel />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -251,6 +315,38 @@ function AdminDashboard() {
   }));
 
   const periodLabel = PERIOD_LABELS[period];
+
+  // Consultores go to their agenda
+  if (isConsultor) {
+    return (
+      <div className="space-y-4 max-w-2xl">
+        <div>
+          <h1 className="text-2xl font-bold">Olá, {user?.name?.split(" ")[0]} 👋</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+          </p>
+        </div>
+        {/* Quick nav cards for consultor */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: "Minha Agenda", emoji: "📅", path: "/agenda-consultor", desc: "Ver compromissos do dia", color: "#0a1e5a" },
+            { label: "Nova Oportunidade", emoji: "⚡", path: "/nova-oportunidade", desc: "Cadastrar novo cliente", color: "#e21d3c" },
+            { label: "Pipeline", emoji: "🎯", path: "/oportunidades", desc: "Minhas oportunidades", color: "#7C3AED" },
+            { label: "Comparativos", emoji: "📊", path: "/comparativos", desc: "LS vs concorrentes", color: "#059669" },
+          ].map(c => (
+            <a key={c.path} href={c.path}
+              className="flex flex-col p-4 rounded-xl border-2 hover:shadow-md transition-all active:scale-95"
+              style={{ borderColor: c.color + "40", background: c.color + "08" }}>
+              <span className="text-2xl mb-2">{c.emoji}</span>
+              <p className="font-bold text-sm" style={{ color: c.color }}>{c.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{c.desc}</p>
+            </a>
+          ))}
+        </div>
+        <GestorPanel />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -750,6 +846,40 @@ export default function Dashboard() {
   const { user } = useAuth();
   const role = (user as any)?.role ?? "bdr";
   const isAdmOrGerente = ["adm", "admin", "gerente", "diretor", "coordenador", "supervisor"].includes(role);
+  const isConsultor = role === "consultor";
+  const isBdr = role === "bdr";
+
+  // Consultores go to their agenda
+  if (isConsultor) {
+    return (
+      <div className="space-y-4 max-w-2xl">
+        <div>
+          <h1 className="text-2xl font-bold">Olá, {user?.name?.split(" ")[0]} 👋</h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+          </p>
+        </div>
+        {/* Quick nav cards for consultor */}
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: "Minha Agenda", emoji: "📅", path: "/agenda-consultor", desc: "Ver compromissos do dia", color: "#0a1e5a" },
+            { label: "Nova Oportunidade", emoji: "⚡", path: "/nova-oportunidade", desc: "Cadastrar novo cliente", color: "#e21d3c" },
+            { label: "Pipeline", emoji: "🎯", path: "/oportunidades", desc: "Minhas oportunidades", color: "#7C3AED" },
+            { label: "Comparativos", emoji: "📊", path: "/comparativos", desc: "LS vs concorrentes", color: "#059669" },
+          ].map(c => (
+            <a key={c.path} href={c.path}
+              className="flex flex-col p-4 rounded-xl border-2 hover:shadow-md transition-all active:scale-95"
+              style={{ borderColor: c.color + "40", background: c.color + "08" }}>
+              <span className="text-2xl mb-2">{c.emoji}</span>
+              <p className="font-bold text-sm" style={{ color: c.color }}>{c.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{c.desc}</p>
+            </a>
+          ))}
+        </div>
+        <GestorPanel />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 md:space-y-6">

@@ -91,3 +91,52 @@ self.addEventListener("notificationclick", (event) => {
     })
   );
 });
+
+// ── Smart Scheduled Notifications ─────────────────────────────────────────────
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SCHEDULE_DAILY_REMINDERS") {
+    const { role, agendaCount, followupCount, metaPercent } = event.data;
+    
+    // Morning reminder (8:30)
+    const now = new Date();
+    const morning = new Date();
+    morning.setHours(8, 30, 0, 0);
+    if (now < morning) {
+      const delay = morning.getTime() - now.getTime();
+      setTimeout(() => {
+        if (role === "consultor" && agendaCount > 0) {
+          self.registration.showNotification("Gallotti LS — Bom dia! 🚜", {
+            body: `Você tem ${agendaCount} compromisso${agendaCount > 1 ? "s" : ""} hoje. Abrir agenda.`,
+            icon: "/logo.png", badge: "/logo.png",
+            data: { url: "/agenda-consultor" },
+            tag: "morning-agenda",
+          });
+        } else if (role === "bdr") {
+          self.registration.showNotification("Gallotti LS — Bom dia! 💪", {
+            body: `Meta de hoje: ${metaPercent ?? 0}% concluída. Vamos prospectar!`,
+            icon: "/logo.png", badge: "/logo.png",
+            data: { url: "/work-mode" },
+            tag: "morning-bdr",
+          });
+        }
+      }, delay);
+    }
+
+    // Evening reminder (17:00)
+    const evening = new Date();
+    evening.setHours(17, 0, 0, 0);
+    if (now < evening) {
+      const delay = evening.getTime() - now.getTime();
+      setTimeout(() => {
+        if (followupCount > 0) {
+          self.registration.showNotification("⏰ Follow-ups pendentes!", {
+            body: `${followupCount} retorno${followupCount > 1 ? "s" : ""} agendado${followupCount > 1 ? "s" : ""} para hoje. Não esqueça!`,
+            icon: "/logo.png", badge: "/logo.png",
+            data: { url: "/follow-ups" },
+            tag: "evening-followup",
+          });
+        }
+      }, delay);
+    }
+  }
+});

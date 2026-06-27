@@ -201,3 +201,59 @@
     }
   }
 }
+
+/* ── Quick Action Animations ─────────────────────────────────────── */
+@keyframes fab-bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(226, 29, 60, 0.4); }
+  70%  { box-shadow: 0 0 0 12px rgba(226, 29, 60, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(226, 29, 60, 0); }
+}
+
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Bigger tap targets on mobile */
+  .mobile-tap-target {
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  /* Bottom padding for FAB */
+  main {
+    padding-bottom: 6rem !important;
+  }
+}
+
+/* Progress bar animation */
+@keyframes progress-fill {
+  from { width: 0%; }
+  to   { width: var(--target-width, 100%); }
+}
+
+/* Smooth card hover */
+.card-hover {
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.card-hover:hover {
+  box-shadow: 0 4px 20px rgba(10, 30, 90, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Active state for interactive cards */
+.card-hover:active {
+  transform: scale(0.98);
+}

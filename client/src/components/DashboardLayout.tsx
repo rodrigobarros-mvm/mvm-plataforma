@@ -63,6 +63,8 @@ import {
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
+import GlobalSearch from "./GlobalSearch";
+import QuickActionFAB from "./QuickActionFAB";
 import { Button } from "./ui/button";
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -75,6 +77,7 @@ const ROLE_LABELS: Record<string, string> = {
   admin: "Administrador",
   gerente: "Gerente",
   bdr: "BDR",
+  consultor: "Consultor Comercial",
   user: "Usuário",
 };
 
@@ -83,6 +86,7 @@ const ROLE_COLORS: Record<string, string> = {
   admin: "bg-purple-500/20 text-purple-300",
   gerente: "bg-blue-500/20 text-blue-300",
   bdr: "bg-green-500/20 text-green-300",
+  consultor: "bg-orange-500/20 text-orange-300",
   user: "bg-gray-500/20 text-gray-300",
 };
 
@@ -118,7 +122,6 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Star, label: "Alta Prioridade", path: "/leads/priority" },
         { icon: ListFilter, label: "Lista Completa", path: "/leads" },
         { icon: CalendarClock, label: "Follow-ups", path: "/follow-ups" },
-      { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
       ],
     },
   ];
@@ -133,6 +136,7 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Package, label: "Estoque & Chassis", path: "/estoque" },
         { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
         { icon: Trophy, label: "Ranking Consultores", path: "/ranking-consultores" },
+        { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
       ],
     },
     {
@@ -160,6 +164,29 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Award, label: "Meu Ranking", path: "/ranking" },
         { icon: DollarSign, label: "Minhas Comissões", path: "/commissions" },
         { icon: Target, label: "Minhas Metas", path: "/goals" },
+      ],
+    });
+  }
+
+  const isConsultor = role === "consultor";
+  if (isConsultor) {
+    groups.push({
+      label: "Comercial",
+      items: [
+        { icon: Zap, label: "Nova Oportunidade", path: "/nova-oportunidade" },
+        { icon: TrendingUp, label: "Minhas Oportunidades", path: "/oportunidades" },
+        { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
+        { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
+      ],
+    });
+    groups.push({
+      label: "Minha Performance",
+      items: [
+        { icon: Trophy, label: "Ranking Consultores", path: "/ranking-consultores" },
+        { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
+        { icon: Target, label: "Minhas Metas", path: "/goals" },
+        { icon: Package, label: "Catálogo Máquinas", path: "/maquinas" },
+        { icon: Package, label: "Estoque", path: "/estoque" },
       ],
     });
   }
@@ -486,6 +513,7 @@ function DashboardLayoutContent({
         )}
         <TeamProgressBar />
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">{children}</main>
+        <QuickActionFAB />
         <MobileBottomBar />
       </SidebarInset>
     </>

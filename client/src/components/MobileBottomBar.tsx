@@ -4,15 +4,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { QuickReleaseDrawer } from "@/components/QuickReleaseDrawer";
 import {
-  Award,
-  Bell,
-  BellOff,
-  LayoutDashboard,
-  Lock,
-  Star,
-  TrendingUp,
-  UserCheck,
-  Zap,
+  Award, Bell, BellOff, Calendar, CheckCircle2,
+  LayoutDashboard, Lock, MapPin, MessageCircle,
+  Phone, Plus, Star, TrendingUp, UserCheck, Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,8 +24,18 @@ const MANAGER_ACTIONS = [
 const BDR_ACTIONS = [
   { label: "Início", icon: LayoutDashboard, path: "/dashboard" },
   { label: "Prospectar", icon: Star, path: "/leads/priority" },
-  { label: "Qualificar", icon: TrendingUp, path: "/leads/list" },
+  { label: "Fila", icon: Zap, path: "/work-mode" },
+  { label: "Follow-ups", icon: Bell, path: "/follow-ups" },
   { label: "Ranking", icon: Award, path: "/ranking" },
+];
+
+// Ações para Consultores Comerciais (mobile-first)
+const CONSULTOR_ACTIONS = [
+  { label: "Agenda", icon: Calendar, path: "/agenda-consultor" },
+  { label: "Nova Oport.", icon: Plus, path: "/nova-oportunidade" },
+  { label: "Pipeline", icon: TrendingUp, path: "/oportunidades" },
+  { label: "Check-in", icon: MapPin, path: "/agenda-consultor" },
+  { label: "Ranking", icon: Award, path: "/ranking-consultores" },
 ];
 
 export function MobileBottomBar() {
@@ -45,7 +49,8 @@ export function MobileBottomBar() {
   const role = (user as any)?.role ?? "bdr";
   const isManager = GERENTE_ROLES.includes(role);
   const isAdm = role === "adm" || role === "admin";
-  const actions = isManager ? MANAGER_ACTIONS : BDR_ACTIONS;
+  const isConsultor = role === "consultor";
+  const actions = isManager ? MANAGER_ACTIONS : isConsultor ? CONSULTOR_ACTIONS : BDR_ACTIONS;
 
   const handlePushToggle = async () => {
     if (permission === "unsupported") {
