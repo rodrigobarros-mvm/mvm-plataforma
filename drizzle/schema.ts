@@ -345,7 +345,10 @@ export const maquinas = mysqlTable("maquinas", {
   precoFabrica: decimal("precoFabrica", { precision: 12, scale: 2 }),  // custo na fábrica
   precoTabelaVarejo: decimal("precoTabelaVarejo", { precision: 12, scale: 2 }),
   // Ficha técnica (JSON)
-  fichaTecnica: text("fichaTecnica"),  // JSON com specs detalhadas
+  fichaTecnica: text("fichaTecnica"),       // JSON: { campo: valor } — extraído do PDF + campos manuais
+  camposCustom: text("camposCustom"),       // JSON: campos adicionados manualmente pelo gestor
+  fichaTecnicaPdfUrl: text("fichaTecnicaPdfUrl"), // PDF original uploadado
+  descricaoCompleta: text("descricaoCompleta"),   // Texto completo extraído do PDF
   // Imagem
   fotoUrl: text("fotoUrl"),
   ativo: boolean("ativo").default(true).notNull(),
