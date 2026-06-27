@@ -141,6 +141,7 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
         { icon: Trophy, label: "Ranking Consultores", path: "/ranking-consultores" },
         { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
+        { icon: FileText, label: "Hist. Propostas", path: "/historico-propostas" },
       ],
     },
     {
@@ -191,6 +192,7 @@ function getMenuGroups(role: string): MenuGroup[] {
       items: [
         { icon: Trophy, label: "Ranking Consultores", path: "/ranking-consultores" },
         { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
+        { icon: FileText, label: "Hist. Propostas", path: "/historico-propostas" },
         { icon: Target, label: "Minhas Metas", path: "/goals" },
         { icon: Package, label: "Catálogo Máquinas", path: "/maquinas" },
         { icon: Package, label: "Estoque", path: "/estoque" },
