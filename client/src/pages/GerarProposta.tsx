@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Printer, MessageCircle, FileText, Building2, Tractor } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { useEffect } from "react";
 import { format, addBusinessDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -328,9 +329,23 @@ function genNum(v: number) {
 export default function GerarProposta() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const search = useSearch();
+  const oppId = new URLSearchParams(search).get("opp");
   const [step, setStep] = useState<1|2|3>(1);
   const [versao, setVersao] = useState(1);
   const [saved, setSaved] = useState(false);
+  // Load machines from DB catalog (merge with static list)
+  const { data: dbMachines } = trpc.maquinas.list.useQuery({ ativo: true });
+  const allMachines = (dbMachines?.data?.length ?? 0) > 0
+    ? dbMachines!.data.map((m: any, i: number) => ({
+        marca: m.marca, modelo: m.modelo, cv: Number(m.potenciaCv) || 0,
+        tracao: m.tracao || "4x4", transmissao: m.transmissao || "",
+        versao: m.versao || "", aplicacao: m.aplicacaoPrincipal || "",
+        culturas: m.culturasSegmentos || "", garantia: "2 anos",
+        preco: Number(m.precoTabelaVarejo || m.precoFabrica || 0),
+        fotoUrl: m.fotoUrl || "", specs: m.fichaTecnica ? JSON.parse(m.fichaTecnica) : {},
+      }))
+    : MACHINES;
   const saveProposta = trpc.propostas.create.useMutation({
     onSuccess: (data) => {
       setSaved(true);
@@ -352,7 +367,7 @@ export default function GerarProposta() {
     observacoes: "", prazoEntrega: "30 dias",
   });
 
-  const M = MACHINES[form.machineIndex] as any;
+  const M = (allMachines ?? MACHINES)[form.machineIndex] as any;
   const theme = BRAND_THEMES[M?.marca ?? "LS Tractor"] ?? BRAND_THEMES["LS Tractor"];
   const pag = PAGAMENTOS.find(p => p.label === form.pagamento) ?? PAGAMENTOS[0];
 
@@ -605,7 +620,7 @@ export default function GerarProposta() {
               <Label>Modelo *</Label>
               <select className="w-full border border-border rounded-md text-sm px-3 py-2 bg-background"
                 value={form.machineIndex} onChange={e=>setForm(f=>({...f,machineIndex:Number(e.target.value)}))}>
-                {MACHINES.map((m:any,i:number)=><option key={i} value={i}>{m.marca} — {m.modelo} ({m.cv}cv) — {fmt(m.preco)}</option>)}
+                {allMachines.map((m:any,i:number)=><option key={i} value={i}>{m.marca} — {m.modelo} ({m.cv}cv) — {fmt(m.preco)}</option>)}
               </select>
             </div>
             <div className="rounded-xl p-3 border-2" style={{ borderColor:theme.primary+"40", background:theme.primary+"06" }}>

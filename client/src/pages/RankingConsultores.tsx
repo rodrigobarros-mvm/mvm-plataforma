@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Trophy, Medal, Award, TrendingUp, FileText, MapPin,
   Target, DollarSign, Zap, CheckCircle2, Phone, Star,
-  Calendar, Clock, BarChart3, Users
+  Calendar, Clock, BarChart3, Users, Download
 } from "lucide-react";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -132,6 +132,9 @@ export default function RankingConsultores() {
             Performance medida em propostas, visitas, vendas e faturamento
           </p>
         </div>
+        <Button variant="outline" size="sm" className="gap-2" onClick={() => window.print()}>
+          <Download className="w-4 h-4" /> Exportar PDF
+        </Button>
         {isAdm && (
           <Button variant="outline" size="sm" className="gap-2" onClick={() => window.location.href = "/goals"}>
             <Target className="w-4 h-4" /> Configurar Metas

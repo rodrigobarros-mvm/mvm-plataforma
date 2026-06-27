@@ -1323,4 +1323,151 @@ const estoqueRouter = router({
     }),
 });
 
-export type AppRouter = typeof appRouter;
+// ─── PROPOSTAS ROUTER ─────────────────────────────────────────────────────────
+const propostasRouter = router({
+  create: protectedProcedure
+    .input(z.object({
+      oportunidadeId: z.number().optional(),
+      clienteNome: z.string(),
+      clienteCnpj: z.string().optional(),
+      clienteUf: z.string().optional(),
+      itens: z.string(),
+      subtotal: z.string(),
+      descontoTotal: z.string().optional(),
+      freteTotal: z.string().optional(),
+      totalGeral: z.string(),
+      condicaoPagamento: z.string().optional(),
+      prazoEntrega: z.string().optional(),
+      observacoesCliente: z.string().optional(),
+      numero: z.string().optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      const { propostas, users } = await import("../drizzle/schema");
+      const numero = input.numero ?? `PROP-${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,"0")}${String(new Date().getDate()).padStart(2,"0")}-${String(Math.floor(Math.random()*999)+1).padStart(3,"0")}`;
+      await db.insert(propostas).values({
+        numero,
+        oportunidadeId: input.oportunidadeId,
+        consultorId: ctx.user!.id,
+        clienteNome: input.clienteNome,
+        clienteCnpj: input.clienteCnpj,
+        clienteUf: input.clienteUf,
+        itens: input.itens,
+        subtotal: input.subtotal,
+        descontoTotal: input.descontoTotal ?? "0",
+        freteTotal: input.freteTotal ?? "0",
+        totalGeral: input.totalGeral,
+        condicaoPagamento: input.condicaoPagamento,
+        prazoEntrega: input.prazoEntrega,
+        observacoesCliente: input.observacoesCliente,
+        status: "enviada",
+      });
+      // Auto-update opportunity status
+      if (input.oportunidadeId) {
+        await db.update(oportunidades)
+          .set({ status: "proposta_enviada", updatedAt: new Date() })
+          .where(eq(oportunidades.id, input.oportunidadeId));
+      }
+      // Notify managers
+      const admins = await db.select({ id: users.id }).from(users)
+        .where(inArray(users.role, ["adm", "gerente", "admin"]));
+      for (const a of admins) {
+        await createNotification({
+          userId: a.id,
+          type: "proposta_enviada",
+          title: "Nova Proposta Enviada",
+          content: `${ctx.user!.name} enviou ${numero} para ${input.clienteNome} — R$ ${Number(input.totalGeral).toLocaleString("pt-BR")}`,
+        });
+      }
+      return { success: true, numero };
+    }),
+
+  list: protectedProcedure
+    .input(z.object({
+      consultorId: z.number().optional(),
+      limit: z.number().optional().default(50),
+    }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) return { data: [], total: 0 };
+      const { propostas, users } = await import("../drizzle/schema");
+      const conditions: any[] = [];
+      const role = ctx.user!.role;
+      if (role === "consultor") conditions.push(eq(propostas.consultorId, ctx.user!.id));
+      else if (input.consultorId) conditions.push(eq(propostas.consultorId, input.consultorId));
+      const rows = await db
+        .select({
+          id: propostas.id,
+          numero: propostas.numero,
+          clienteNome: propostas.clienteNome,
+          clienteCnpj: propostas.clienteCnpj,
+          clienteUf: propostas.clienteUf,
+          totalGeral: propostas.totalGeral,
+          condicaoPagamento: propostas.condicaoPagamento,
+          prazoEntrega: propostas.prazoEntrega,
+          status: propostas.status,
+          consultorId: propostas.consultorId,
+          consultorNome: users.name,
+          observacoesCliente: propostas.observacoesCliente,
+          createdAt: propostas.createdAt,
+          updatedAt: propostas.updatedAt,
+        })
+        .from(propostas)
+        .leftJoin(users, eq(propostas.consultorId, users.id))
+        .where(conditions.length > 0 ? and(...conditions) : undefined)
+        .orderBy(desc(propostas.createdAt))
+        .limit(input.limit);
+      return { data: rows, total: rows.length };
+    }),
+
+  updateStatus: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      status: z.enum(["rascunho","enviada","aceita","recusada","expirada"]),
+      motivoRecusa: z.string().optional(),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("DB unavailable");
+      const { propostas } = await import("../drizzle/schema");
+      await db.update(propostas)
+        .set({ status: input.status, motivoRecusa: input.motivoRecusa, updatedAt: new Date() })
+        .where(eq(propostas.id, input.id));
+      return { success: true };
+    }),
+
+  stats: protectedProcedure.query(async ({ ctx }) => {
+    const db = await getDb();
+    if (!db) return { totalGeral: 0, mesAtual: 0, aceitas: 0, volumeMes: 0, volumeTotal: 0 };
+    const { propostas } = await import("../drizzle/schema");
+    const conditions: any[] = [];
+    if (ctx.user!.role === "consultor") conditions.push(eq(propostas.consultorId, ctx.user!.id));
+    const rows = await db.select({
+      status: propostas.status,
+      totalGeral: propostas.totalGeral,
+      createdAt: propostas.createdAt,
+    }).from(propostas).where(conditions.length > 0 ? and(...conditions) : undefined);
+    const startOfMonth = new Date(); startOfMonth.setDate(1); startOfMonth.setHours(0,0,0,0);
+    const mesAtual = rows.filter(r => new Date(r.createdAt) >= startOfMonth);
+    return {
+      totalGeral: rows.length,
+      mesAtual: mesAtual.length,
+      aceitas: rows.filter(r => r.status === "aceita").length,
+      volumeMes: mesAtual.reduce((acc, r) => acc + Number(r.totalGeral || 0), 0),
+      volumeTotal: rows.reduce((acc, r) => acc + Number(r.totalGeral || 0), 0),
+    };
+  }),
+});
+
+
+// Extend appRouter
+const appRouterExtended = {
+  ...appRouter,
+  oportunidades: oportunidadesRouter,
+  maquinas: maquinasRouter,
+  estoque: estoqueRouter,
+  propostas: propostasRouter,
+};
+export { appRouterExtended as appRouter };
+export type AppRouter = typeof appRouterExtended;

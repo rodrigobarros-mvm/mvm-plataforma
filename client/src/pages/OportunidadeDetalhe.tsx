@@ -78,7 +78,7 @@ export default function OportunidadeDetalhe() {
           </div>
         </div>
         <Button style={{ background: "#e21d3c", color: "white" }} className="gap-2 shrink-0"
-          onClick={() => setLocation("/gerar-proposta")}>
+          onClick={() => setLocation(`/gerar-proposta?opp=${id || ""}`)}>
           <FileText className="w-4 h-4" /> Nova Proposta
         </Button>
       </div>
@@ -195,7 +195,7 @@ export default function OportunidadeDetalhe() {
             <Button className="w-full gap-2 text-sm" style={{ background: "#25D366", color: "white" }}>
               <MessageCircle className="w-4 h-4" /> WhatsApp do cliente
             </Button>
-            <Button variant="outline" className="w-full gap-2 text-sm" onClick={() => setLocation("/gerar-proposta")}>
+            <Button variant="outline" className="w-full gap-2 text-sm" onClick={() => setLocation(`/gerar-proposta?opp=${id || ""}`)}>
               <FileText className="w-4 h-4" /> Gerar/Atualizar Proposta
             </Button>
             <Button variant="outline" className="w-full gap-2 text-sm text-green-700 border-green-200"

@@ -208,7 +208,7 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Unlock, label: "Liberar Leads", path: "/leads/release" },
         { icon: UserCheck, label: "Atribuir a BDRs", path: "/leads/assign" },
         { icon: FileUp, label: "Importar Planilha", path: "/leads/importar" },
-        { icon: Settings, label: "Configurações", path: "/settings" },
+        { icon: Settings, label: "Configuracoes", path: "/configuracoes" },
       ],
     });
   } else if (isGerente) {

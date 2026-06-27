@@ -37,6 +37,7 @@ import RelatorioVisitas from "./pages/RelatorioVisitas";
 import OportunidadeDetalhe from "./pages/OportunidadeDetalhe";
 import MeuPerfil from "./pages/MeuPerfil";
 import HistoricoPropostas from "./pages/HistoricoPropostas";
+import Configuracoes from "./pages/Configuracoes";
 import Maquinas from "./pages/Maquinas";
 import Estoque from "./pages/Estoque";
 import QualificationFieldsConfig from "./pages/QualificationFieldsConfig";
@@ -91,6 +92,7 @@ function Router() {
       <Route path="/relatorio-visitas" component={() => <ProtectedRoute component={RelatorioVisitas} />} />
       <Route path="/oportunidades/:id" component={() => <ProtectedRoute component={OportunidadeDetalhe} />} />
       <Route path="/meu-perfil" component={() => <ProtectedRoute component={MeuPerfil} />} />
+      <Route path="/configuracoes" component={() => <ProtectedRoute component={Configuracoes} />} />
       <Route path="/historico-propostas" component={() => <ProtectedRoute component={HistoricoPropostas} />} />
       <Route path="/maquinas" component={() => <ProtectedRoute component={Maquinas} />} />
       <Route path="/estoque" component={() => <ProtectedRoute component={Estoque} />} />

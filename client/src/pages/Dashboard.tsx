@@ -193,6 +193,7 @@ function AdminDashboard() {
   const { data: stats, isLoading } = trpc.dashboard.stats.useQuery(periodInput);
   const { data: ranking } = trpc.dashboard.ranking.useQuery({});
   const { data: reasons } = trpc.dashboard.disqualificationReasons.useQuery();
+  const { data: propostasRecentes } = trpc.propostas.list.useQuery({ limit: 20 }, { refetchInterval: 300_000 });
   const { data: myFollowUps } = trpc.followUp.listMine.useQuery({ includesDone: false }, { refetchInterval: 300_000 });
   const alertedRef = useRef(false);
 
@@ -200,6 +201,21 @@ function AdminDashboard() {
     if (alertedRef.current || !myFollowUps) return;
     const now = new Date();
     const overdue = myFollowUps.filter((fu: any) => !fu.isDone && new Date(fu.scheduledAt) <= now);
+    // Check for expiring proposals (3 business days from creation)
+    if (propostasRecentes?.data) {
+      const expiring = propostasRecentes.data.filter((p: any) => {
+        if (p.status !== "enviada") return false;
+        const created = new Date(p.createdAt);
+        const daysOld = Math.floor((now - created.getTime()) / 86400000);
+        return daysOld >= 2; // 2+ days = warning
+      });
+      if (expiring.length > 0) {
+        toast(`⏰ ${expiring.length} proposta${expiring.length > 1 ? "s" : ""} vencendo! Ligue para o cliente hoje.`, {
+          duration: 8000,
+          action: { label: "Ver", onClick: () => window.location.href = "/historico-propostas" },
+        });
+      }
+    }
     if (overdue.length > 0) {
       alertedRef.current = true;
       toast(`⚠️ ${overdue.length} follow-up${overdue.length > 1 ? "s atrasados" : " atrasado"}! Acesse Follow-ups para regularizar.`, {
