@@ -1461,6 +1461,127 @@ const propostasRouter = router({
 });
 
 
+
+// ─── CONSULTOR RANKING ROUTER ─────────────────────────────────────────────────
+const consultorRankingRouter = router({
+  ranking: protectedProcedure
+    .input(z.object({
+      periodo: z.enum(["dia", "semana", "mes"]).default("mes"),
+    }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return [];
+      const { propostas, visitaCheckins, oportunidades, users } = await import("../drizzle/schema");
+
+      // Calculate date range
+      const now = new Date();
+      let startDate = new Date();
+      if (input.periodo === "dia") {
+        startDate.setHours(0, 0, 0, 0);
+      } else if (input.periodo === "semana") {
+        startDate.setDate(now.getDate() - now.getDay());
+        startDate.setHours(0, 0, 0, 0);
+      } else {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      }
+
+      // Get all consultores
+      const consultores = await db.select({ id: users.id, name: users.name, email: users.email })
+        .from(users)
+        .where(inArray(users.role, ["consultor", "adm", "admin", "gerente"]));
+
+      // Get propostas per consultor
+      const propostasRows = await db.select({
+        consultorId: propostas.consultorId,
+        totalGeral: propostas.totalGeral,
+        status: propostas.status,
+        createdAt: propostas.createdAt,
+      }).from(propostas).where(gte(propostas.createdAt, startDate));
+
+      // Get checkins per consultor (visitas)
+      const checkinsRows = await db.select({
+        userId: visitaCheckins.userId,
+        durMinutos: visitaCheckins.durMinutos,
+        status: visitaCheckins.status,
+        createdAt: visitaCheckins.createdAt,
+      }).from(visitaCheckins).where(gte(visitaCheckins.createdAt, startDate));
+
+      // Get ganhos (vendas fechadas) per consultor
+      const ganhosRows = await db.select({
+        consultorId: oportunidades.consultorId,
+        ticketEstimado: oportunidades.ticketEstimado,
+        updatedAt: oportunidades.updatedAt,
+      }).from(oportunidades)
+        .where(and(eq(oportunidades.status, "ganho"), gte(oportunidades.updatedAt, startDate)));
+
+      // Build ranking
+      const rankingMap = new Map<number, {
+        userId: number; userName: string;
+        propostasEnviadas: number; volumePropostas: number;
+        visitasRealizadas: number; vendasRealizadas: number;
+        faturamentoTotal: number; maquinasVendidas: number;
+      }>();
+
+      for (const c of consultores) {
+        rankingMap.set(c.id, {
+          userId: c.id, userName: c.name ?? "—",
+          propostasEnviadas: 0, volumePropostas: 0,
+          visitasRealizadas: 0, vendasRealizadas: 0,
+          faturamentoTotal: 0, maquinasVendidas: 0,
+        });
+      }
+
+      for (const p of propostasRows) {
+        if (!p.consultorId) continue;
+        const entry = rankingMap.get(p.consultorId);
+        if (!entry) continue;
+        entry.propostasEnviadas++;
+        entry.volumePropostas += Number(p.totalGeral || 0);
+        if (p.status === "aceita") {
+          entry.vendasRealizadas++;
+          entry.faturamentoTotal += Number(p.totalGeral || 0);
+          entry.maquinasVendidas++;
+        }
+      }
+
+      for (const v of checkinsRows) {
+        const entry = rankingMap.get(v.userId);
+        if (!entry) continue;
+        if (v.status === "valido" || v.status === "suspeito") {
+          entry.visitasRealizadas++;
+        }
+      }
+
+      for (const g of ganhosRows) {
+        if (!g.consultorId) continue;
+        const entry = rankingMap.get(g.consultorId);
+        if (!entry) continue;
+        // Only count if not already counted via propostas
+        if (entry.vendasRealizadas === 0) {
+          entry.vendasRealizadas++;
+          entry.faturamentoTotal += Number(g.ticketEstimado || 0);
+        }
+      }
+
+      // Calculate score (weighted)
+      const result = Array.from(rankingMap.values()).map(r => {
+        const maxP = Math.max(...Array.from(rankingMap.values()).map(x => x.propostasEnviadas), 1);
+        const maxV = Math.max(...Array.from(rankingMap.values()).map(x => x.visitasRealizadas), 1);
+        const maxVe = Math.max(...Array.from(rankingMap.values()).map(x => x.vendasRealizadas), 1);
+        const maxF = Math.max(...Array.from(rankingMap.values()).map(x => x.faturamentoTotal), 1);
+        const score = Math.round(
+          (r.propostasEnviadas / maxP) * 30 +
+          (r.visitasRealizadas / maxV) * 20 +
+          (r.vendasRealizadas / maxVe) * 25 +
+          (r.faturamentoTotal / maxF) * 25
+        );
+        return { ...r, score };
+      });
+
+      return result.sort((a, b) => b.score - a.score);
+    }),
+});
+
 // Extend appRouter
 const appRouterExtended = {
   ...appRouter,
@@ -1468,6 +1589,7 @@ const appRouterExtended = {
   maquinas: maquinasRouter,
   estoque: estoqueRouter,
   propostas: propostasRouter,
+  consultorRanking: consultorRankingRouter,
 };
 export { appRouterExtended as appRouter };
 export type AppRouter = typeof appRouterExtended;

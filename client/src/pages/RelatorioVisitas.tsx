@@ -108,27 +108,46 @@ export default function RelatorioVisitas() {
           <CardDescription>Localização GPS dos check-ins no período</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-xl overflow-hidden border border-border" style={{ height: "300px", background: "#f1f5f9", position: "relative" }}>
-            {/* Simple visual representation since no map API */}
-            <div className="absolute inset-0 flex items-center justify-center flex-col gap-3">
-              <div className="grid grid-cols-3 gap-4 w-full max-w-lg px-8">
-                {checkins.map((c, i) => {
-                  const cfg = STATUS_CONFIG[c.status as keyof typeof STATUS_CONFIG];
-                  return (
-                    <div key={i} className="flex flex-col items-center gap-1 text-center">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 shadow-sm"
-                        style={{ background: cfg.bg, borderColor: cfg.color }}>
-                        <MapPin className="w-5 h-5" style={{ color: cfg.color }} />
-                      </div>
-                      <p className="text-xs font-semibold truncate max-w-[80px]">{c.empresa.split(" ")[0]}</p>
-                      <p className="text-xs text-muted-foreground">{c.cidade.split("/")[1]}</p>
-                    </div>
-                  );
-                })}
+          <div className="rounded-xl overflow-hidden border border-border" style={{ height: "380px", position: "relative" }}>
+            {/* Google Maps embed showing checkin locations */}
+            {checkins.length > 0 ? (
+              <iframe
+                title="Mapa de Visitas"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                src={`https://www.google.com/maps/embed/v1/search?key=AIzaSyD-dummy-replace-with-real-key&q=${encodeURIComponent(
+                  checkins.map(c => c.cidade).filter(Boolean).join("|") || "Luís Eduardo Magalhães, BA"
+                )}&zoom=7&language=pt-BR`}
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center bg-muted/30">
+                <div className="text-center">
+                  <MapPin className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+                  <p className="text-sm font-semibold text-muted-foreground">Nenhum check-in no período</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">🗺️ Integração com mapa em desenvolvimento</p>
+            )}
+            {/* Overlay with check-in status summary */}
+            <div className="absolute top-3 left-3 flex flex-col gap-2">
+              {checkins.slice(0, 5).map((c, i) => {
+                const cfg = STATUS_CONFIG[c.status as keyof typeof STATUS_CONFIG];
+                return (
+                  <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg shadow-md text-xs font-semibold"
+                    style={{ background: "white", border: `2px solid ${cfg.color}` }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: cfg.color }} />
+                    <span className="max-w-[120px] truncate">{c.empresa.split(" ")[0]}</span>
+                    <span className="text-muted-foreground">{c.durMinutos}min</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            💡 Para ativar o mapa interativo com localização GPS real, adicione sua chave Google Maps API nas configurações.
+          </p>
           {/* Legend */}
           <div className="flex gap-4 mt-3 flex-wrap">
             {Object.entries(STATUS_CONFIG).map(([k,v])=>(

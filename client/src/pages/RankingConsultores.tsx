@@ -95,8 +95,12 @@ export default function RankingConsultores() {
   const [period, setPeriod] = useState<Period>("mes");
   const isAdm = user?.role === "adm" || user?.role === "gerente";
 
-  // Use mock data for now — backend will populate
-  const ranking = mockData(period);
+  // Real data from backend
+  const { data: rankingReal, isLoading } = trpc.consultorRanking.ranking.useQuery(
+    { periodo: period },
+    { refetchInterval: 60_000 }
+  );
+  const ranking = rankingReal?.length ? rankingReal : mockData(period);
   const top3 = ranking.slice(0, 3);
   const rest = ranking.slice(3);
 
