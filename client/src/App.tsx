@@ -30,6 +30,8 @@ import FollowUps from "./pages/FollowUps";
 import Comparativos from "./pages/Comparativos";
 import Oportunidades from "./pages/Oportunidades";
 import NovaOportunidade from "./pages/NovaOportunidade";
+import RankingConsultores from "./pages/RankingConsultores";
+import AgendaConsultor from "./pages/AgendaConsultor";
 import Maquinas from "./pages/Maquinas";
 import Estoque from "./pages/Estoque";
 import QualificationFieldsConfig from "./pages/QualificationFieldsConfig";
@@ -78,6 +80,8 @@ function Router() {
       <Route path="/comparativos" component={() => <ProtectedRoute component={Comparativos} />} />
       <Route path="/oportunidades" component={() => <ProtectedRoute component={Oportunidades} />} />
       <Route path="/nova-oportunidade" component={() => <ProtectedRoute component={NovaOportunidade} />} />
+      <Route path="/ranking-consultores" component={() => <ProtectedRoute component={RankingConsultores} />} />
+      <Route path="/agenda-consultor" component={() => <ProtectedRoute component={AgendaConsultor} />} />
       <Route path="/maquinas" component={() => <ProtectedRoute component={Maquinas} />} />
       <Route path="/estoque" component={() => <ProtectedRoute component={Estoque} />} />
       <Route path="/follow-ups" component={() => <ProtectedRoute component={FollowUps} />} />

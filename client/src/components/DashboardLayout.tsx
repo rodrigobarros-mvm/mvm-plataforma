@@ -56,7 +56,9 @@ import {
   Users,
   FileUp,
   Zap,
-  Package
+  Package,
+  Calendar,
+  Trophy
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -129,6 +131,8 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: TrendingUp, label: "Oportunidades", path: "/oportunidades" },
         { icon: Package, label: "Catálogo / Máquinas", path: "/maquinas" },
         { icon: Package, label: "Estoque & Chassis", path: "/estoque" },
+        { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
+        { icon: Trophy, label: "Ranking Consultores", path: "/ranking-consultores" },
       ],
     },
     {

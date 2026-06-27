@@ -440,3 +440,89 @@ export const propostas = mysqlTable("propostas", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 export type Proposta = typeof propostas.$inferSelect;
+
+// ─── Consultor Performance (propostas, visitas, vendas) ──────────────────────
+export const consultorAtividades = mysqlTable("consultor_atividades", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  tipo: mysqlEnum("tipo", ["proposta_enviada", "visita_realizada", "venda_realizada", "maquina_vendida"]).notNull(),
+  qtdMaquinas: int("qtdMaquinas").default(1),  // qtd de máquinas na venda
+  oportunidadeId: int("oportunidadeId"),
+  propostaId: int("propostaId"),
+  ticketValor: decimal("ticketValor", { precision: 12, scale: 2 }),
+  observacoes: text("observacoes"),
+  dataAtividade: timestamp("dataAtividade").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ConsultorAtividade = typeof consultorAtividades.$inferSelect;
+
+// ─── Consultor Goals (metas específicas de consultores) ───────────────────────
+export const consultorMetas = mysqlTable("consultor_metas", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),                // null = meta para todos os consultores
+  tipo: mysqlEnum("tipo", [
+    "propostas_dia",      // propostas enviadas por dia
+    "visitas_semana",     // visitas realizadas por semana
+    "vendas_mes",         // vendas fechadas por mês
+    "ticket_medio_mes",   // ticket médio mensal
+    "conversao_proposta", // % conversão proposta → venda
+  ]).notNull(),
+  valorMeta: decimal("valorMeta", { precision: 12, scale: 2 }).notNull(),
+  periodo: mysqlEnum("periodo", ["diario", "semanal", "mensal"]).notNull(),
+  ativo: boolean("ativo").default(true).notNull(),
+  criadoPor: int("criadoPor").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ConsultorMeta = typeof consultorMetas.$inferSelect;
+
+// ─── Consultor Check-in de Visita (geolocalização) ───────────────────────────
+export const visitaCheckins = mysqlTable("visita_checkins", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  oportunidadeId: int("oportunidadeId"),
+  leadId: int("leadId"),
+  // Localização do consultor no momento do check-in
+  latConsultor: decimal("latConsultor", { precision: 10, scale: 7 }),
+  lngConsultor: decimal("lngConsultor", { precision: 10, scale: 7 }),
+  // Localização esperada (endereço do cliente)
+  latCliente: decimal("latCliente", { precision: 10, scale: 7 }),
+  lngCliente: decimal("lngCliente", { precision: 10, scale: 7 }),
+  distanciaMetros: int("distanciaMetros"),  // distância calculada entre consultor e cliente
+  enderecoConsultor: text("enderecoConsultor"),  // reverse geocode do consultor
+  enderecoCliente: text("enderecoCliente"),
+  status: mysqlEnum("status", ["valido", "suspeito", "invalido"]).default("valido").notNull(),
+  // valido = consultor está no raio de 500m do cliente
+  // suspeito = entre 500m e 2km
+  // invalido = mais de 2km de distância
+  fotoUrl: text("fotoUrl"),         // foto opcional tirada no momento da visita
+  observacoes: text("observacoes"),
+  durMinutos: int("durMinutos"),    // duração da visita em minutos
+  checkoutAt: timestamp("checkoutAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type VisitaCheckin = typeof visitaCheckins.$inferSelect;
+
+// ─── Agenda do Consultor (tarefas / compromissos) ─────────────────────────────
+export const agendaConsultor = mysqlTable("agenda_consultor", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  tipo: mysqlEnum("tipo", ["visita", "ligacao", "reuniao_online", "proposta", "outro"]).notNull(),
+  titulo: varchar("titulo", { length: 256 }).notNull(),
+  leadId: int("leadId"),
+  oportunidadeId: int("oportunidadeId"),
+  dataHora: timestamp("dataHora").notNull(),
+  duracaoMinutos: int("duracaoMinutos").default(60),
+  // Localização (para visitas)
+  endereco: text("endereco"),
+  lat: decimal("lat", { precision: 10, scale: 7 }),
+  lng: decimal("lng", { precision: 10, scale: 7 }),
+  distanciaKm: decimal("distanciaKm", { precision: 8, scale: 2 }),
+  status: mysqlEnum("status", ["agendado", "em_andamento", "concluido", "cancelado"]).default("agendado").notNull(),
+  checkinId: int("checkinId"),      // check-in vinculado (quando visita)
+  observacoes: text("observacoes"),
+  criadoPorSugestao: boolean("criadoPorSugestao").default(false), // true = criado pelo "buscar empresas próximas"
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type AgendaConsultor = typeof agendaConsultor.$inferSelect;
