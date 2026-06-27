@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { ChevronLeft, ChevronRight, Lock, MapPin, Phone, Search, Star, User } from "lucide-react";
+import { ChevronLeft, ChevronRight, Lock, MapPin, MessageCircle, Phone, Search, Star, User } from "lucide-react";
 import { CityMultiSelect } from "@/components/CityMultiSelect";
 
 const STATUS_COLORS: Record<string, string> = {

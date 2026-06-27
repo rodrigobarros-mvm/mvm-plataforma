@@ -159,6 +159,7 @@ export default function Users() {
                       <SelectItem value="coordenador">Coordenador</SelectItem>
                       <SelectItem value="supervisor">Supervisor</SelectItem>
                       <SelectItem value="bdr">BDR</SelectItem>
+                <SelectItem value="consultor">Consultor Comercial</SelectItem>
                     </SelectContent>
                   </Select>
                   <div className="flex items-center gap-1">
@@ -278,6 +279,7 @@ export default function Users() {
                     <SelectItem value="coordenador">Coordenador</SelectItem>
                     <SelectItem value="supervisor">Supervisor</SelectItem>
                     <SelectItem value="bdr">BDR</SelectItem>
+                <SelectItem value="consultor">Consultor Comercial</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

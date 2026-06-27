@@ -125,6 +125,7 @@ function getMenuGroups(role: string): MenuGroup[] {
     groups.push({
       label: "Comercial",
       items: [
+        { icon: Zap, label: "Nova Oportunidade", path: "/nova-oportunidade", highlight: true },
         { icon: TrendingUp, label: "Oportunidades", path: "/oportunidades" },
         { icon: Package, label: "Catálogo / Máquinas", path: "/maquinas" },
         { icon: Package, label: "Estoque & Chassis", path: "/estoque" },
