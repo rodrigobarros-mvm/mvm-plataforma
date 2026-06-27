@@ -255,6 +255,30 @@ function AdminDashboard() {
   return (
     <div className="space-y-4 md:space-y-6">
 
+      {/* ── 3 Perguntas do Gestor ─────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-1"
+          style={{ borderColor: "#0a1e5a40", background: "#0a1e5a06" }}>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Quem está travado?</p>
+          <p className="text-2xl">👇</p>
+          <p className="text-xs text-muted-foreground">Veja o painel abaixo</p>
+        </div>
+        <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-1"
+          style={{ borderColor: "#059669" + "40", background: "#05966906" }}>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Meta do dia</p>
+          <p className="text-2xl font-black" style={{ color: "#059669" }}>
+            {stats ? `${Math.round(((stats.todayAttempts ?? 0) / (stats.dailyAttemptsGoal ?? 80)) * 100)}%` : "—"}
+          </p>
+          <p className="text-xs text-muted-foreground">{stats?.todayAttempts ?? 0} / {stats?.dailyAttemptsGoal ?? 80} tentativas</p>
+        </div>
+        <div className="rounded-xl border-2 border-dashed p-4 text-center space-y-1"
+          style={{ borderColor: "#D97706" + "40", background: "#D9770606" }}>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-wide">Oportunidades quentes</p>
+          <p className="text-2xl font-black" style={{ color: "#D97706" }}>{stats?.totalQualified ?? 0}</p>
+          <p className="text-xs text-muted-foreground">leads qualificados hoje</p>
+        </div>
+      </div>
+
       {/* ── Period Selector + KPI Cards (mobile + desktop) ── */}
       <div className="space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
@@ -746,6 +770,54 @@ function AdminDashboard() {
 }
 
 // ─── Main Export ──────────────────────────────────────────────────────────────
+
+// ─── CONSULTOR DASHBOARD ─────────────────────────────────────────────────────
+function ConsultorDashboard() {
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+
+  const firstName = user?.name?.split(" ")[0] ?? "Consultor";
+  const hour = new Date().getHours();
+  const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
+  const today = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
+
+  return (
+    <div className="space-y-5 max-w-2xl">
+      {/* Greeting */}
+      <div className="rounded-2xl p-5 text-white" style={{ background: "linear-gradient(135deg, #0a1e5a, #1c3c8a)" }}>
+        <p className="text-white/70 text-sm">{todayCapitalized}</p>
+        <h1 className="text-2xl font-bold mt-1">{greeting}, {firstName}! 👋</h1>
+        <p className="text-white/80 text-sm mt-2">Pronto para fechar negócios hoje?</p>
+      </div>
+
+      {/* Quick actions 2x2 */}
+      <div className="grid grid-cols-2 gap-3">
+        {[
+          { emoji: "📅", label: "Minha Agenda", desc: "Ver compromissos de hoje", path: "/agenda-consultor", color: "#0a1e5a" },
+          { emoji: "⚡", label: "Nova Oportunidade", desc: "Cadastrar novo cliente", path: "/nova-oportunidade", color: "#e21d3c" },
+          { emoji: "🎯", label: "Pipeline", desc: "Oportunidades ativas", path: "/oportunidades", color: "#7C3AED" },
+          { emoji: "📊", label: "Comparativos", desc: "LS vs concorrentes", path: "/comparativos", color: "#059669" },
+        ].map(c => (
+          <button
+            key={c.path}
+            onClick={() => setLocation(c.path)}
+            className="flex flex-col items-start p-4 rounded-xl border-2 active:scale-95 transition-all text-left w-full"
+            style={{ borderColor: c.color + "40", background: c.color + "08" }}
+          >
+            <span className="text-2xl mb-2">{c.emoji}</span>
+            <p className="font-bold text-sm" style={{ color: c.color }}>{c.label}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{c.desc}</p>
+          </button>
+        ))}
+      </div>
+
+      {/* Gestor panel for context */}
+      <GestorPanel />
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
   const role = (user as any)?.role ?? "bdr";
@@ -770,7 +842,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {isAdmOrGerente ? <AdminDashboard /> : <BdrDashboard />}
+      {isAdmOrGerente ? <AdminDashboard /> : isConsultor ? <ConsultorDashboard /> : <BdrDashboard />}
     </div>
   );
 }

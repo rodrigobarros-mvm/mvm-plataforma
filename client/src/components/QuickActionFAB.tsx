@@ -6,6 +6,7 @@ import {
   Plus, X, Phone, MessageCircle, MapPin, FileText, CheckCircle2
 } from "lucide-react";
 import { toast } from "sonner";
+import { useCelebration } from "@/hooks/useCelebration";
 
 const CONSULTOR_ACTIONS = [
   { icon: FileText,     label: "Proposta enviada",  tipo: "proposta_enviada",  color: "#0a1e5a" },
@@ -28,6 +29,7 @@ export default function QuickActionFAB() {
   const [, setLocation] = useLocation();
 
   const role = (user as any)?.role ?? "bdr";
+  const { celebrate } = useCelebration();
   const isConsultor = role === "consultor";
   const actions = isConsultor ? CONSULTOR_ACTIONS : BDR_ACTIONS;
 
@@ -36,10 +38,15 @@ export default function QuickActionFAB() {
     setTimeout(() => {
       setConfirming(null);
       setOpen(false);
-      toast.success("Atividade registrada!", {
-        icon: "✅",
-        duration: 2000,
-      });
+      // Celebrate on key actions
+      if (tipo === "venda_realizada" || tipo === "contato") celebrate();
+      toast.success(
+        tipo === "venda_realizada" ? "🏆 Venda registrada! Parabéns!" :
+        tipo === "visita_realizada" ? "📍 Visita registrada!" :
+        tipo === "contato" ? "✅ Contato realizado!" :
+        "✅ Atividade registrada!",
+        { duration: 2500 }
+      );
     }, 800);
   };
 

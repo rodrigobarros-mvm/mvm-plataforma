@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
-  ArrowRight, CheckCircle2, Clock, DollarSign, Phone, Search,
-  TrendingUp, UserCheck, Users, XCircle, Zap, Plus, FileText
+  ArrowRight, CheckCircle2, Clock, DollarSign, MessageCircle, Phone, Search,
+  TrendingUp, UserCheck, Users, XCircle, Zap, Plus, FileText, List, LayoutGrid
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -206,7 +206,7 @@ export default function Oportunidades() {
                       </div>
                     </div>
                     {/* Actions */}
-                    {isConsultor && opp.status === "aguardando_consultor" && (
+                    {opp.status === "aguardando_consultor" && (
                       <Button
                         size="sm"
                         className="shrink-0"
@@ -218,6 +218,19 @@ export default function Oportunidades() {
                       >
                         <CheckCircle2 className="w-4 h-4 mr-1" /> Assumir
                       </Button>
+                    )}
+                    {/* Quick WA button if has phone */}
+                    {opp.leadWhatsapp && (
+                      <a
+                        href={`https://wa.me/55${opp.leadWhatsapp.replace(/\D/g,"")}?text=${encodeURIComponent(`Olá! Da Gallotti Tractor | LS Tractor. Entrando em contato sobre ${opp.modeloInteresse ?? "nossa linha de tratores"}.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="flex items-center justify-center w-8 h-8 rounded-full shrink-0"
+                        style={{ background: "#25D36618", color: "#128C7E" }}
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                      </a>
                     )}
                     <ArrowRight className="w-4 h-4 text-muted-foreground shrink-0 self-center" />
                   </div>

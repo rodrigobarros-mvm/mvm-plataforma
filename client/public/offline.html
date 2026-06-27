@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallotti LS — Sem conexão</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0a1e5a;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .logo { font-size: 48px; margin-bottom: 16px; }
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    p { font-size: 14px; opacity: 0.7; max-width: 280px; line-height: 1.6; }
+    .card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+      max-width: 320px;
+      width: 100%;
+    }
+    .card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.6; margin-bottom: 12px; }
+    .tip { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; }
+    .tip:last-child { border-bottom: none; }
+    .tip .icon { font-size: 20px; width: 28px; text-align: center; shrink: 0; }
+    button {
+      margin-top: 24px;
+      background: #e21d3c;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 32px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      max-width: 320px;
+    }
+    button:active { opacity: 0.85; transform: scale(0.98); }
+  </style>
+</head>
+<body>
+  <div class="logo">🚜</div>
+  <h1>Você está offline</h1>
+  <p>A plataforma Gallotti LS precisa de conexão para carregar dados em tempo real.</p>
+
+  <div class="card">
+    <h2>O que fazer agora?</h2>
+    <div class="tip">
+      <span class="icon">📶</span>
+      <span>Verifique sua conexão WiFi ou dados móveis</span>
+    </div>
+    <div class="tip">
+      <span class="icon">🔄</span>
+      <span>Tente recarregar a página em alguns segundos</span>
+    </div>
+    <div class="tip">
+      <span class="icon">📱</span>
+      <span>Em área rural sem sinal? Registre no papel e lance depois</span>
+    </div>
+  </div>
+
+  <button onclick="location.reload()">Tentar novamente</button>
+
+  <script>
+    // Auto-retry when connection returns
+    window.addEventListener("online", () => location.reload());
+  </script>
+</body>
+</html>

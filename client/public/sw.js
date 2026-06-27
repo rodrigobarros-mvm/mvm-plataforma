@@ -7,8 +7,11 @@ const STATIC_CACHE = [
   "/dashboard",
   "/work-mode",
   "/follow-ups",
+  "/agenda-consultor",
+  "/oportunidades",
   "/logo.png",
   "/favicon.ico",
+  "/offline.html",
 ];
 
 // Install: cache static assets
@@ -45,7 +48,12 @@ self.addEventListener("fetch", (event) => {
         }
         return res;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => {
+        if (event.request.destination === "document") {
+          return caches.match("/offline.html");
+        }
+        return caches.match(event.request);
+      })
   );
 });
 

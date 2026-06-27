@@ -65,6 +65,7 @@ import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from "./DashboardLayoutSkeleton";
 import GlobalSearch from "./GlobalSearch";
 import QuickActionFAB from "./QuickActionFAB";
+import { useSmartNotifications } from "@/hooks/useSmartNotifications";
 import { Button } from "./ui/button";
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -288,6 +289,7 @@ function DashboardLayoutContent({
 
   const role = (user as any)?.role ?? "bdr";
   const menuGroups = getMenuGroups(role);
+  useSmartNotifications();
   const { theme, toggleTheme } = useTheme();
 
   const { data: unreadCount } = trpc.notifications.unreadCount.useQuery(undefined, {
