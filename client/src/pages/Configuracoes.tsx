@@ -15,8 +15,6 @@ export default function Configuracoes() {
   const role = (user as any)?.role ?? "bdr";
   const isAdm = ["adm", "admin", "gerente"].includes(role);
   const [saved, setSaved] = useState(false);
-  const [mapsApiKey, setMapsApiKey] = useState(() => localStorage.getItem("maps_api_key") ?? "");
-  const [showKey, setShowKey] = useState(false);
 
   const [empresa, setEmpresa] = useState({
     nome: "Gallotti Tractor Comercio de Tratores e Maquinas Agricolas LTDA",
@@ -38,8 +36,6 @@ export default function Configuracoes() {
   });
 
   const handleSave = () => {
-    if (mapsApiKey) localStorage.setItem("maps_api_key", mapsApiKey);
-    else localStorage.removeItem("maps_api_key");
     setSaved(true);
     toast.success("Configuracoes salvas!");
     setTimeout(() => setSaved(false), 3000);
@@ -169,52 +165,22 @@ export default function Configuracoes() {
         </CardContent>
       </Card>
 
-      {/* API Google Maps */}
-      <Card className="border-border">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <MapPin className="w-4 h-4" style={{ color: "#0a1e5a" }} />
-            Google Maps API
-          </CardTitle>
-          <CardDescription>
-            Usada no mapa de visitas GPS e no relatório de check-ins
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="space-y-1.5">
-            <Label>Chave da API (Google Maps)</Label>
-            <div className="flex gap-2">
-              <Input
-                type={showKey ? "text" : "password"}
-                value={mapsApiKey}
-                onChange={e => setMapsApiKey(e.target.value)}
-                placeholder="AIzaSy..."
-                className="font-mono"
-              />
-              <Button variant="outline" size="sm" onClick={() => setShowKey(v => !v)}
-                className="shrink-0 text-xs px-3">
-                {showKey ? "Ocultar" : "Mostrar"}
-              </Button>
-            </div>
-            {mapsApiKey && (
-              <p className="text-xs text-green-700 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> Chave configurada
+      {/* Mapa info */}
+      <Card className="border-border" style={{ background: "#f0fdf4", borderColor: "#6ee7b7" }}>
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <MapPin className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-bold text-green-800">Mapa de Visitas — Gratuito ✅</p>
+              <p className="text-xs text-green-700 mt-1 leading-relaxed">
+                O mapa do Relatório de Visitas usa <strong>OpenStreetMap</strong> — 100% gratuito,
+                sem necessidade de chave de API ou pagamento. Funciona automaticamente.
               </p>
-            )}
+            </div>
           </div>
-          <div className="rounded-lg p-3 bg-muted/40 text-xs text-muted-foreground space-y-1">
-            <p className="font-semibold text-foreground">Como obter a chave:</p>
-            <p>1. Acesse <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">console.cloud.google.com</a></p>
-            <p>2. Crie um projeto ou selecione um existente</p>
-            <p>3. Ative a API: <strong>Maps Embed API</strong> e <strong>Maps JavaScript API</strong></p>
-            <p>4. Crie uma chave em Credenciais → Criar Credenciais → Chave de API</p>
-            <p>5. Cole a chave acima e salve</p>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            A chave é salva localmente no navegador. Para uso em todos os dispositivos, configure via variável de ambiente no Railway.
-          </p>
         </CardContent>
       </Card>
+
 
       {/* Info conta */}
       <Card className="border-border">

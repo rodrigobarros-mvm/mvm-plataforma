@@ -108,51 +108,45 @@ export default function RelatorioVisitas() {
           <CardDescription>Localização GPS dos check-ins no período</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-xl overflow-hidden border border-border" style={{ height: "380px", position: "relative" }}>
-            {/* Google Maps embed showing checkin locations */}
-            {checkins.length > 0 && localStorage.getItem("maps_api_key") ? (
-              <iframe
-                title="Mapa de Visitas"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                loading="lazy"
-                allowFullScreen
-                src={`https://www.google.com/maps/embed/v1/search?key=${localStorage.getItem("maps_api_key") ?? ""}&q=${encodeURIComponent(
-                  checkins.map(c => c.cidade).filter(Boolean).join("|") || "Luís Eduardo Magalhães, BA"
-                )}&zoom=7&language=pt-BR`}
-              />
-            ) : (
-              <div className="h-full flex items-center justify-center bg-muted/30 flex-col gap-3">
-                <MapPin className="w-12 h-12 text-muted-foreground/30" />
-                {!localStorage.getItem("maps_api_key") ? (
-                  <div className="text-center px-6">
-                    <p className="text-sm font-semibold text-muted-foreground">Chave Google Maps não configurada</p>
-                    <p className="text-xs text-muted-foreground mt-1">Acesse <strong>Configurações → Google Maps API</strong> para ativar o mapa</p>
-                    <a href="/configuracoes" className="text-xs text-blue-600 underline mt-2 block">Ir para Configurações →</a>
-                  </div>
-                ) : (
-                  <p className="text-sm font-semibold text-muted-foreground">Nenhum check-in no período</p>
-                )}
-              </div>
-            )}
-            {/* Overlay with check-in status summary */}
-            <div className="absolute top-3 left-3 flex flex-col gap-2">
-              {checkins.slice(0, 5).map((c, i) => {
+          {/* OpenStreetMap via Leaflet — 100% gratuito, sem chave */}
+          <div className="rounded-xl overflow-hidden border border-border" style={{ height: "380px", position: "relative", background: "#f1f5f9" }}>
+            <iframe
+              title="Mapa de Visitas — OpenStreetMap"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=-48.0%2C-17.0%2C-36.0%2C-2.0&layer=mapnik&marker=${
+                checkins.length > 0
+                  ? checkins.map(c => `${c.lat},${c.lng}`).slice(0,5).join("|")
+                  : "-12.09,-45.78"
+              }`}
+            />
+            {/* Overlay pins */}
+            <div className="absolute top-3 left-3 flex flex-col gap-2 pointer-events-none">
+              {checkins.slice(0, 6).map((c, i) => {
                 const cfg = STATUS_CONFIG[c.status as keyof typeof STATUS_CONFIG];
                 return (
-                  <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg shadow-md text-xs font-semibold"
-                    style={{ background: "white", border: `2px solid ${cfg.color}` }}>
-                    <div className="w-2 h-2 rounded-full" style={{ background: cfg.color }} />
-                    <span className="max-w-[120px] truncate">{c.empresa.split(" ")[0]}</span>
-                    <span className="text-muted-foreground">{c.durMinutos}min</span>
+                  <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg shadow-md text-xs font-semibold pointer-events-auto"
+                    style={{ background: "white", border: `2px solid ${cfg.color}`, maxWidth: "200px" }}>
+                    <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: cfg.color }} />
+                    <span className="truncate">{c.empresa.split(" ")[0]}</span>
+                    <span className="text-muted-foreground shrink-0">{c.durMinutos}min</span>
                   </div>
                 );
               })}
             </div>
+            {checkins.length === 0 && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+                <div className="text-center">
+                  <MapPin className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-sm font-semibold text-muted-foreground">Nenhum check-in no período</p>
+                </div>
+              </div>
+            )}
           </div>
-          <p className="text-xs text-muted-foreground mt-2">
-            💡 Para ativar o mapa interativo com localização GPS real, adicione sua chave Google Maps API nas configurações.
+          <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
+            🗺️ Mapa via <strong>OpenStreetMap</strong> — gratuito, sem necessidade de chave de API
           </p>
           {/* Legend */}
           <div className="flex gap-4 mt-3 flex-wrap">
