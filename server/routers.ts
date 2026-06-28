@@ -211,7 +211,6 @@ const appRouter = router({
       .input(z.object({
         email: z.string().email(),
         role: z.enum(["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr", "consultor"]),
-        unidade: z.enum(["bahia", "piaui", "ambas"]).default("bahia"),
         origin: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -225,7 +224,6 @@ const appRouter = router({
         await createInvite({
           email: input.email,
           role: input.role,
-          unidade: (input as any).unidade ?? "bahia",
           token,
           invitedBy: ctx.user.id,
           expiresAt,
