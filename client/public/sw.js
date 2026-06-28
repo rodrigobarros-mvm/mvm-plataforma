@@ -1,16 +1,20 @@
-// LS Tractor Gallotti — Service Worker v2
+// LS Tractor Gallotti — Service Worker v3
 // Suporte a Push Notifications + Cache Offline básico
 
-const CACHE_NAME = "lst-gallotti-v2";
+const CACHE_NAME = "lst-gallotti-v3";
 const STATIC_CACHE = [
   "/",
+  "/login",
   "/dashboard",
   "/work-mode",
   "/follow-ups",
   "/agenda-consultor",
   "/oportunidades",
-  "/logo.png",
-  "/favicon.ico",
+  "/icon-192x192.png",
+  "/icon-512x512.png",
+  "/apple-touch-icon.png",
+  "/favicon-32x32.png",
+  "/favicon-16x16.png",
   "/offline.html",
 ];
 
@@ -32,7 +36,7 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: network first, fallback to cache for navigation
+// Fetch: network first, fallback to cache para navegação
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   const url = new URL(event.request.url);
@@ -57,7 +61,7 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Push Notifications
+// ── Push Notifications ─────────────────────────────────────────────────────────
 self.addEventListener("push", (event) => {
   if (!event.data) return;
   let data;
@@ -65,15 +69,15 @@ self.addEventListener("push", (event) => {
 
   const options = {
     body: data.body || "",
-    icon: "/logo.png",
-    badge: "/logo.png",
+    icon: "/icon-192x192.png",
+    badge: "/icon-192x192.png",
     tag: data.tag || "lst-notification",
     data: { url: data.url || "/dashboard" },
     requireInteraction: false,
     silent: false,
     vibrate: [200, 100, 200],
     actions: [
-      { action: "open", title: "Abrir" },
+      { action: "open",    title: "Abrir" },
       { action: "dismiss", title: "Dispensar" },
     ],
   };
@@ -104,8 +108,8 @@ self.addEventListener("notificationclick", (event) => {
 self.addEventListener("message", (event) => {
   if (event.data?.type === "SCHEDULE_DAILY_REMINDERS") {
     const { role, agendaCount, followupCount, metaPercent } = event.data;
-    
-    // Morning reminder (8:30)
+
+    // Lembrete manhã (8:30)
     const now = new Date();
     const morning = new Date();
     morning.setHours(8, 30, 0, 0);
@@ -115,14 +119,16 @@ self.addEventListener("message", (event) => {
         if (role === "consultor" && agendaCount > 0) {
           self.registration.showNotification("Gallotti LS — Bom dia! 🚜", {
             body: `Você tem ${agendaCount} compromisso${agendaCount > 1 ? "s" : ""} hoje. Abrir agenda.`,
-            icon: "/logo.png", badge: "/logo.png",
+            icon: "/icon-192x192.png",
+            badge: "/icon-192x192.png",
             data: { url: "/agenda-consultor" },
             tag: "morning-agenda",
           });
         } else if (role === "bdr") {
           self.registration.showNotification("Gallotti LS — Bom dia! 💪", {
             body: `Meta de hoje: ${metaPercent ?? 0}% concluída. Vamos prospectar!`,
-            icon: "/logo.png", badge: "/logo.png",
+            icon: "/icon-192x192.png",
+            badge: "/icon-192x192.png",
             data: { url: "/work-mode" },
             tag: "morning-bdr",
           });
@@ -130,7 +136,7 @@ self.addEventListener("message", (event) => {
       }, delay);
     }
 
-    // Evening reminder (17:00)
+    // Lembrete tarde (17:00)
     const evening = new Date();
     evening.setHours(17, 0, 0, 0);
     if (now < evening) {
@@ -139,7 +145,8 @@ self.addEventListener("message", (event) => {
         if (followupCount > 0) {
           self.registration.showNotification("⏰ Follow-ups pendentes!", {
             body: `${followupCount} retorno${followupCount > 1 ? "s" : ""} agendado${followupCount > 1 ? "s" : ""} para hoje. Não esqueça!`,
-            icon: "/logo.png", badge: "/logo.png",
+            icon: "/icon-192x192.png",
+            badge: "/icon-192x192.png",
             data: { url: "/follow-ups" },
             tag: "evening-followup",
           });
