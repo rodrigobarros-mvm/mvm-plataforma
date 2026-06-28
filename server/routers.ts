@@ -211,6 +211,7 @@ const appRouter = router({
       .input(z.object({
         email: z.string().email(),
         role: z.enum(["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr", "consultor"]),
+        unidade: z.enum(["bahia", "piaui", "ambas"]).default("bahia"),
         origin: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
