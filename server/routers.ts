@@ -190,7 +190,7 @@ const appRouter = router({
       }),
 
     updateRole: admProcedure
-      .input(z.object({ id: z.number(), role: z.enum(["adm", "gerente", "bdr"]) }))
+      .input(z.object({ id: z.number(), role: z.enum(["adm", "gerente", "bdr", "consultor"]) }))
       .mutation(async ({ input }) => {
         await updateUserRole(input.id, input.role);
         return { success: true };
@@ -210,13 +210,13 @@ const appRouter = router({
     invite: canInviteProcedure
       .input(z.object({
         email: z.string().email(),
-        role: z.enum(["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr"]),
+        role: z.enum(["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr", "consultor"]),
         origin: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const senderRole = ctx.user.role as string;
         const isAdm = senderRole === "adm" || senderRole === "admin";
-        if (!isAdm && input.role !== "bdr") {
+        if (!isAdm && input.role !== "bdr" && input.role !== "consultor") {
           throw new TRPCError({ code: "FORBIDDEN", message: "Gerentes, Diretores, Coordenadores e Supervisores só podem convidar BDRs" });
         }
         const token = nanoid(32);
