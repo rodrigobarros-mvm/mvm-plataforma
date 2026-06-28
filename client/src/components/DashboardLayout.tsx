@@ -26,7 +26,6 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
 import { trpc } from "@/lib/trpc";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -36,7 +35,6 @@ import {
   Bell,
   CalendarClock,
   ChevronDown,
-  ClipboardList,
   DollarSign,
   Tractor,
   LayoutDashboard,
@@ -60,7 +58,7 @@ import {
   Calendar,
   Trophy,
   FileText,
-  MapPin
+  MapPin,
 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
@@ -98,7 +96,6 @@ type MenuItem = {
   icon: React.ElementType;
   label: string;
   path: string;
-  roles?: string[];
   badge?: number;
 };
 
@@ -111,6 +108,7 @@ function getMenuGroups(role: string): MenuGroup[] {
   const isAdm = role === "adm" || role === "admin";
   const isGerente = role === "gerente";
   const isBdr = role === "bdr";
+  const isConsultor = role === "consultor";
 
   const groups: MenuGroup[] = [
     {
@@ -120,45 +118,51 @@ function getMenuGroups(role: string): MenuGroup[] {
         { icon: Bell, label: "Notificações", path: "/notifications" },
       ],
     },
-    {
+  ];
+
+  // Leads — só para ADM, Gerente e BDR
+  if (isAdm || isGerente || isBdr) {
+    groups.push({
       label: "Leads",
       items: [
         { icon: Star, label: "Alta Prioridade", path: "/leads/priority" },
         { icon: ListFilter, label: "Lista Completa", path: "/leads" },
         { icon: CalendarClock, label: "Follow-ups", path: "/follow-ups" },
       ],
-    },
-  ];
+    });
+  }
 
+  // Comercial — ADM e Gerente
   if (isAdm || isGerente) {
     groups.push({
       label: "Comercial",
       items: [
-        { icon: Zap, label: "Nova Oportunidade", path: "/nova-oportunidade", highlight: true },
-        { icon: TrendingUp, label: "Oportunidades", path: "/oportunidades" },
-        { icon: Package, label: "Catálogo / Máquinas", path: "/maquinas" },
-        { icon: Package, label: "Estoque & Chassis", path: "/estoque" },
-        { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
-        { icon: Trophy, label: "Ranking Consultores", path: "/ranking-consultores" },
-        { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
-        { icon: FileText, label: "Hist. Propostas", path: "/historico-propostas" },
-        { icon: MessageCircle, label: "WA em Massa", path: "/whatsapp-massa" },
-        { icon: BarChart3, label: "Saude da Carteira", path: "/carteira" },
+        { icon: Zap,         label: "Nova Oportunidade",   path: "/nova-oportunidade" },
+        { icon: TrendingUp,  label: "Oportunidades",       path: "/oportunidades" },
+        { icon: Package,     label: "Catálogo / Máquinas", path: "/maquinas" },
+        { icon: Package,     label: "Estoque & Chassis",   path: "/estoque" },
+        { icon: Calendar,    label: "Minha Agenda",        path: "/agenda-consultor" },
+        { icon: Trophy,      label: "Ranking Consultores", path: "/ranking-consultores" },
+        { icon: BarChart3,   label: "Comparativos",        path: "/comparativos" },
+        { icon: FileText,    label: "Hist. Propostas",     path: "/historico-propostas" },
+        { icon: MessageCircle, label: "WA em Massa",       path: "/whatsapp-massa" },
+        { icon: BarChart3,   label: "Saúde da Carteira",   path: "/carteira" },
       ],
-    },
-    {
-    label: "Gestão",
+    });
+    groups.push({
+      label: "Gestão",
       items: [
-        { icon: BarChart3, label: "Relatórios", path: "/reports" },
-        { icon: MapPin, label: "Relatório de Visitas", path: "/relatorio-visitas" },
-        { icon: TrendingUp, label: "Funil de Pipeline", path: "/pipeline" },
-        { icon: Target, label: "Metas & KPIs", path: "/goals" },
-        { icon: DollarSign, label: "Comissões", path: "/commissions" },
-        { icon: Award, label: "Ranking BDRs", path: "/ranking" },
+        { icon: BarChart3,  label: "Relatórios",          path: "/reports" },
+        { icon: MapPin,     label: "Relatório de Visitas", path: "/relatorio-visitas" },
+        { icon: TrendingUp, label: "Funil de Pipeline",   path: "/pipeline" },
+        { icon: Target,     label: "Metas & KPIs",        path: "/goals" },
+        { icon: DollarSign, label: "Comissões",           path: "/commissions" },
+        { icon: Award,      label: "Ranking BDRs",        path: "/ranking" },
       ],
     });
   }
 
+  // Prospecção — BDR
   if (isBdr) {
     groups.push({
       label: "Prospecção",
@@ -169,52 +173,51 @@ function getMenuGroups(role: string): MenuGroup[] {
     groups.push({
       label: "Minha Performance",
       items: [
-        { icon: Award, label: "Meu Ranking", path: "/ranking" },
-        { icon: DollarSign, label: "Minhas Comissões", path: "/commissions" },
-        { icon: Target, label: "Minhas Metas", path: "/goals" },
+        { icon: Award,      label: "Meu Ranking",       path: "/ranking" },
+        { icon: DollarSign, label: "Minhas Comissões",  path: "/commissions" },
+        { icon: Target,     label: "Minhas Metas",      path: "/goals" },
       ],
     });
   }
 
-  const isConsultor = role === "consultor";
+  // Comercial — Consultor
   if (isConsultor) {
     groups.push({
       label: "Comercial",
       items: [
-        { icon: Zap, label: "Nova Oportunidade", path: "/nova-oportunidade" },
-        { icon: TrendingUp, label: "Minhas Oportunidades", path: "/oportunidades" },
-        { icon: FileText, label: "Gerar Proposta", path: "/gerar-proposta" },
-        { icon: FileText, label: "Hist. Propostas", path: "/historico-propostas" },
-        { icon: MessageCircle, label: "WA em Massa", path: "/whatsapp-massa" },
-        { icon: BarChart3, label: "Saude da Carteira", path: "/carteira" },
-        { icon: Calendar, label: "Minha Agenda", path: "/agenda-consultor" },
-        { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
+        { icon: Zap,           label: "Nova Oportunidade",    path: "/nova-oportunidade" },
+        { icon: TrendingUp,    label: "Minhas Oportunidades", path: "/oportunidades" },
+        { icon: FileText,      label: "Gerar Proposta",       path: "/gerar-proposta" },
+        { icon: FileText,      label: "Hist. Propostas",      path: "/historico-propostas" },
+        { icon: Calendar,      label: "Minha Agenda",         path: "/agenda-consultor" },
+        { icon: MapPin,        label: "Check-in GPS",         path: "/agenda-consultor" },
+        { icon: BarChart3,     label: "Comparativos",         path: "/comparativos" },
+        { icon: BarChart3,     label: "Saúde da Carteira",    path: "/carteira" },
+        { icon: MessageCircle, label: "WA em Massa",          path: "/whatsapp-massa" },
+        { icon: Package,       label: "Catálogo Máquinas",    path: "/maquinas" },
+        { icon: Package,       label: "Estoque",              path: "/estoque" },
       ],
     });
     groups.push({
       label: "Minha Performance",
       items: [
-        { icon: Trophy, label: "Ranking Consultores", path: "/ranking-consultores" },
-        { icon: BarChart3, label: "Comparativos", path: "/comparativos" },
-        { icon: FileText, label: "Hist. Propostas", path: "/historico-propostas" },
-        { icon: MessageCircle, label: "WA em Massa", path: "/whatsapp-massa" },
-        { icon: BarChart3, label: "Saude da Carteira", path: "/carteira" },
-        { icon: Target, label: "Minhas Metas", path: "/goals" },
-        { icon: Package, label: "Catálogo Máquinas", path: "/maquinas" },
-        { icon: Package, label: "Estoque", path: "/estoque" },
+        { icon: Trophy,     label: "Ranking Consultores", path: "/ranking-consultores" },
+        { icon: Target,     label: "Minhas Metas",        path: "/goals" },
+        { icon: DollarSign, label: "Minhas Comissões",    path: "/commissions" },
       ],
     });
   }
 
+  // Administração
   if (isAdm) {
     groups.push({
       label: "Administração",
       items: [
-        { icon: Users, label: "Usuários", path: "/users" },
-        { icon: Unlock, label: "Liberar Leads", path: "/leads/release" },
+        { icon: Users,    label: "Usuários",          path: "/users" },
+        { icon: Unlock,   label: "Liberar Leads",     path: "/leads/release" },
         { icon: UserCheck, label: "Atribuir a BDRs", path: "/leads/assign" },
-        { icon: FileUp, label: "Importar Planilha", path: "/leads/importar" },
-        { icon: Settings, label: "Configuracoes", path: "/configuracoes" },
+        { icon: FileUp,   label: "Importar Planilha", path: "/leads/importar" },
+        { icon: Settings, label: "Configurações",     path: "/configuracoes" },
       ],
     });
   } else if (isGerente) {
@@ -229,7 +232,7 @@ function getMenuGroups(role: string): MenuGroup[] {
   groups.push({
     label: "Minha Conta",
     items: [
-      { icon: User, label: "Meu Perfil", path: "/meu-perfil" },
+      { icon: User,          label: "Meu Perfil",   path: "/meu-perfil" },
       { icon: MessageCircle, label: "SAC / Suporte", path: "/sac" },
     ],
   });
@@ -250,15 +253,22 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading) return <DashboardLayoutSkeleton />;
 
+  // ── Tela de acesso restrito — botão vai direto para /login ────────────────
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center gap-6 p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "oklch(0.24 0.09 248)" }}>
+          <div
+            className="w-16 h-16 rounded-2xl flex items-center justify-center"
+            style={{ background: "oklch(0.24 0.09 248)" }}
+          >
             <TrendingUp className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            <h1
+              className="text-2xl font-bold text-foreground mb-2"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
               Acesso Restrito
             </h1>
             <p className="text-muted-foreground">
@@ -266,7 +276,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </p>
           </div>
           <Button
-            onClick={() => { window.location.href = getLoginUrl(); }}
+            onClick={() => { window.location.href = "/login"; }}
             size="lg"
             className="w-full"
             style={{ background: "#0a1e5a" }}
@@ -337,7 +347,8 @@ function DashboardLayoutContent({
     };
   }, [isResizing, setSidebarWidth]);
 
-  const initials = `${user?.name?.[0] ?? ""}${(user as any)?.lastName?.[0] ?? ""}`.toUpperCase() || "U";
+  const initials =
+    `${user?.name?.[0] ?? ""}${(user as any)?.lastName?.[0] ?? ""}`.toUpperCase() || "U";
 
   return (
     <>
@@ -355,25 +366,28 @@ function DashboardLayoutContent({
                 <PanelLeft className="h-4 w-4" style={{ color: "#e21d3c" }} />
               </button>
               {!isCollapsed && (
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="h-7 flex items-center shrink-0">
-                    
+                <div className="min-w-0">
+                  <div
+                    className="text-sidebar-foreground font-bold text-sm leading-tight truncate"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    Gallotti Tractor | LS Tractor
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-sidebar-foreground font-bold text-sm leading-tight truncate" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                      Gallotti Tractor | LS Tractor
-                    </div>
-                    <div className="text-sidebar-foreground/50 text-xs truncate">Prospecção Ativa</div>
+                  <div className="text-sidebar-foreground/50 text-xs truncate">
+                    Prospecção Ativa
                   </div>
                 </div>
               )}
             </div>
           </SidebarHeader>
 
-          {/* Content — usando div nativo para evitar sobreposição de labels no mobile */}
+          {/* Menu */}
           <div className="flex-1 overflow-y-auto min-h-0 py-2">
             {menuGroups.map((group, groupIdx) => (
-              <div key={group.label} className={`${groupIdx > 0 ? "mt-1 pt-2 border-t border-sidebar-border/30" : ""}`}>
+              <div
+                key={group.label}
+                className={`${groupIdx > 0 ? "mt-1 pt-2 border-t border-sidebar-border/30" : ""}`}
+              >
                 {!isCollapsed && (
                   <div className="px-3 pt-1 pb-0.5">
                     <span className="text-sidebar-foreground/40 text-[10px] uppercase tracking-widest font-semibold select-none">
@@ -383,23 +397,33 @@ function DashboardLayoutContent({
                 )}
                 <div className="px-2 pb-1">
                   {group.items.map((item) => {
-                    const isActive = location === item.path || location.startsWith(item.path + "/");
+                    const isActive =
+                      location === item.path || location.startsWith(item.path + "/");
                     const isNotif = item.path === "/notifications";
                     return (
                       <button
-                        key={item.path}
+                        key={item.path + item.label}
                         onClick={() => setLocation(item.path)}
                         className={`flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm transition-colors text-left mb-0.5 ${
                           isActive
                             ? "text-sidebar-foreground"
                             : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                         }`}
-                        style={isActive ? { background: "oklch(0.22 0.08 248)", color: "oklch(0.52 0.22 27)" } : {}}
+                        style={
+                          isActive
+                            ? { background: "oklch(0.22 0.08 248)", color: "oklch(0.52 0.22 27)" }
+                            : {}
+                        }
                       >
                         <item.icon className="h-4 w-4 shrink-0" />
-                        {!isCollapsed && <span className="truncate flex-1">{item.label}</span>}
+                        {!isCollapsed && (
+                          <span className="truncate flex-1">{item.label}</span>
+                        )}
                         {isNotif && unreadCount && unreadCount > 0 && !isCollapsed && (
-                          <span className="text-xs rounded-full px-1.5 py-0.5 font-medium" style={{ background: "oklch(0.52 0.22 27)", color: "white" }}>
+                          <span
+                            className="text-xs rounded-full px-1.5 py-0.5 font-medium"
+                            style={{ background: "oklch(0.52 0.22 27)", color: "white" }}
+                          >
                             {unreadCount > 99 ? "99+" : unreadCount}
                           </span>
                         )}
@@ -418,7 +442,10 @@ function DashboardLayoutContent({
                 <button className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-sidebar-accent transition-colors w-full text-left focus:outline-none">
                   <Avatar className="h-8 w-8 shrink-0">
                     <AvatarImage src={(user as any)?.photoUrl ?? ""} />
-                    <AvatarFallback className="text-xs font-bold" style={{ background: "oklch(0.52 0.22 27)", color: "white" }}>
+                    <AvatarFallback
+                      className="text-xs font-bold"
+                      style={{ background: "oklch(0.52 0.22 27)", color: "white" }}
+                    >
                       {initials}
                     </AvatarFallback>
                   </Avatar>
@@ -432,7 +459,9 @@ function DashboardLayoutContent({
                       </p>
                     </div>
                   )}
-                  {!isCollapsed && <ChevronDown className="h-3 w-3 text-sidebar-foreground/40 shrink-0" />}
+                  {!isCollapsed && (
+                    <ChevronDown className="h-3 w-3 text-sidebar-foreground/40 shrink-0" />
+                  )}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-52">
@@ -440,7 +469,10 @@ function DashboardLayoutContent({
                   <div className="flex items-center gap-2">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={(user as any)?.photoUrl ?? ""} />
-                      <AvatarFallback className="text-xs font-bold" style={{ background: "oklch(0.52 0.22 27)", color: "white" }}>
+                      <AvatarFallback
+                        className="text-xs font-bold"
+                        style={{ background: "oklch(0.52 0.22 27)", color: "white" }}
+                      >
                         {initials}
                       </AvatarFallback>
                     </Avatar>
@@ -453,27 +485,43 @@ function DashboardLayoutContent({
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setLocation("/profile")} className="cursor-pointer">
+                <DropdownMenuItem
+                  onClick={() => setLocation("/profile")}
+                  className="cursor-pointer"
+                >
                   <User className="mr-2 h-4 w-4" />
                   Meu Perfil
                 </DropdownMenuItem>
                 {toggleTheme && (
                   <DropdownMenuItem onClick={toggleTheme} className="cursor-pointer">
-                    {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+                    {theme === "dark" ? (
+                      <Sun className="mr-2 h-4 w-4" />
+                    ) : (
+                      <Moon className="mr-2 h-4 w-4" />
+                    )}
                     {theme === "dark" ? "Modo Claro" : "Modo Escuro"}
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={() => setLocation("/notifications")} className="cursor-pointer">
+                <DropdownMenuItem
+                  onClick={() => setLocation("/notifications")}
+                  className="cursor-pointer"
+                >
                   <Bell className="mr-2 h-4 w-4" />
                   Notificações
                   {unreadCount && unreadCount > 0 && (
-                    <span className="ml-auto text-xs px-1.5 py-0.5 rounded-full" style={{ background: "oklch(0.63 0.18 40)", color: "white" }}>
+                    <span
+                      className="ml-auto text-xs px-1.5 py-0.5 rounded-full"
+                      style={{ background: "oklch(0.63 0.18 40)", color: "white" }}
+                    >
                       {unreadCount}
                     </span>
                   )}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="cursor-pointer text-destructive focus:text-destructive">
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="cursor-pointer text-destructive focus:text-destructive"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sair
                 </DropdownMenuItem>
@@ -482,9 +530,11 @@ function DashboardLayoutContent({
           </SidebarFooter>
         </Sidebar>
 
-        {/* Resize handle */}
+        {/* Resize handle — só desktop */}
         <div
-          className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${isCollapsed ? "hidden" : ""}`}
+          className={`absolute top-0 right-0 w-1 h-full cursor-col-resize hover:bg-primary/20 transition-colors ${
+            isCollapsed ? "hidden" : ""
+          }`}
           onMouseDown={() => { if (!isCollapsed) setIsResizing(true); }}
           style={{ zIndex: 50 }}
         />
@@ -496,12 +546,12 @@ function DashboardLayoutContent({
           <div className="flex border-b h-14 items-center justify-between bg-background/95 px-4 backdrop-blur sticky top-0 z-40">
             <div className="flex items-center gap-3">
               <SidebarTrigger className="h-9 w-9 rounded-lg" />
-              <div className="flex items-center gap-2">
-                <div className="h-7 flex items-center shrink-0">
-                  
-                </div>
-                <span className="font-bold text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Gallotti Tractor | LS Tractor</span>
-              </div>
+              <span
+                className="font-bold text-foreground text-sm"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                Gallotti Tractor | LS Tractor
+              </span>
             </div>
             <div className="flex items-center gap-1">
               {toggleTheme && (
@@ -517,10 +567,16 @@ function DashboardLayoutContent({
                   )}
                 </button>
               )}
-              <button onClick={() => setLocation("/notifications")} className="relative p-2">
+              <button
+                onClick={() => setLocation("/notifications")}
+                className="relative p-2"
+              >
                 <Bell className="w-5 h-5 text-muted-foreground" />
                 {unreadCount && unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-4 h-4 rounded-full text-xs flex items-center justify-center" style={{ background: "oklch(0.63 0.18 40)", color: "white" }}>
+                  <span
+                    className="absolute top-1 right-1 w-4 h-4 rounded-full text-xs flex items-center justify-center"
+                    style={{ background: "oklch(0.63 0.18 40)", color: "white" }}
+                  >
                     {unreadCount > 9 ? "9+" : unreadCount}
                   </span>
                 )}
@@ -528,8 +584,12 @@ function DashboardLayoutContent({
             </div>
           </div>
         )}
+
         <TeamProgressBar />
-        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">{children}</main>
+
+        {/* pb-24 no mobile garante que o bottom nav não esconde conteúdo */}
+        <main className="flex-1 p-4 md:p-6 pb-24 md:pb-6">{children}</main>
+
         <QuickActionFAB />
         <OnboardingTour />
         <MobileBottomBar />
