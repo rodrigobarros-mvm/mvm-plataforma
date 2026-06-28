@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   Plus, X, Phone, MessageCircle, MapPin, FileText, CheckCircle2
@@ -22,11 +21,12 @@ const BDR_ACTIONS = [
   { icon: FileText,      label: "Observação",       tipo: "observacao",       color: "#7C3AED" },
 ];
 
-// Rotas onde o FAB deve ficar oculto (formulários e telas de detalhe com muitos campos)
+// Rotas onde o FAB fica oculto
 const HIDDEN_ON_ROUTES = [
   "/propostas/nova",
   "/nova-oportunidade",
   "/nova-proposta",
+  "/gerar-proposta",
   "/estoque/liberar",
   "/estoque/receber",
   "/maquinas/nova",
@@ -34,6 +34,11 @@ const HIDDEN_ON_ROUTES = [
   "/usuarios/novo",
   "/usuarios/editar",
   "/goals",
+  "/ranking-consultores",
+  "/ranking",
+  "/relatorio-visitas",
+  "/pipeline",
+  "/carteira",
 ];
 
 export default function QuickActionFAB() {
@@ -47,7 +52,6 @@ export default function QuickActionFAB() {
   const isConsultor = role === "consultor";
   const actions = isConsultor ? CONSULTOR_ACTIONS : BDR_ACTIONS;
 
-  // Esconde em formulários — verifica se a rota atual começa com alguma rota proibida
   const isHidden = HIDDEN_ON_ROUTES.some(
     (route) => location === route || location.startsWith(route + "/")
   );
@@ -72,7 +76,6 @@ export default function QuickActionFAB() {
 
   return (
     <div className="fixed bottom-20 right-4 z-50 md:bottom-6 flex flex-col items-end gap-3">
-      {/* Ações expandidas */}
       {open && (
         <div className="flex flex-col items-end gap-2">
           {actions.map((action) => {
@@ -103,16 +106,12 @@ export default function QuickActionFAB() {
         </div>
       )}
 
-      {/* Botão principal FAB */}
       <button
         onClick={() => setOpen(v => !v)}
         className="w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all active:scale-95"
         style={{ background: open ? "#64748b" : "#e21d3c", color: "white" }}
       >
-        {open
-          ? <X className="w-6 h-6" />
-          : <Plus className="w-6 h-6" />
-        }
+        {open ? <X className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
       </button>
     </div>
   );
