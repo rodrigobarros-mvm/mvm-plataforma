@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Printer, MessageCircle, FileText, Building2, Tractor } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
+import { UNIDADES, getUnidade, type UnidadeKey } from "@/lib/unidades";
 import { useEffect } from "react";
 import { format, addBusinessDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -334,6 +335,14 @@ export default function GerarProposta() {
   const [step, setStep] = useState<1|2|3>(1);
   const [versao, setVersao] = useState(1);
   const [saved, setSaved] = useState(false);
+
+  // Unidade logic
+  const userUnidade = (user as any)?.unidade ?? "bahia";
+  const temAmbas = userUnidade === "ambas";
+  const [unidadeSel, setUnidadeSel] = useState<UnidadeKey>(
+    userUnidade === "ambas" ? "bahia" : userUnidade as UnidadeKey
+  );
+  const unidade = getUnidade(unidadeSel);
   // Load ONLY disponivel machines from estoque
   const { data: estoqueDisp } = trpc.estoque.listDisponivel.useQuery();
   const [chassisBusca, setChassisBusca] = useState("");
@@ -587,7 +596,7 @@ export default function GerarProposta() {
         <img src={theme.logo} alt={M?.marca} style={{ height:"28px", objectFit:"contain" }} onError={(e)=>{ (e.target as HTMLImageElement).style.display="none" }} />
         <div>
           <p className="text-sm font-bold" style={{ color:theme.primary }}>{M?.marca} — {M?.modelo}</p>
-          <p className="text-xs text-muted-foreground">Layout {M?.marca==="ENSIGN"?"ENSIGN (laranja/preto)":"LS Tractor (azul/vermelho)"}</p>
+          <p className="text-xs text-muted-foreground">Layout {M?.marca==="ENSIGN"?"ENSIGN (laranja/preto)":"LS Tractor (azul/vermelho)"} · {unidade.nome}</p>
         </div>
       </div>
 
@@ -666,6 +675,39 @@ export default function GerarProposta() {
               </div>
               <div className="space-y-1.5"><Label>Garantia</Label><Input value={form.garantia||M?.garantia||""} onChange={e=>setForm(f=>({...f,garantia:e.target.value}))} /></div>
             </div>
+            {/* Unidade da proposta */}
+            {temAmbas && (
+              <div className="space-y-2">
+                <Label className="font-bold">Unidade que está revendendo *</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {(["bahia", "piaui"] as UnidadeKey[]).map(u => {
+                    const un = getUnidade(u);
+                    return (
+                      <button key={u} onClick={() => setUnidadeSel(u)}
+                        className="flex flex-col items-start p-3 rounded-xl border-2 text-left transition-all"
+                        style={{
+                          borderColor: unidadeSel === u ? un.cor : "var(--border)",
+                          background: unidadeSel === u ? un.cor + "10" : "var(--card)",
+                        }}>
+                        <span className="text-xs font-bold" style={{ color: un.cor }}>
+                          {u === "bahia" ? "🟦" : "🟣"} {un.nome}
+                        </span>
+                        <span className="text-xs text-muted-foreground mt-0.5">{un.cidade}/{un.uf}</span>
+                        <span className="text-xs text-muted-foreground">CNPJ: {un.cnpj}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {!temAmbas && (
+              <div className="p-3 rounded-xl border border-border bg-muted/30">
+                <p className="text-xs font-bold text-muted-foreground">Unidade da Proposta</p>
+                <p className="text-sm font-semibold mt-0.5">{unidade.nome}</p>
+                <p className="text-xs text-muted-foreground">{unidade.cidade}/{unidade.uf} · CNPJ: {unidade.cnpj}</p>
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label>Tipo de Frete</Label>
               <div className="grid grid-cols-2 gap-3">

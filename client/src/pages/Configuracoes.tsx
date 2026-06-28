@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Settings, Building2, Bell, Moon, Sun, Palette, Save, CheckCircle2, MapPin } from "lucide-react";
+import { Settings, Building2, Bell, Moon, Sun, Palette, Save, CheckCircle2, MapPin, Store } from "lucide-react";
+import { UNIDADES } from "@/lib/unidades";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
 
