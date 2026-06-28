@@ -41,7 +41,7 @@ export const userInvites = mysqlTable("user_invites", {
   email: varchar("email", { length: 320 }).notNull(),
   role: mysqlEnum("role", ["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr", "consultor"]).notNull(),
   invitedByRole: mysqlEnum("invitedByRole", ["adm", "admin", "gerente", "diretor", "coordenador", "supervisor", "consultor"]),
-  unidade: mysqlEnum("unidade", ["bahia", "piaui", "ambas"]).default("bahia").notNull(),
+  unidade: mysqlEnum("unidade", ["bahia", "piaui", "ambas"]).default("bahia"),
   token: varchar("token", { length: 128 }).notNull().unique(),
   invitedBy: int("invitedBy").notNull(),
   usedAt: timestamp("usedAt"),
