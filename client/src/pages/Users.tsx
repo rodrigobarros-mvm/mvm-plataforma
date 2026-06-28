@@ -19,14 +19,22 @@ const ROLE_LABELS: Record<string, string> = {
   adm: "Administrador", admin: "Administrador",
   gerente: "Gerente", diretor: "Diretor",
   coordenador: "Coordenador", supervisor: "Supervisor",
-  bdr: "BDR", user: "Usuário",
+  bdr: "BDR", consultor: "Consultor Comercial", user: "Usuário",
 };
+
 const ROLE_COLORS: Record<string, string> = {
   adm: "bg-purple-100 text-purple-700", admin: "bg-purple-100 text-purple-700",
   gerente: "bg-blue-100 text-blue-700", diretor: "bg-blue-100 text-blue-700",
   coordenador: "bg-cyan-100 text-cyan-700", supervisor: "bg-indigo-100 text-indigo-700",
-  bdr: "bg-green-100 text-green-700", user: "bg-gray-100 text-gray-700",
+  bdr: "bg-green-100 text-green-700", consultor: "bg-orange-100 text-orange-700",
+  user: "bg-gray-100 text-gray-700",
 };
+
+// Roles aceitos pelo backend no convite
+type InviteRole = "gerente" | "diretor" | "coordenador" | "supervisor" | "bdr" | "consultor";
+
+// Roles aceitos pelo backend no updateRole
+type UpdateRole = "adm" | "gerente" | "bdr" | "consultor";
 
 export default function Users() {
   const { user } = useAuth();
@@ -45,12 +53,12 @@ export default function Users() {
   }
 
   const { data: users, isLoading } = trpc.users.list.useQuery();
-  const [showInvite, setShowInvite] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState<"gerente" | "diretor" | "coordenador" | "supervisor" | "bdr">("bdr");
-  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [showInvite, setShowInvite]     = useState(false);
+  const [inviteEmail, setInviteEmail]   = useState("");
+  const [inviteRole, setInviteRole]     = useState<InviteRole>("bdr");
+  const [inviteLink, setInviteLink]     = useState<string | null>(null);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
-  const [blockUserId, setBlockUserId] = useState<number | null>(null);
+  const [blockUserId, setBlockUserId]   = useState<number | null>(null);
 
   const inviteUser = trpc.users.invite.useMutation({
     onSuccess: (data) => {
@@ -144,43 +152,35 @@ export default function Users() {
                     </div>
                     <p className="text-xs text-muted-foreground">{u.email}</p>
                   </div>
+
+                  {/* Select de role — só roles aceitos pelo backend */}
                   <Select
                     value={u.role ?? "bdr"}
-                    onValueChange={(v) => updateRole.mutate({ id: u.id, role: v as any })}
+                    onValueChange={(v) => updateRole.mutate({ id: u.id, role: v as UpdateRole })}
                     disabled={u.id === user?.id}
                   >
-                    <SelectTrigger className="w-36 h-8 text-xs">
+                    <SelectTrigger className="w-40 h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="adm">Administrador</SelectItem>
                       <SelectItem value="gerente">Gerente</SelectItem>
-                      <SelectItem value="diretor">Diretor</SelectItem>
-                      <SelectItem value="coordenador">Coordenador</SelectItem>
-                      <SelectItem value="supervisor">Supervisor</SelectItem>
                       <SelectItem value="bdr">BDR</SelectItem>
-                <SelectItem value="consultor">Consultor Comercial</SelectItem>
+                      <SelectItem value="consultor">Consultor Comercial</SelectItem>
                     </SelectContent>
                   </Select>
+
                   <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0"
                       onClick={() => setBlockUserId(u.id)}
                       disabled={u.id === user?.id}
-                      title={u.isBlocked ? "Desbloquear" : "Bloquear"}
-                    >
+                      title={u.isBlocked ? "Desbloquear" : "Bloquear"}>
                       <UserX className="w-4 h-4 text-red-600" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0"
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0"
                       onClick={() => setDeleteUserId(u.id)}
                       disabled={u.id === user?.id}
-                      title="Excluir usuário"
-                    >
+                      title="Excluir usuário">
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
@@ -204,7 +204,6 @@ export default function Users() {
           </DialogHeader>
 
           {inviteLink ? (
-            /* ── Tela de sucesso com link ── */
             <div className="space-y-4">
               <div className="flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200">
                 <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
@@ -213,73 +212,47 @@ export default function Users() {
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Link de Primeiro Acesso</Label>
                 <div className="flex gap-2">
-                  <Input
-                    readOnly
-                    value={inviteLink}
-                    className="text-xs font-mono bg-muted"
-                    onClick={(e) => (e.target as HTMLInputElement).select()}
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0"
-                    onClick={handleCopyLink}
-                  >
+                  <Input readOnly value={inviteLink} className="text-xs font-mono bg-muted"
+                    onClick={(e) => (e.target as HTMLInputElement).select()} />
+                  <Button variant="outline" size="sm" className="shrink-0" onClick={handleCopyLink}>
                     <Copy className="w-4 h-4" />
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  Este link expira em <strong>7 dias</strong>. Envie por e-mail, WhatsApp ou outro canal de sua preferência.
+                  Este link expira em <strong>7 dias</strong>. Envie por e-mail, WhatsApp ou outro canal.
                 </p>
               </div>
               <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={handleCopyLink}
-                >
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copiar Link
+                <Button variant="outline" className="flex-1" onClick={handleCopyLink}>
+                  <Copy className="w-4 h-4 mr-2" />Copiar Link
                 </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => window.open(inviteLink, "_blank")}
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Abrir Link
+                <Button variant="outline" className="flex-1" onClick={() => window.open(inviteLink, "_blank")}>
+                  <ExternalLink className="w-4 h-4 mr-2" />Abrir Link
                 </Button>
               </div>
             </div>
           ) : (
-            /* ── Formulário de convite ── */
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>E-mail corporativo</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    placeholder="usuario@empresa.com"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                    className="pl-9"
-                  />
+                  <Input type="email" placeholder="usuario@empresa.com"
+                    value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)}
+                    className="pl-9" />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Nível de acesso</Label>
-                <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as any)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                <Select value={inviteRole} onValueChange={(v) => setInviteRole(v as InviteRole)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="gerente">Gerente</SelectItem>
                     <SelectItem value="diretor">Diretor</SelectItem>
                     <SelectItem value="coordenador">Coordenador</SelectItem>
                     <SelectItem value="supervisor">Supervisor</SelectItem>
                     <SelectItem value="bdr">BDR</SelectItem>
-                <SelectItem value="consultor">Consultor Comercial</SelectItem>
+                    <SelectItem value="consultor">Consultor Comercial</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -292,11 +265,15 @@ export default function Users() {
             </Button>
             {!inviteLink && (
               <Button
-                onClick={() => inviteUser.mutate({ email: inviteEmail, role: inviteRole, origin: window.location.origin })}
+                onClick={() => inviteUser.mutate({
+                  email: inviteEmail,
+                  role: inviteRole,
+                  origin: window.location.origin,
+                })}
                 disabled={!inviteEmail || inviteUser.isPending}
                 style={{ background: "oklch(0.22 0.08 240)" }}
               >
-                {inviteUser.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                {inviteUser.isPending && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
                 {inviteUser.isPending ? "Gerando..." : "Gerar Convite"}
               </Button>
             )}
@@ -315,10 +292,8 @@ export default function Users() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground"
-              onClick={() => deleteUserId && deleteUser.mutate({ id: deleteUserId })}
-            >
+            <AlertDialogAction className="bg-destructive text-destructive-foreground"
+              onClick={() => deleteUserId && deleteUser.mutate({ id: deleteUserId })}>
               Excluir
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -330,13 +305,14 @@ export default function Users() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Bloquear/Desbloquear usuário?</AlertDialogTitle>
-            <AlertDialogDescription>
-              O usuário terá seu acesso alterado imediatamente.
-            </AlertDialogDescription>
+            <AlertDialogDescription>O usuário terá seu acesso alterado imediatamente.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => blockUserId && toggleBlock.mutate({ id: blockUserId, isBlocked: !(users ?? []).find((u: any) => u.id === blockUserId)?.isBlocked })}>
+            <AlertDialogAction onClick={() => blockUserId && toggleBlock.mutate({
+              id: blockUserId,
+              isBlocked: !(users ?? []).find((u: any) => u.id === blockUserId)?.isBlocked,
+            })}>
               Confirmar
             </AlertDialogAction>
           </AlertDialogFooter>
