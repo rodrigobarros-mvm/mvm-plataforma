@@ -9,42 +9,62 @@ import { toast } from "sonner";
 import { useCelebration } from "@/hooks/useCelebration";
 
 const CONSULTOR_ACTIONS = [
-  { icon: FileText,     label: "Proposta enviada",  tipo: "proposta_enviada",  color: "#0a1e5a" },
-  { icon: MapPin,       label: "Visita realizada",  tipo: "visita_realizada",  color: "#7C3AED" },
-  { icon: CheckCircle2, label: "Venda fechada",     tipo: "venda_realizada",   color: "#059669" },
-  { icon: MessageCircle,label: "WhatsApp enviado",  tipo: "whatsapp",          color: "#25D366" },
+  { icon: FileText,      label: "Proposta enviada", tipo: "proposta_enviada", color: "#0a1e5a" },
+  { icon: MapPin,        label: "Visita realizada", tipo: "visita_realizada", color: "#7C3AED" },
+  { icon: CheckCircle2,  label: "Venda fechada",    tipo: "venda_realizada",  color: "#059669" },
+  { icon: MessageCircle, label: "WhatsApp enviado", tipo: "whatsapp",         color: "#25D366" },
 ];
 
 const BDR_ACTIONS = [
-  { icon: Phone,        label: "Tentativa",         tipo: "tentativa",         color: "#0a1e5a" },
-  { icon: CheckCircle2, label: "Contato feito",     tipo: "contato",           color: "#059669" },
-  { icon: MessageCircle,label: "WhatsApp enviado",  tipo: "whatsapp_share",    color: "#25D366" },
-  { icon: FileText,     label: "Observação",        tipo: "observacao",        color: "#7C3AED" },
+  { icon: Phone,         label: "Tentativa",        tipo: "tentativa",        color: "#0a1e5a" },
+  { icon: CheckCircle2,  label: "Contato feito",    tipo: "contato",          color: "#059669" },
+  { icon: MessageCircle, label: "WhatsApp enviado", tipo: "whatsapp_share",   color: "#25D366" },
+  { icon: FileText,      label: "Observação",       tipo: "observacao",       color: "#7C3AED" },
+];
+
+// Rotas onde o FAB deve ficar oculto (formulários e telas de detalhe com muitos campos)
+const HIDDEN_ON_ROUTES = [
+  "/propostas/nova",
+  "/nova-oportunidade",
+  "/nova-proposta",
+  "/estoque/liberar",
+  "/estoque/receber",
+  "/maquinas/nova",
+  "/maquinas/editar",
+  "/usuarios/novo",
+  "/usuarios/editar",
+  "/goals",
 ];
 
 export default function QuickActionFAB() {
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
   const { user } = useAuth();
-  const [, setLocation] = useLocation();
+  const [location] = useLocation();
 
   const role = (user as any)?.role ?? "bdr";
   const { celebrate } = useCelebration();
   const isConsultor = role === "consultor";
   const actions = isConsultor ? CONSULTOR_ACTIONS : BDR_ACTIONS;
 
+  // Esconde em formulários — verifica se a rota atual começa com alguma rota proibida
+  const isHidden = HIDDEN_ON_ROUTES.some(
+    (route) => location === route || location.startsWith(route + "/")
+  );
+
+  if (isHidden) return null;
+
   const handleAction = (tipo: string) => {
     setConfirming(tipo);
     setTimeout(() => {
       setConfirming(null);
       setOpen(false);
-      // Celebrate on key actions
       if (tipo === "venda_realizada" || tipo === "contato") celebrate();
       toast.success(
         tipo === "venda_realizada" ? "🏆 Venda registrada! Parabéns!" :
         tipo === "visita_realizada" ? "📍 Visita registrada!" :
-        tipo === "contato" ? "✅ Contato realizado!" :
-        "✅ Atividade registrada!",
+        tipo === "contato"         ? "✅ Contato realizado!" :
+                                     "✅ Atividade registrada!",
         { duration: 2500 }
       );
     }, 800);
@@ -52,7 +72,7 @@ export default function QuickActionFAB() {
 
   return (
     <div className="fixed bottom-20 right-4 z-50 md:bottom-6 flex flex-col items-end gap-3">
-      {/* Action buttons — appear when open */}
+      {/* Ações expandidas */}
       {open && (
         <div className="flex flex-col items-end gap-2">
           {actions.map((action) => {
@@ -83,7 +103,7 @@ export default function QuickActionFAB() {
         </div>
       )}
 
-      {/* Main FAB */}
+      {/* Botão principal FAB */}
       <button
         onClick={() => setOpen(v => !v)}
         className="w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all active:scale-95"
