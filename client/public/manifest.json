@@ -2,20 +2,64 @@
   "name": "Gallotti Tractor | LS Tractor",
   "short_name": "Gallotti LS",
   "description": "Plataforma Comercial de Prospecção Ativa — LS Tractor Gallotti",
-  "start_url": "/dashboard",
+  "start_url": "/login",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0a1e5a",
   "theme_color": "#0a1e5a",
   "orientation": "portrait-primary",
+  "lang": "pt-BR",
   "icons": [
-    { "src": "/logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
   "categories": ["business", "productivity"],
-  "lang": "pt-BR",
   "shortcuts": [
-    { "name": "Modo de Trabalho", "short_name": "Trabalhar", "url": "/work-mode", "icons": [{ "src": "/logo.png", "sizes": "96x96" }] },
-    { "name": "Follow-ups", "short_name": "Follow-ups", "url": "/follow-ups", "icons": [{ "src": "/logo.png", "sizes": "96x96" }] },
-    { "name": "Alta Prioridade", "short_name": "Prioridade", "url": "/leads/priority", "icons": [{ "src": "/logo.png", "sizes": "96x96" }] }
+    {
+      "name": "Modo de Trabalho",
+      "short_name": "Trabalhar",
+      "url": "/work-mode",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32" }]
+    },
+    {
+      "name": "Minha Agenda",
+      "short_name": "Agenda",
+      "url": "/agenda-consultor",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32" }]
+    },
+    {
+      "name": "Follow-ups",
+      "short_name": "Follow-ups",
+      "url": "/follow-ups",
+      "icons": [{ "src": "/favicon-32x32.png", "sizes": "32x32" }]
+    }
   ]
 }
