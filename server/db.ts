@@ -156,7 +156,7 @@ export async function createInvite(data: {
 }) {
   const db = await getDb();
   if (!db) return;
-  await db.insert(userInvites).values({ ...data, unidade: data.unidade ?? "bahia" } as any);
+  await db.insert(userInvites).values(data as any); as any);
 }
 
 export async function getInviteByToken(token: string) {
