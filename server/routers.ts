@@ -224,6 +224,7 @@ const appRouter = router({
         await createInvite({
           email: input.email,
           role: input.role,
+          unidade: (input as any).unidade ?? "bahia",
           token,
           invitedBy: ctx.user.id,
           expiresAt,
