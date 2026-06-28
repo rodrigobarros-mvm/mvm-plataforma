@@ -148,7 +148,7 @@ export async function deleteUser(id: number) {
 export async function createInvite(data: {
   email: string;
   role: "adm" | "gerente" | "diretor" | "coordenador" | "supervisor" | "bdr" | "consultor";
-  unidade?: "bahia" | "piaui" | "ambas";
+  
   token: string;
   invitedBy: number;
   expiresAt: Date;
