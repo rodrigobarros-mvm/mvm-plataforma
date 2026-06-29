@@ -29,6 +29,8 @@ import {
   getGoals,
   getInviteByToken,
   getKpiConfig,
+  getConsultorMetas,
+  upsertConsultorMetas,
   getLeadById,
   getLeadInteractions,
   getLeads,
@@ -208,27 +210,39 @@ const appRouter = router({
       return { success: true };
     }),
     invite: canInviteProcedure
-      .input(z.object({
-        email: z.string().email(),
-        role: z.enum(["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr", "consultor"]),
-        origin: z.string().optional(),
-      }))
-      .mutation(async ({ ctx, input }) => {
-        const senderRole = ctx.user.role as string;
-        const isAdm = senderRole === "adm" || senderRole === "admin";
-        if (!isAdm && input.role !== "bdr" && input.role !== "consultor") {
-          throw new TRPCError({ code: "FORBIDDEN", message: "Gerentes, Diretores, Coordenadores e Supervisores só podem convidar BDRs" });
-        }
-        const token = nanoid(32);
-        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-        await createInvite({
-          email: input.email,
-          role: input.role,
-          token,
-          invitedBy: ctx.user.id,
-          expiresAt,
-          invitedByRole: senderRole as any,
-        });
+  .input(z.object({
+    email: z.string().email(),
+    role: z.enum(["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr", "consultor"]),
+    origin: z.string().optional(),
+  }))
+  .mutation(async ({ ctx, input }) => {
+    ...
+    await createInvite({
+      email: input.email,
+      role: input.role,
+      token,
+      invitedBy: ctx.user.id,
+      expiresAt,
+      invitedByRole: senderRole as any,
+    });
+invite: canInviteProcedure
+  .input(z.object({
+    email: z.string().email(),
+    role: z.enum(["adm", "gerente", "diretor", "coordenador", "supervisor", "bdr", "consultor"]),
+    unidade: z.enum(["bahia", "piaui", "ambas"]).default("bahia"),
+    origin: z.string().optional(),
+  }))
+  .mutation(async ({ ctx, input }) => {
+    ...
+    await createInvite({
+      email: input.email,
+      role: input.role,
+      unidade: input.unidade,
+      token,
+      invitedBy: ctx.user.id,
+      expiresAt,
+      invitedByRole: senderRole as any,
+    });
         const origin = input.origin ?? "";
         const inviteUrl = `${origin}/primeiro-acesso?token=${token}`;
         return { token, inviteUrl, success: true };
@@ -971,6 +985,35 @@ const appRouter = router({
         return { success: true };
       }),
   }),
+  // ─── Consultor Metas ──────────────────────────────────────────────────────────
+consultorMetas: router({
+  get: protectedProcedure.query(async () => {
+    return getConsultorMetas();
+  }),
+
+  upsert: admOrGerenteProcedure
+    .input(z.object({
+      propostasDia:        z.string(),
+      visitasSemana:       z.string(),
+      vendasMes:           z.string(),
+      ticketMedioMes:      z.string(),
+      conversaoProposta:   z.string(),
+      maquinasVendidasMes: z.string(),
+      faturamentoMes:      z.string(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await upsertConsultorMetas([
+        { tipo: "propostas_dia",          valorMeta: input.propostasDia,        periodo: "diario"  },
+        { tipo: "visitas_semana",         valorMeta: input.visitasSemana,       periodo: "semanal" },
+        { tipo: "vendas_mes",             valorMeta: input.vendasMes,           periodo: "mensal"  },
+        { tipo: "ticket_medio_mes",       valorMeta: input.ticketMedioMes,      periodo: "mensal"  },
+        { tipo: "conversao_proposta",     valorMeta: input.conversaoProposta,   periodo: "mensal"  },
+        { tipo: "maquinas_vendidas_mes",  valorMeta: input.maquinasVendidasMes, periodo: "mensal"  },
+        { tipo: "faturamento_mes",        valorMeta: input.faturamentoMes,      periodo: "mensal"  },
+      ], ctx.user.id);
+      return { success: true };
+    }),
+}),
   // ─── Follow-ups ─────────────────────────────────────────────────────────────────────────────────────
   followUp: router({
     create: protectedProcedure
