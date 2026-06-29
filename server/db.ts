@@ -148,7 +148,7 @@ export async function deleteUser(id: number) {
 export async function createInvite(data: {
   email: string;
   role: "adm" | "gerente" | "diretor" | "coordenador" | "supervisor" | "bdr" | "consultor";
-  
+  unidade?: "bahia" | "piaui" | "ambas";
   token: string;
   invitedBy: number;
   expiresAt: Date;
@@ -156,7 +156,7 @@ export async function createInvite(data: {
 }) {
   const db = await getDb();
   if (!db) return;
-await db.insert(userInvites).values({ ...data, unidade: "bahia" } as any);
+  await db.insert(userInvites).values({ ...data, unidade: data.unidade ?? "bahia" } as any);
 }
 
 export async function getInviteByToken(token: string) {
