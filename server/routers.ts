@@ -1,4 +1,5 @@
 import { COOKIE_NAME } from "@shared/const";
+import Anthropic from "@anthropic-ai/sdk";
 import { oportunidades, maquinas as maquinasTable, estoque as estoqueTable } from "../drizzle/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
@@ -984,6 +985,74 @@ invite: canInviteProcedure
         await upsertKpiConfig({ ...input, updatedBy: ctx.user.id });
         return { success: true };
       }),
+
+      // ─── PDF Extraction ───────────────────────────────────────────────────────────
+pdfExtract: router({
+  extractMaquina: admOrGerenteProcedure
+    .input(z.object({ base64: z.string() }))
+    .mutation(async ({ input }) => {
+      const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+      const response = await client.messages.create({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2000,
+        messages: [{
+          role: "user",
+          content: [
+            {
+              type: "document",
+              source: { type: "base64", media_type: "application/pdf", data: input.base64 },
+            },
+            {
+              type: "text",
+              text: `Analise esta ficha técnica de trator/máquina agrícola e extraia TODOS os dados.
+Responda SOMENTE com JSON válido, sem texto adicional, sem markdown, sem explicações.
+
+Formato exato:
+{
+  "marca": "LS Tractor ou ENSIGN",
+  "modelo": "nome exato do modelo",
+  "serie": "série se houver",
+  "potenciaCv": "número em cv",
+  "tracao": "4x4 ou 4x2",
+  "transmissao": "descrição da transmissão",
+  "versao": "Plataformado ou Cabinado ou outro",
+  "aplicacaoPrincipal": "principais usos da máquina",
+  "culturasSegmentos": "culturas e segmentos recomendados",
+  "descricaoCompleta": "descrição técnica completa em 2-3 parágrafos",
+  "fichaTecnica": {
+    "Motor": "...",
+    "Potência Máxima": "...",
+    "Torque": "...",
+    "Cilindros": "...",
+    "Capacidade do Tanque": "...",
+    "Peso": "...",
+    "Dimensões": "...",
+    "Bitola Dianteira": "...",
+    "Bitola Traseira": "...",
+    "Rodagem Dianteira": "...",
+    "Rodagem Traseira": "...",
+    "Capacidade Hidráulica": "...",
+    "Engate": "...",
+    "Tomada de Força": "...",
+    "Cabine": "..."
+  }
+}
+
+Inclua TODOS os campos encontrados na ficha técnica. Se não encontrar um campo, omita-o.`,
+            },
+          ],
+        }],
+      });
+
+      const text = response.content[0]?.type === "text" ? response.content[0].text : "{}";
+      const clean = text.replace(/```json\n?|```\n?/g, "").trim();
+      try {
+        return JSON.parse(clean);
+      } catch {
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Falha ao processar resposta da IA" });
+      }
+    }),
+    
   }),
   // ─── Consultor Metas ──────────────────────────────────────────────────────────
 consultorMetas: router({
